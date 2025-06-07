@@ -1,9 +1,10 @@
 # src/main.py
+
 import argparse
 from .config import settings
 from .services.observability_service import init_logging, log
 from .services.context_manager import ContextManager
-from .orchestrator.orchestrator import Orchestrator  # Corrigido de 'src.orchestrator' para '.orchestrator'
+from .agents.orchestrator import Orchestrator  # CORREÇÃO: O caminho correto é DENTRO de 'agents'
 
 def app(goal: str, project_id: str | None = None):
     try:
@@ -14,12 +15,12 @@ def app(goal: str, project_id: str | None = None):
             context = context_manager.create_new_project_context(goal)
         
         init_logging(context.get_logs_path())
-        log.info("Configuration and context loaded.", config=settings.model_dump_json())
+        log.info("Configuration and context loaded.")
         
         orchestrator = Orchestrator(config=settings, context=context)
         orchestrator.run()
     except Exception as e:
-        log.critical("A critical error occurred during execution.", error=str(e), exc_info=True)
+        log.critical("A critical error occurred.", error=str(e), exc_info=True)
         print(f"\nErro Crítico: {e}\nVerifique os logs para detalhes.")
 
 if __name__ == "__main__":
@@ -28,5 +29,4 @@ if __name__ == "__main__":
     parser.add_argument("--project_id", type=str, help="Optional project ID to continue.")
     args = parser.parse_args()
     
-    log.info("="*36); log.info("       STARTING EVOLUX ENGINE       "); log.info("="*36)
     app(goal=args.goal, project_id=args.project_id)
