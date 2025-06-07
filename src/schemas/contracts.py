@@ -3,20 +3,16 @@
 import uuid
 from enum import Enum
 from typing import List, Optional
+from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-# =========================================================================
-# AQUI ESTÁ A ADIÇÃO NECESSÁRIA:
-# Usamos um Enum para definir os estados possíveis de um projeto.
-# Isso torna o código mais seguro e legível.
 class ProjectStatus(str, Enum):
     PLANNING = "planning"
     PENDING_EXECUTION = "pending_execution"
     EXECUTING = "executing"
     COMPLETED = "completed"
     FAILED = "failed"
-# =========================================================================
 
 # === Modelos de Configuração ===
 
@@ -48,7 +44,7 @@ class SystemConfig(BaseModel):
 class Task(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
     description: str
-    type: str
+    type: str # Ex: "create_file", "run_command"
     dependencies: List[uuid.UUID] = []
     acceptance_criteria: List[str]
     status: str = "pending" # pending, in_progress, completed, failed
@@ -57,8 +53,12 @@ class Task(BaseModel):
 class ProjectContext(BaseModel):
     project_id: uuid.UUID = Field(default_factory=uuid.uuid4)
     project_goal: Optional[str] = None
-    # CORRIGIMOS AQUI TAMBÉM: o status agora usa nosso Enum
+    # =========================================================================
+    # AQUI ESTÁ A CORREÇÃO:
+    project_type: Optional[str] = None # Ex: "api", "script", "website"
+    # =========================================================================
     current_status: ProjectStatus = Field(default=ProjectStatus.PLANNING)
     tasks: List[Task] = []
     history: List[str] = []
+    last_updated: Optional[str] = None
 
