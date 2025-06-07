@@ -1,44 +1,54 @@
 # src/models/project_context.py (VERSÃO FINAL E CORRIGIDA)
 
-from __future__ import annotations
-import uuid
-from enum import Enum
 from pathlib import Path
+from typing import List, Dict, Any
 from pydantic import BaseModel, Field
-from typing import Optional, TYPE_CHECKING
+# Removido a necessidade de UUID aqui
+from ..schemas.contracts import Plan
 
-if TYPE_CHECKING:
-    from src.schemas.contracts import SystemConfig
-
-class ProjectState(str, Enum):
-    STARTING = "starting"
-    PLANNING = "planning"
-    EXECUTING = "executing"
-    COMPLETED = "completed"
-    FAILED = "failed"
-
-class Task(BaseModel):
-    id: str = Field(default_factory=lambda: f"task_{uuid.uuid4().hex[:8]}")
-    description: str
-    tool_name: str
-    tool_args: dict
-    status: str = "pending"
-    result: Optional[str] = None
+# Para armazenar o resultado de cada ação
+class ActionHistory(BaseModel):
+    task_id: int
+    status: str # 'success' ou 'error'
+    result: str
 
 class ProjectContext(BaseModel):
-    project_id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    project_goal: str
-    project_type: str = ""
-    current_state: ProjectState = ProjectState.PLANNING
-    workspace_path: Path
-    tasks: list[Task] = []
-    completed_tasks: list[Task] = []
-    
-    # --- A LINHA CORRIGIDA/ADICIONADA ESTÁ AQUI ---
-    # Nós declaramos oficialmente que o ProjectContext PODE ter um campo 'config'.
-    config: Optional["SystemConfig"] = None
+    """
+    Mantém todo o estado de um projeto específico.
+    """
+    # CORREÇÃO: project_id agora é uma string simples, não um UUID.
+    project_id: str
 
-    class Config:
-        arbitrary_types_allowed = True
-        defer_build = True
+    # CORREÇÃO: O nome do campo é 'goal', não 'project_goal'.
+    goal: str
 
+    # CORREÇÃO: O nome do campo é 'workspace_dir', não 'workspace_path'.
+    workspace_dir: str
+
+    plan: Plan | None = None
+    history: List[ActionHistory] = Field(default_factory=list)
+
+    def get_workspace_path(self) -> Path:
+        """Retorna o caminho completo para o diretório de trabalho do projeto."""
+        return Path(self.workspace_dir) / self.project_id / "workspace"
+
+    def get_logs_path(self) -> Path:
+        """Retorna o caminho para o arquivo de log do projeto."""
+        log_dir = Path(self.workspace_dir) / self.project_id / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        return log_dir / "execution.log"
+
+    def add_plan(self, plan: Plan):
+        self.plan = plan
+
+    def add_action_result(self, task_id: int, status: str, result: str):
+        self.history.append(ActionHistory(task_id=task_id, status=status, result=result))
+
+    def get_full_context_for_llm(self) -> Dict[str, Any]:
+        """Retorna um dicionário com todo o contexto para ser usado em prompts."""
+        return {
+            "project_id": self.project_id,
+            "goal": self.goal,
+            "plan": self.plan.model_dump() if self.plan else None,
+            "history": [h.model_dump() for h in self.history]
+        }
