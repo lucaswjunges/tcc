@@ -3,7 +3,6 @@
 import uuid
 from pathlib import Path
 
-# AQUI ESTÁ A MUDANÇA: 'Context' foi corrigido para 'ProjectContext'
 from src.schemas.contracts import SystemConfig, Task, ProjectContext, ProjectStatus
 from src.services.context_manager import ContextManager
 from src.services.llm_client import LLMClient
@@ -18,7 +17,12 @@ class Orchestrator:
         self.context_manager = context_manager
         
         self.llm_client = LLMClient()
-        self.toolbelt = Toolbelt(self.context_manager.get_workspace_path())
+        # =========================================================================
+        # AQUI ESTÁ A CORREÇÃO:
+        # Acessamos o atributo 'workspace_path' diretamente, sem os "()",
+        # porque ele é uma variável do ContextManager, não um método/função.
+        self.toolbelt = Toolbelt(self.context_manager.workspace_path)
+        # =========================================================================
         
         log.info("Orchestrator initialized.", project_id=str(project_id))
 
@@ -40,8 +44,8 @@ class Orchestrator:
             self.context_manager.save_context()
 
         except Exception as e:
-            log.critical("Planning phase failed. Halting execution.", error=str(e), exc_info=True)
-            context = self.context_manager.get_context() # Recarrega o contexto para garantir que estamos com a versão mais recente
+            log.critical("Orchestrator run failed. Halting execution.", error=str(e), exc_info=True)
+            context = self.context_manager.get_context() # Recarrega o contexto
             context.current_status = ProjectStatus.FAILED
             log.info("Updating project status to 'failed'.")
             self.context_manager.save_context()

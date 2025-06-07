@@ -1,17 +1,23 @@
-# config.yaml
+# config.yaml (VERSÃO CORRIGIDA)
+
 api_settings:
-  default_provider: "openrouter"
+  default_provider: openrouter
   provider:
     openrouter:
       base_url: "https://openrouter.ai/api/v1"
-      # Esta linha precisa conter o NOME da variável, não o valor dela.
+      # O programa vai procurar por esta variável de ambiente
       api_key_env: "OPENROUTER_API_KEY"
 
 model_mapping:
-  planner: "anthropic/claude-3-haiku-20240307"
-  executor: "anthropic/claude-3-haiku-20240307"
-  validator: "anthropic/claude-3-haiku-20240307"
+  # =========================================================================
+  # AQUI ESTÁ A CORREÇÃO:
+  # O nome correto do modelo no OpenRouter não inclui a data.
+  planner: "anthropic/claude-3-haiku" 
+  # =========================================================================
+  executor: "anthropic/claude-3-haiku"
+  validator: "anthropic/claude-3-haiku"
 
 engine_settings:
-  max_iterations: 25
-  security_level: "strict"
+  max_iterations: 10
+  security_level: "low" # 'low', 'medium', 'high', 'paranoid'
+
