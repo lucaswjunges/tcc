@@ -1,0 +1,68 @@
+# config/default_config.yaml
+
+# ------------------------------------------------------------------------------
+# Configurações Padrão do Evolux Engine
+# Um arquivo user_config.yaml pode ser criado para sobrescrever estas opções.
+# ------------------------------------------------------------------------------
+
+engine_settings:
+  # Número máximo de tentativas para uma única tarefa antes de escalonar para o Planner.
+  max_iterations_per_task: 4
+  # 'strict': Usa todas as camadas de segurança, incluindo Docker e análise por IA.
+  # 'permissive': Abrandaria algumas verificações (não recomendado).
+  security_level: 'strict'
+
+api_settings:
+  # O provedor de API a ser usado. Atualmente, apenas 'openrouter' é suportado.
+  provider: 'openrouter'
+  # A chave de API deve ser definida na variável de ambiente OPENROUTER_API_KEY
+  # e não neste arquivo.
+
+model_mapping:
+  # Modelo para planejamento estratégico e decomposição de tarefas.
+  # Requer alta capacidade de raciocínio.
+  planner: "anthropic/claude-3-opus-20240229"
+  
+  # Modelo otimizado para gerar código.
+  code_generator: "deepseek/deepseek-coder"
+  
+  # Modelo para validar a lógica e a semântica do código/texto gerado.
+  # Precisa de bom equilíbrio entre raciocínio e velocidade.
+  validator: "anthropic/claude-3-sonnet-20240229"
+  
+  # Modelo rápido para analisar a segurança de um comando shell.
+  security_analyzer: "anthropic/claude-3-haiku-20240307"
+
+security_settings:
+  # Lista de comandos base permitidos no terminal.
+  command_whitelist:
+    - "ls"
+    - "cat"
+    - "python"
+    - "pip"
+    - "mkdir"
+    - "touch"
+    - "echo"
+    - "git"
+    - "sh" # Para executar scripts
+  
+  # Lista de padrões (regex) perigosos que são sempre bloqueados.
+  pattern_blacklist:
+    - "sudo"
+    - "rm -rf"
+    - "mkfs"
+    - "chmod .*777"
+    - "> /dev/"
+
+executor_settings:
+  # Imagem Docker a ser usada para o ambiente de execução sandbox.
+  docker_image: "python:3.11-slim"
+  
+  # Tempo máximo em segundos para a execução de um comando antes de ser finalizado.
+  timeout_seconds: 300
+  
+  # Lista de tipos de tarefa que têm permissão para acessar a rede de dentro do contêiner.
+  network_enabled_tasks:
+    - "dependency_install"
+    - "git_clone"
+

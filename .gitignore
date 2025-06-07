@@ -1,0 +1,17 @@
+# Arquivo de segredos - NUNCA ENVIE ISSO!
+.env
+
+# Pasta do ambiente virtual do Python
+venv/
+/venv
+
+# Arquivos de cache do Python
+__pycache__/
+*.pyc
+
+# Pastas de workspaces geradas pelo projeto
+project_workspaces/
+
+# Arquivos de configuração de IDEs comuns
+.idea/
+.vscode/
