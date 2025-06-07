@@ -1,51 +1,71 @@
-# src/services/context_manager.py (VERSÃO CORRIGIDA)
+# src/services/context_manager.py (VERSÃO COMPLETA E FINAL)
 
 import json
 from pathlib import Path
-from src.services.observability_service import log
-
-# --- A CORREÇÃO ESTÁ AQUI ---
-# Nós agora importamos ProjectContext e ProjectState da sua fonte original e correta.
-from src.models.project_context import ProjectContext, ProjectState
+from datetime import datetime
+import hashlib
+from ..models import ProjectContext
+from .observability_service import log
 
 class ContextManager:
-    """Gerencia a leitura e escrita do estado do projeto (context.json)."""
+    """Gerencia o ciclo de vida dos contextos de projeto (criar, carregar, salvar)."""
 
-    def __init__(self, project_id: str):
-        self.project_id = project_id
-        self.workspace_path = Path(f"project_workspaces/{self.project_id}")
-        self.context_file = self.workspace_path / "context.json"
-        log.info("ContextManager initialized.", project_id=self.project_id)
+    def __init__(self, base_dir: str):
+        self.base_dir = Path(base_dir)
+        self.base_dir.mkdir(parents=True, exist_ok=True)
+        log.info("ContextManager initialized.", base_dir=str(self.base_dir))
 
-    def create_context(self, goal: str) -> ProjectContext:
-        """Cria um novo contexto de projeto e o salva no disco."""
-        log.info("Creating new project context.")
-        self.workspace_path.mkdir(parents=True, exist_ok=True)
+    def create_new_project_context(self, goal: str) -> ProjectContext:
+        """
+        Cria um novo contexto para um novo projeto, com um ID único.
+        """
+        log.info("Creating a new project context.", goal=goal)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        goal_hash = hashlib.sha1(goal.encode()).hexdigest()[:6]
+        project_id = f"proj_{timestamp}_{goal_hash}"
+        
         context = ProjectContext(
-            project_id=self.project_id,
-            project_goal=goal,
-            workspace_path=self.workspace_path,
-            current_state=ProjectState.PLANNING,
+            project_id=project_id,
+            goal=goal,
+            workspace_dir=str(self.base_dir)
         )
-        self.save_context(context)
+        
+        # Salva o contexto inicial para persistência
+        self.save_project_context(context)
+        log.info(f"New project '{project_id}' created successfully.")
         return context
 
-    def get_context(self) -> ProjectContext:
-        """Carrega o contexto do projeto do arquivo context.json."""
-        if not self.context_file.exists():
-            log.error("Context file not found.", path=str(self.context_file))
-            raise FileNotFoundError(f"Context file not found at {self.context_file}")
+    def load_project_context(self, project_id: str) -> ProjectContext:
+        """
+        Carrega um contexto de projeto existente a partir de seu arquivo JSON.
+        """
+        log.info(f"Loading project context for '{project_id}'.")
+        context_path = self.base_dir / project_id / "context.json"
         
-        with open(self.context_file, 'r') as f:
-            data = json.load(f)
-        
-        context = ProjectContext(**data)
-        log.info("Project context loaded.", project_id=self.project_id, path=str(self.context_file))
-        return context
+        if not context_path.exists():
+            log.error("Project context file not found.", path=str(context_path))
+            raise FileNotFoundError(f"No project found with ID '{project_id}'.")
+            
+        try:
+            data = json.loads(context_path.read_text(encoding='utf-8'))
+            context = ProjectContext(**data)
+            log.info("Project context loaded successfully.")
+            return context
+        except Exception as e:
+            log.error("Failed to load or parse project context.", error=str(e), exc_info=True)
+            raise
 
-    def save_context(self, context: ProjectContext):
-        """Salva o objeto de contexto atual em context.json."""
-        with open(self.context_file, 'w') as f:
-            # Usamos o .model_dump_json() do Pydantic para serialização correta
-            f.write(context.model_dump_json(indent=2))
-        log.info("Project context saved.", path=str(self.context_file))
+    def save_project_context(self, context: ProjectContext):
+        """
+        Salva o estado atual do contexto do projeto em seu arquivo JSON.
+        """
+        project_path = self.base_dir / context.project_id
+        project_path.mkdir(parents=True, exist_ok=True)
+        context_path = project_path / "context.json"
+        
+        try:
+            context_path.write_text(context.model_dump_json(indent=2), encoding='utf-8')
+            log.info(f"Project context for '{context.project_id}' saved.", path=str(context_path))
+        except Exception as e:
+            log.error("Failed to save project context.", error=str(e), exc_info=True)
+            raise
