@@ -1,4 +1,4 @@
-# src/agents/planner_agent.py (VERSÃO CORRETA COM LÓGICA DE PÓS-PROCESSAMENTO)
+# src/agents/planner_agent.py (VERSÃO FINAL SEM REDUNDÂNCIA)
 
 import uuid
 import json
@@ -21,19 +21,20 @@ class PlannerAgent:
         
         try:
             log.info("Invoking LLM.", model=self.model, num_messages=len(system_message + user_message))
-            response = self.llm_client.invoke(
+            # A variável 'response_dict' agora recebe o dicionário diretamente do LLMClient
+            response_dict = self.llm_client.invoke(
                 model=self.model,
                 messages=system_message + user_message
             )
             log.info("LLM invocation successful.", model=self.model)
 
-            response_json = response.json()
-            llm_response_content = response_json["choices"][0]["message"]["content"]
+            # ----- CORREÇÃO APLICADA AQUI -----
+            # A linha "response_json = response.json()" foi removida.
+            # Usamos 'response_dict' diretamente.
+            # ------------------------------------
+            llm_response_content = response_dict["choices"][0]["message"]["content"]
             task_data = json.loads(llm_response_content)
 
-            # =========================================================================
-            # LÓGICA DE PÓS-PROCESSAMENTO PARA GARANTIR VALIDAÇÃO
-            # =========================================================================
             processed_tasks = []
             previous_task_id = None
             
@@ -51,7 +52,6 @@ class PlannerAgent:
                 processed_tasks.append(processed_task)
                 
                 previous_task_id = new_id
-            # =========================================================================
 
             if not processed_tasks:
                 log.warning("LLM returned a plan with no tasks.")
