@@ -1,23 +1,16 @@
-# config.yaml (VERSÃO CORRIGIDA)
+# config.yaml (VERSÃO SIMPLIFICADA E CORRETA)
 
-api_settings:
-  default_provider: openrouter
-  provider:
-    openrouter:
-      base_url: "https://openrouter.ai/api/v1"
-      # O programa vai procurar por esta variável de ambiente
-      api_key_env: "OPENROUTER_API_KEY"
+# Provedor de LLM a ser usado. Atualmente suporta: "openrouter"
+llm_provider: "openrouter"
 
+# Mapeia os papéis dos agentes para modelos de IA específicos.
+# Nós atualizamos nosso código para esperar um modelo para o Executor também.
 model_mapping:
-  # =========================================================================
-  # AQUI ESTÁ A CORREÇÃO:
-  # O nome correto do modelo no OpenRouter não inclui a data.
-  planner: "anthropic/claude-3-haiku" 
-  # =========================================================================
+  planner: "anthropic/claude-3-haiku"
   executor: "anthropic/claude-3-haiku"
-  validator: "anthropic/claude-3-haiku"
 
-engine_settings:
-  max_iterations: 10
-  security_level: "low" # 'low', 'medium', 'high', 'paranoid'
+# Chave de API para o OpenRouter.
+# Esta chave será lida da variável de ambiente OPENROUTER_API_KEY se não for especificada aqui.
+# É uma boa prática de segurança usar variáveis de ambiente em vez de colocar a chave diretamente aqui.
+# openrouter_api_key: "sk-or-..." 
 

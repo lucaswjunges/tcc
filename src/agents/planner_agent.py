@@ -1,64 +1,54 @@
-# src/agents/planner_agent.py (VERSÃO FINAL SEM REDUNDÂNCIA)
-
-import uuid
+# src/agents/planner_agent.py (VERSÃO CORRIGIDA)
 import json
-
-from src.schemas.contracts import SystemConfig, ProjectContext, Task
 from src.services.llm_client import LLMClient
 from src.services.observability_service import log
-from src.agents.prompts import planner_prompts
+from src.models.project_context import ProjectContext
+from src.agents.prompts import Prompts
 
 class PlannerAgent:
-    def __init__(self, llm_client: LLMClient, config: SystemConfig):
+    def __init__(self, llm_client: LLMClient):
         self.llm_client = llm_client
-        self.model = config.model_mapping.planner
 
-    def create_initial_plan(self, context: ProjectContext) -> list[Task]:
-        log.info(f"PlannerAgent: Creating initial project plan.", project_id=str(context.project_id))
+    def create_initial_plan(self, context: ProjectContext) -> list[dict]:
+        log.info("PlannerAgent: Creating initial project plan.", project_id=context.project_id)
         
-        system_message = [{"role": "system", "content": planner_prompts.SYSTEM_PROMPT}]
-        user_message = [{"role": "user", "content": planner_prompts.USER_PROMPT.format(goal=context.project_goal)}]
+        system_message = Prompts.get_system_prompt("planner")
+        user_message = Prompts.get_user_prompt(
+            "planner",
+            goal=context.project_goal,
+            tech_stack="",  # Podemos adicionar isso ao contexto no futuro
+            project_type=context.project_type
+        )
         
+        messages = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_message}
+        ]
+
         try:
-            log.info("Invoking LLM.", model=self.model, num_messages=len(system_message + user_message))
-            # A variável 'response_dict' agora recebe o dicionário diretamente do LLMClient
-            response_dict = self.llm_client.invoke(
-                model=self.model,
-                messages=system_message + user_message
-            )
-            log.info("LLM invocation successful.", model=self.model)
-
-            # ----- CORREÇÃO APLICADA AQUI -----
-            # A linha "response_json = response.json()" foi removida.
-            # Usamos 'response_dict' diretamente.
-            # ------------------------------------
-            llm_response_content = response_dict["choices"][0]["message"]["content"]
-            task_data = json.loads(llm_response_content)
-
-            processed_tasks = []
-            previous_task_id = None
+            log.info("Invoking LLM.", model=context.config.model_mapping.planner, num_messages=len(messages))
             
-            for task_dict in task_data["tasks"]:
-                new_id = uuid.uuid4()
-                dependencies = [previous_task_id] if previous_task_id else []
+            # --- A CORREÇÃO ESTÁ AQUI ---
+            # Troquei .invoke() por .call_llm() para combinar com o nosso LLMClient
+            response_text = self.llm_client.call_llm(
+                model=context.config.model_mapping.planner,
+                messages=messages
+            )
+            # ---------------------------
 
-                processed_task = Task(
-                    id=new_id,
-                    description=task_dict.get("description", "No description provided"),
-                    type=task_dict.get("type", "unknown"),
-                    dependencies=dependencies,
-                    acceptance_criteria=task_dict.get("acceptance_criteria", [])
-                )
-                processed_tasks.append(processed_task)
-                
-                previous_task_id = new_id
+            log.info(f"PlannerAgent: Received plan from LLM.", raw_response=response_text)
+            
+            # Extrair o JSON do bloco de código
+            json_block = response_text.strip().split("```json\n")[1].split("\n```")[0]
+            plan = json.loads(json_block)
+            
+            log.info("PlannerAgent: Plan parsed successfully.", num_tasks=len(plan))
+            return plan
 
-            if not processed_tasks:
-                log.warning("LLM returned a plan with no tasks.")
-                return []
-                
-            return processed_tasks
-
+        except (json.JSONDecodeError, IndexError) as e:
+            log.error("PlannerAgent: Failed to parse plan from LLM response.", error_message=str(e), raw_response=response_text, exc_info=True)
+            raise
         except Exception as e:
-            log.error(f"PlannerAgent: An unexpected error occurred while creating a plan.", error=str(e), exc_info=True)
-            raise e
+            log.error("PlannerAgent: An unexpected error occurred while creating a plan.", error_message=str(e), exc_info=True)
+            raise
+

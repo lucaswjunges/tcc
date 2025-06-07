@@ -1,64 +1,78 @@
-# src/schemas/contracts.py (VERSÃO CORRIGIDA)
+# src/schemas/contracts.py (VERSÃO COMPLETA E CORRIGIDA)
 
-import uuid
 from enum import Enum
-from typing import List, Optional
-from datetime import datetime
-
+from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
+from pathlib import Path
+from typing import Optional
 
-class ProjectStatus(str, Enum):
-    PLANNING = "planning"
-    PENDING_EXECUTION = "pending_execution"
-    EXECUTING = "executing"
-    COMPLETED = "completed"
-    FAILED = "failed"
+# =========================================================================
+# ESTADOS E TIPOS
+# =========================================================================
 
-# === Modelos de Configuração ===
+class ProjectState(str, Enum):
+    """
+    Enumeração dos possíveis estados de um projeto.
+    """
+    planning = "planning"
+    executing = "executing"
+    completed = "completed"
+    failed = "failed"
 
-class ProviderSettings(BaseModel):
-    base_url: str
-    api_key_env: str
+class TaskType(str, Enum):
+    """
+    Enumeração dos possíveis tipos de tarefas.
+    """
+    create_file = "create_file"
+    run_command = "run_command"
+    unknown = "unknown"
 
-class ApiSettings(BaseModel):
-    default_provider: str
-    provider: dict[str, ProviderSettings]
-
-class ModelMapping(BaseModel):
-    planner: str
-    executor: str
-    validator: str
-
-class EngineSettings(BaseModel):
-    max_iterations: int
-    security_level: str
-
-class SystemConfig(BaseModel):
-    api_settings: ApiSettings
-    model_mapping: ModelMapping
-    engine_settings: EngineSettings
-
-
-# === Modelos de Contexto do Projeto ===
+# =========================================================================
+# ESTRUTURAS DE DADOS
+# =========================================================================
 
 class Task(BaseModel):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    """
+    Representa uma única tarefa a ser executada.
+    """
+    id: UUID = Field(default_factory=uuid4)
     description: str
-    type: str # Ex: "create_file", "run_command"
-    dependencies: List[uuid.UUID] = []
-    acceptance_criteria: List[str]
-    status: str = "pending" # pending, in_progress, completed, failed
-    result: Optional[str] = None
+    type: str  # Poderia ser TaskType, mas string dá mais flexibilidade para a IA
+    dependencies: list[UUID] = Field(default_factory=list)
+    acceptance_criteria: list[str] = Field(default_factory=list)
 
 class ProjectContext(BaseModel):
-    project_id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    project_goal: Optional[str] = None
-    # =========================================================================
-    # AQUI ESTÁ A CORREÇÃO:
-    project_type: Optional[str] = None # Ex: "api", "script", "website"
-    # =========================================================================
-    current_status: ProjectStatus = Field(default=ProjectStatus.PLANNING)
-    tasks: List[Task] = []
-    history: List[str] = []
-    last_updated: Optional[str] = None
+    """
+    Mantém todo o estado e contexto de um projeto.
+    """
+    project_id: UUID = Field(default_factory=uuid4)
+    project_goal: str = ""
+    project_type: str = ""
+    current_state: ProjectState = ProjectState.planning
+    workspace_path: Path
+    
+    tasks: list[Task] = Field(default_factory=list)
+    completed_tasks: list[Task] = Field(default_factory=list)
+    
+    class Config:
+        # Permite que o Pydantic trabalhe com tipos como pathlib.Path
+        arbitrary_types_allowed = True
 
+# =========================================================================
+# CONFIGURAÇÃO DO SISTEMA
+# =========================================================================
+
+class ModelMapping(BaseModel):
+    """
+    Mapeia os papéis dos agentes para modelos de IA específicos.
+    """
+    planner: str
+    executor: str
+
+class SystemConfig(BaseModel):
+    """
+    Carrega e valida a configuração geral do sistema a partir do config.yaml.
+    """
+    llm_provider: str
+    model_mapping: ModelMapping
+    openrouter_api_key: Optional[str] = None

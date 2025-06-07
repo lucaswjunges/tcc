@@ -12,3 +12,5 @@ structlog==25.4.0
 typing-inspection==0.4.1
 typing_extensions==4.14.0
 urllib3==2.4.0
+typer[all]
+openai

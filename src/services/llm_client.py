@@ -1,65 +1,64 @@
 # src/services/llm_client.py (VERSÃO CORRIGIDA)
-
 import os
-import requests
-from dotenv import load_dotenv
-
-# AQUI ESTÁ A CORREÇÃO: Importamos a classe ConfigManager
-from src.services.config_manager import ConfigManager
+from openai import OpenAI
 from src.services.observability_service import log
 
-load_dotenv()
-
 class LLMClient:
-    def __init__(self):
-        # E AQUI ESTÁ A CORREÇÃO: Usamos a classe para obter a config
-        self.config = ConfigManager.get_config()
-        self.api_settings = self.config.api_settings
-        self.default_provider = self.api_settings.default_provider
-        self.provider_settings = self.api_settings.provider[self.default_provider]
-        
-        self.api_key_env_var = self.provider_settings.api_key_env
-        self.api_key = os.getenv(self.api_key_env_var)
-        
-        if not self.api_key:
-            log.critical(f"API key environment variable '{self.api_key_env_var}' not set.", env_var=self.api_key_env_var)
-            raise ValueError(f"API key environment variable '{self.api_key_env_var}' not set. Please create a .env file and set this variable.")
+    """
+    Cliente unificado para interagir com diferentes provedores de LLM.
+    Atualmente suporta OpenRouter.
+    """
+    def __init__(self, provider: str, api_key: str = None):
+        """
+        Inicializa o cliente LLM.
 
-        self.base_url = self.provider_settings.base_url
-        self.headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        }
-        log.info("LLMClient initialized successfully.", provider=self.default_provider)
+        Args:
+            provider (str): O nome do provedor de LLM (ex: 'openrouter').
+            api_key (str, optional): A chave de API. Se não for fornecida,
+                                     ela será lida da variável de ambiente.
+        """
+        self.provider = provider
+        log.info(f"Initializing LLMClient for provider: {self.provider}")
 
-    def invoke(self, model: str, messages: list[dict], max_tokens: int = 4096) -> dict:
-        """Envia uma requisição para a API da LLM."""
-        
-        endpoint = f"{self.base_url}/chat/completions"
-        payload = {
-            "model": model,
-            "messages": messages,
-            "max_tokens": max_tokens,
-            "stream": False
-        }
-        
-        log.info("Invoking LLM.", model=model, num_messages=len(messages))
-
-        try:
-            response = requests.post(endpoint, headers=self.headers, json=payload, timeout=120)
-            response.raise_for_status() # Lança um erro para status HTTP 4xx/5xx
+        if self.provider == "openrouter":
+            self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
+            if not self.api_key:
+                raise ValueError("OpenRouter API key not found. Please set it in .env as OPENROUTER_API_KEY.")
             
-            response_data = response.json()
-            log.info("LLM invocation successful.", model=model)
-            return response_data
+            # OpenRouter usa a mesma interface do cliente OpenAI
+            self.client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=self.api_key,
+            )
+            log.info("OpenRouter client configured successfully.")
+        else:
+            raise ValueError(f"Unsupported LLM provider: {self.provider}")
 
-        except requests.exceptions.HTTPError as http_err:
-            log.error("HTTP error occurred during LLM invocation.", 
-                      status_code=http_err.response.status_code, 
-                      response=http_err.response.text,
-                      error=str(http_err))
-            raise
+    def call_llm(self, model: str, messages: list, temperature: float = 0.7, max_tokens: int = 4096) -> str:
+        """
+        Faz uma chamada para o modelo de linguagem.
+
+        Args:
+            model (str): O nome do modelo a ser usado (ex: 'anthropic/claude-3-haiku').
+            messages (list): A lista de mensagens no formato da API OpenAI.
+            temperature (float): A temperatura para a geração.
+            max_tokens (int): O número máximo de tokens a serem gerados.
+
+        Returns:
+            str: A resposta do modelo.
+        """
+        try:
+            log.info(f"Calling LLM: {model} with {len(messages)} messages.")
+            response = self.client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            content = response.choices[0].message.content
+            log.info(f"LLM call successful. Received response from {model}.", response_length=len(content))
+            return content
         except Exception as e:
-            log.error("An unexpected error occurred during LLM invocation.", error=str(e), exc_info=True)
+            log.critical(f"LLM call failed for model {model}.", error=str(e), exc_info=True)
             raise
 
