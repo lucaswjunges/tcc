@@ -1,65 +1,84 @@
-# src/main.py (VERSÃO FINAL E LIMPA)
+# src/main.py (VERSÃO FINAL E CORRIGIDA)
 
 import typer
+from typing_extensions import Annotated
+from typing import Optional
 import uuid
 
-# Note: Não há mais hacks de sys.path aqui. Não precisamos mais deles.
-
-from src.services.config_manager import ConfigManager
+from src.config import settings
+from src.services.observability_service import init_logging, log
 from src.services.context_manager import ContextManager
-from src.services.observability_service import ObservabilityService, log
-from src.agents.orchestrator import Orchestrator
 from src.services.llm_client import LLMClient
 from src.services.toolbelt import Toolbelt
+from src.agents.orchestrator import Orchestrator
 
-# O app é criado aqui para ser importado pelo evolux.py
-app = typer.Typer(
-    name="Evolux Engine",
-    help="An AI-powered software development automation engine."
-)
+app = typer.Typer()
 
 @app.command()
 def start(
-    goal: str = typer.Option(..., "--goal", "-g", help="The main goal for the project."),
-    project_id: uuid.UUID = typer.Option(None, "--project-id", "-p", help="An existing project ID to resume.")
+    goal: Annotated[
+        Optional[str],
+        typer.Option(
+            "--goal",
+            "-g",
+            help="The main goal of the AI project.",
+        ),
+    ] = None,
+    project_id: Annotated[
+        Optional[str],
+        typer.Option(
+            "--project-id",
+            "-p",
+            help="The ID of an existing project to resume.",
+        ),
+    ] = None,
 ):
-    """
-    Start a new project or resume an existing one.
-    """
-    project_id = project_id or uuid.uuid4()
+    """Starts the Evolux Engine to work on a project goal."""
+    if not goal and not project_id:
+        log.error("Either --goal or --project-id must be provided.")
+        raise typer.Exit(code=1)
+
+    project_uuid = uuid.UUID(project_id) if project_id else uuid.uuid4()
     
+    log_dir = f"project_workspaces/{project_uuid}/logs"
+    init_logging(log_dir)
+
+    log.info("====================================")
+    log.info("       STARTING EVOLUX ENGINE       ")
+    log.info("====================================")
+
+    config = settings
+    log.info("Configuration loaded and validated successfully.")
+
     try:
-        log_dir = f"project_workspaces/{project_id}/logs"
-        ObservabilityService.initialize(log_dir=log_dir, project_id=project_id)
+        context_manager = ContextManager(str(project_uuid))
         
-        log.info("====================================")
-        log.info("       STARTING EVOLUX ENGINE       ")
-        log.info("====================================")
+        # --- A CORREÇÃO LÓGICA ESTÁ AQUI ---
+        if goal:
+            log.info("Starting a new project...")
+            context = context_manager.create_context(goal)
+        else:
+            log.info(f"Resuming project {project_uuid}...")
+            context = context_manager.get_context()
+        # ------------------------------------
 
-        config = ConfigManager.get_config()
-        log.info("Configuration loaded and validated successfully.")
-
-        context_manager = ContextManager(project_id)
-        context = context_manager.get_context()
-        context.project_goal = goal
-        context_manager.save_context(context)
-        
-        llm_client = LLMClient(config.llm_provider, config.openrouter_api_key)
+        llm_client = LLMClient(config)
         toolbelt = Toolbelt(context.workspace_path)
         
         orchestrator = Orchestrator(
-            project_id=project_id,
+            project_id=str(project_uuid),
             config=config,
             context_manager=context_manager,
             llm_client=llm_client,
-            toolbelt=toolbelt
+            toolbelt=toolbelt,
         )
         orchestrator.run()
 
     except Exception as e:
         log.critical("A critical error occurred during execution.", error=str(e), exc_info=True)
         print(f"\nErro Crítico: {e}")
-        print(f"Verifique o arquivo de log em 'project_workspaces/{project_id}/logs' para mais detalhes.")
+        print(f"Verifique o arquivo de log em '{log_dir}' para mais detalhes.")
+        raise typer.Exit(code=1)
 
-# Note: A cláusula `if __name__ == "__main__"` foi removida.
-# O ponto de entrada agora é o `evolux.py`.
+if __name__ == "__main__":
+    app()
