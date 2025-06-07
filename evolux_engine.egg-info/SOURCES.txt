@@ -4,6 +4,7 @@ evolux_engine.egg-info/SOURCES.txt
 evolux_engine.egg-info/dependency_links.txt
 evolux_engine.egg-info/top_level.txt
 src/__init__.py
+src/config.py
 src/main.py
 src/agents/__init__.py
 src/agents/executor_agent.py

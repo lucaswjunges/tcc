@@ -1,64 +1,43 @@
-# src/services/llm_client.py (VERSÃO CORRIGIDA)
-import os
+# src/services/llm_client.py (VERSÃO FINAL E CORRETA)
+
 from openai import OpenAI
+from src.config import settings # Importa as configurações globais
 from src.services.observability_service import log
 
 class LLMClient:
-    """
-    Cliente unificado para interagir com diferentes provedores de LLM.
-    Atualmente suporta OpenRouter.
-    """
-    def __init__(self, provider: str, api_key: str = None):
-        """
-        Inicializa o cliente LLM.
+    """Um wrapper unificado para interagir com diferentes clientes de LLM."""
+    def __init__(self, provider: str):
+        self._client = self._get_client(provider)
 
-        Args:
-            provider (str): O nome do provedor de LLM (ex: 'openrouter').
-            api_key (str, optional): A chave de API. Se não for fornecida,
-                                     ela será lida da variável de ambiente.
-        """
-        self.provider = provider
-        log.info(f"Initializing LLMClient for provider: {self.provider}")
-
-        if self.provider == "openrouter":
-            self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
-            if not self.api_key:
-                raise ValueError("OpenRouter API key not found. Please set it in .env as OPENROUTER_API_KEY.")
+    def _get_client(self, provider: str):
+        """Fábrica que retorna uma instância de cliente configurada."""
+        if provider == "openrouter":
+            if not settings.openrouter_api_key:
+                raise ValueError("OPENROUTER_API_KEY must be set in .env for OpenRouter provider")
             
-            # OpenRouter usa a mesma interface do cliente OpenAI
-            self.client = OpenAI(
+            return OpenAI(
                 base_url="https://openrouter.ai/api/v1",
-                api_key=self.api_key,
+                api_key=settings.openrouter_api_key,
             )
-            log.info("OpenRouter client configured successfully.")
         else:
-            raise ValueError(f"Unsupported LLM provider: {self.provider}")
+            raise ValueError(f"Unsupported LLM provider: {provider}")
 
-    def call_llm(self, model: str, messages: list, temperature: float = 0.7, max_tokens: int = 4096) -> str:
-        """
-        Faz uma chamada para o modelo de linguagem.
-
-        Args:
-            model (str): O nome do modelo a ser usado (ex: 'anthropic/claude-3-haiku').
-            messages (list): A lista de mensagens no formato da API OpenAI.
-            temperature (float): A temperatura para a geração.
-            max_tokens (int): O número máximo de tokens a serem gerados.
-
-        Returns:
-            str: A resposta do modelo.
-        """
+    def chat_completion(self, model: str, messages: list, max_tokens: int = 4096) -> str:
+        """Método unificado para chamar o endpoint de chat completion."""
+        log.info("Requesting chat completion from LLM.", model=model)
         try:
-            log.info(f"Calling LLM: {model} with {len(messages)} messages.")
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=temperature,
-                max_tokens=max_tokens,
+            response = self._client.chat.completions.create(
+                model=model, messages=messages, max_tokens=max_tokens
             )
             content = response.choices[0].message.content
-            log.info(f"LLM call successful. Received response from {model}.", response_length=len(content))
+            log.info("Chat completion received successfully.", model=model)
             return content
         except Exception as e:
-            log.critical(f"LLM call failed for model {model}.", error=str(e), exc_info=True)
+            log.error("Error during LLM chat completion.", error=str(e), exc_info=True)
             raise
 
+# --- A CORREÇÃO ESTÁ AQUI ---
+# A função não aceita mais argumentos. Ela é autossuficiente.
+def get_llm_client() -> LLMClient:
+    """Retorna uma instância do nosso LLMClient usando as configurações globais."""
+    return LLMClient(provider=settings.llm_provider)
