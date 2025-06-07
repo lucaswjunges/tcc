@@ -1,49 +1,56 @@
-# src/agents/executor_agent.py
+# src/agents/executor.py
 
-from src.schemas.contracts import SystemConfig, ProjectContext, Task
-from src.services.llm_client import LLMClient
-from src.services.toolbelt import Toolbelt
-from src.services.observability_service import log
+from ..models import ProjectContext
+from ..services.llm_client import LLMClient
+from ..services.file_service import FileService
+from ..services.observability_service import log
+from ..schemas.contracts import Task
 
-class ExecutorAgent:
-    def __init__(self, llm_client: LLMClient, toolbelt: Toolbelt, config: SystemConfig):
+class Executor:
+    """
+    O Agente Executor é responsável por executar as tarefas definidas no plano,
+    uma a uma, utilizando as ferramentas disponíveis.
+    """
+    def __init__(self, llm_client: LLMClient, file_service: FileService):
         self.llm_client = llm_client
-        self.toolbelt = toolbelt
-        self.model = config.model_mapping.executor # Vamos usar um modelo para o executor também
+        self.file_service = file_service
+        self.toolbelt = {
+            "write_file": self.file_service.write_file,
+            "read_file": self.file_service.read_file,
+            "list_files": self.file_service.list_files,
+        }
 
-    def find_next_task(self, context: ProjectContext) -> Task | None:
-        """
-        Encontra a primeira tarefa na lista que ainda não foi concluída
-        e cujas dependências já foram satisfeitas.
-        """
-        completed_task_ids = {task.id for task in context.completed_tasks}
+    def _execute_task(self, task: Task, context: ProjectContext):
+        log.info(f"Executing task: {task.description}", task_id=task.id)
         
-        for task in context.tasks:
-            # Se a tarefa já foi concluída, pule.
-            if task.id in completed_task_ids:
-                continue
+        tool_name = task.tool
+        if tool_name not in self.toolbelt:
+            log.error("Tool not found.", tool_name=tool_name)
+            raise ValueError(f"Tool '{tool_name}' is not available.")
             
-            # Se a tarefa não tem dependências, ela está pronta.
-            if not task.dependencies:
-                log.info(f"ExecutorAgent: Found next task with no dependencies.", task_id=task.id)
-                return task
-            
-            # Verifique se todas as dependências foram concluídas.
-            if all(dep_id in completed_task_ids for dep_id in task.dependencies):
-                log.info(f"ExecutorAgent: Found next task with resolved dependencies.", task_id=task.id)
-                return task
+        tool_func = self.toolbelt[tool_name]
         
-        # Se o loop terminar, não há mais tarefas executáveis.
-        log.info(f"ExecutorAgent: No more executable tasks found.")
-        return None
+        try:
+            # Transforma o dicionário de parâmetros em argumentos para a função
+            result = tool_func(**task.parameters)
+            log.info("Task executed successfully.", task_id=task.id, result=str(result))
+            context.add_action_result(task.id, "success", str(result))
 
-    def execute_task(self, context: ProjectContext, task: Task):
-        """
-        Executa uma tarefa específica. (Ainda não implementado)
-        """
-        # Placeholder - aqui é onde a mágica acontecerá
-        log.info(f"ExecutorAgent: Pretending to execute task.", task_description=task.description)
+        except Exception as e:
+            log.error("Error executing task.", task_id=task.id, error=str(e), exc_info=True)
+            context.add_action_result(task.id, "error", str(e))
+            # Você pode decidir se quer parar a execução ou continuar
+            raise e
+
+    def execute_plan(self, context: ProjectContext, model: str):
+        log.info("Executor agent starting plan execution.", project_id=context.project_id)
         
-        # Por enquanto, vamos apenas movê-la para a lista de concluídas
-        context.completed_tasks.append(task)
-        log.info(f"ExecutorAgent: Task marked as complete.", task_id=task.id)
+        if not context.plan or not context.plan.tasks:
+            log.warn("No plan or tasks to execute.")
+            return
+
+        for task in context.plan.tasks:
+            self._execute_task(task, context)
+            
+        log.info("All tasks in the plan have been executed.")
+

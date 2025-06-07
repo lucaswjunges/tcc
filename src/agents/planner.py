@@ -1,54 +1,53 @@
-# src/agents/planner_agent.py (VERSÃO CORRIGIDA)
-import json
-from src.services.llm_client import LLMClient
-from src.services.observability_service import log
-from src.models.project_context import ProjectContext
-from src.agents.prompts import Prompts
+# src/agents/planner.py
 
-class PlannerAgent:
+import json
+from ..services.llm_client import LLMClient
+from ..services.observability_service import log
+from ..schemas.contracts import Plan
+from .planner_prompts import PLANNER_SYSTEM_PROMPT
+
+class Planner:
+    """
+    O Agente Planner é responsável por receber um objetivo de alto nível
+    e decompô-lo em um plano de tarefas executáveis passo a passo em formato JSON.
+    """
     def __init__(self, llm_client: LLMClient):
         self.llm_client = llm_client
 
-    def create_initial_plan(self, context: ProjectContext) -> list[dict]:
-        log.info("PlannerAgent: Creating initial project plan.", project_id=context.project_id)
-        
-        system_message = Prompts.get_system_prompt("planner")
-        user_message = Prompts.get_user_prompt(
-            "planner",
-            goal=context.project_goal,
-            tech_stack="",  # Podemos adicionar isso ao contexto no futuro
-            project_type=context.project_type
-        )
+    def create_plan(self, goal: str, model: str) -> Plan:
+        log.info("Planner agent starting plan creation.", goal=goal)
         
         messages = [
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": user_message}
+            {"role": "system", "content": PLANNER_SYSTEM_PROMPT},
+            {"role": "user", "content": f"O objetivo final do projeto é: {goal}"}
         ]
-
+        
         try:
-            log.info("Invoking LLM.", model=context.config.model_mapping.planner, num_messages=len(messages))
-            
-            # --- A CORREÇÃO ESTÁ AQUI ---
-            # Troquei .invoke() por .call_llm() para combinar com o nosso LLMClient
-            response_text = self.llm_client.call_llm(
-                model=context.config.model_mapping.planner,
+            response_text = self.llm_client.chat_completion(
+                model=model,
                 messages=messages
             )
-            # ---------------------------
-
-            log.info(f"PlannerAgent: Received plan from LLM.", raw_response=response_text)
             
-            # Extrair o JSON do bloco de código
-            json_block = response_text.strip().split("```json\n")[1].split("\n```")[0]
-            plan = json.loads(json_block)
+            # Limpeza básica para garantir que estamos lidando com um objeto JSON
+            # O LLM às vezes envolve o JSON em blocos de código markdown
+            if response_text.startswith("```json"):
+                response_text = response_text[7:]
+            if response_text.endswith("```"):
+                response_text = response_text[:-3]
             
-            log.info("PlannerAgent: Plan parsed successfully.", num_tasks=len(plan))
+            response_text = response_text.strip()
+            
+            log.info("Raw response from LLM received.", raw_response=response_text)
+            
+            plan_data = json.loads(response_text)
+            plan = Plan(**plan_data)
+            
+            log.info("Plan parsed and validated successfully.", plan_tasks=len(plan.tasks))
             return plan
 
-        except (json.JSONDecodeError, IndexError) as e:
-            log.error("PlannerAgent: Failed to parse plan from LLM response.", error_message=str(e), raw_response=response_text, exc_info=True)
-            raise
+        except json.JSONDecodeError as e:
+            log.error("Failed to decode JSON from LLM response.", error=str(e), raw_response=response_text)
+            raise ValueError(f"Planner response could not be decoded: {e}")
         except Exception as e:
-            log.error("PlannerAgent: An unexpected error occurred while creating a plan.", error_message=str(e), exc_info=True)
+            log.error("An unexpected error occurred during plan creation.", error=str(e), exc_info=True)
             raise
-

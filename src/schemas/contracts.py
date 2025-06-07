@@ -1,28 +1,33 @@
-# src/schemas/contracts.py (VERSÃO FINAL-FINAL)
+# src/schemas/contracts.py (VERSÃO UNIFICADA E FINAL)
 
-from __future__ import annotations
-from pydantic import BaseModel, Field
-from pydantic_settings import BaseSettings  # <-- IMPORTAMOS ISSO
-from typing import Optional, TYPE_CHECKING
+from pydantic import BaseModel, Field, SecretStr
+from typing import List, Dict, Any
 
-if TYPE_CHECKING:
-    from src.models.project_context import ProjectContext
+# --- Modelos de Configuração ---
 
 class ModelMapping(BaseModel):
-    planner: str = 'anthropic/claude-3-haiku'
-    executor: str = 'anthropic/claude-3-haiku'
+    """Mapeia os papéis dos agentes para modelos de LLM específicos."""
+    planner: str
+    executor: str
 
-# --- A CORREÇÃO ESTÁ AQUI ---
-# A SystemConfig agora herda de BaseSettings, tornando-se a nossa classe
-# principal de configuração.
-class SystemConfig(BaseSettings):
+class SystemConfig(BaseModel):
+    """A configuração principal do sistema, carregada do ambiente."""
     llm_provider: str = "openrouter"
-    model_mapping: ModelMapping = Field(default_factory=ModelMapping)
-    openrouter_api_key: Optional[str] = None
+    openrouter_api_key: SecretStr
+    model_mapping: ModelMapping
+    project_workspace_dir: str = "project_workspaces"
 
-    class Config:
-        # Ela agora sabe como ler do arquivo .env
-        env_file = ".env"
-        env_file_encoding = 'utf-8'
-        # Isso faz com que OPENROUTER_API_KEY no .env mapeie para o campo
-        env_prefix = '' 
+# --- Modelos de Plano e Tarefas ---
+
+class Task(BaseModel):
+    """Define a estrutura de uma única tarefa executável."""
+    id: int = Field(..., description="Um ID numérico único para a tarefa.")
+    description: str = Field(..., description="Uma descrição clara e concisa do que a tarefa deve fazer.")
+    tool: str = Field(..., description="O nome da ferramenta a ser usada (ex: 'write_file', 'finish').")
+    parameters: Dict[str, Any] = Field(default_factory=dict, description="Os parâmetros a serem passados para a ferramenta.")
+    dependencies: List[int] = Field(default_factory=list, description="Uma lista de IDs de tarefas das quais esta tarefa depende.")
+
+class Plan(BaseModel):
+    """Representa o plano completo, que é uma lista de tarefas."""
+    goal: str = Field(..., description="O objetivo original de alto nível que este plano visa alcançar.")
+    tasks: List[Task] = Field(..., description="A sequência de tarefas a serem executadas.")
