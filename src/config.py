@@ -1,5 +1,6 @@
 # src/config.py (VERSÃO SIMPLIFICADA E FINAL)
 
+from dataclasses import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 # CORREÇÃO: Importa o modelo de dados do nosso arquivo de contratos unificado.
 from .schemas.contracts import SystemConfig, ModelMapping
@@ -10,6 +11,9 @@ class Settings(BaseSettings):
     O prefixo 'EVOLUX_' é usado para as variáveis (ex: EVOLUX_OPENROUTER_API_KEY).
     """
     OPENROUTER_API_KEY: str
+  #  project_base_dir: str = "project_workspaces"  # Certifique-se de que esta linha existe!
+    project_base_dir: str
+    project_workspace_dir: str = "project_workspaces"
     
     # Mapeamento dos modelos pode ser definido via variáveis de ambiente, se necessário
     MODEL_PLANNER: str = "anthropic/claude-3-haiku"
