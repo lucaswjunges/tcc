@@ -39,7 +39,9 @@ def main():
     args = parser.parse_args()
 
     try:
-        context_manager = ContextManager(settings.project_base_dir)
+ #       context_manager = ContextManager(settings.project_base_dir)
+        context_manager = ContextManager(global_settings.project_base_dir)
+
         context = context_manager.create_project_context(args.goal)
         log.info(f"New project '{context.project_id}' created successfully.")
 
