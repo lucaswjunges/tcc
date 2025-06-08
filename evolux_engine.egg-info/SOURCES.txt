@@ -1,4 +1,5 @@
 pyproject.toml
+setup.py
 evolux_engine.egg-info/PKG-INFO
 evolux_engine.egg-info/SOURCES.txt
 evolux_engine.egg-info/dependency_links.txt
@@ -7,9 +8,9 @@ src/__init__.py
 src/config.py
 src/main.py
 src/agents/__init__.py
-src/agents/executor_agent.py
+src/agents/executor.py
 src/agents/orchestrator.py
-src/agents/planner_agent.py
+src/agents/planner.py
 src/agents/planner_prompts.py
 src/agents/prompts.py
 src/models/__init__.py
@@ -19,6 +20,8 @@ src/schemas/contracts.py
 src/services/__init__.py
 src/services/config_manager.py
 src/services/context_manager.py
+src/services/file_service.py
 src/services/llm_client.py
 src/services/observability_service.py
+src/services/shell_service.py
 src/services/toolbelt.py

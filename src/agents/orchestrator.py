@@ -1,33 +1,32 @@
-# src/agents/orchestrator.py (VERSÃO FINAL, SIMPLES E CORRETA)
+# src/orchestrator.py
 
-# Um ponto (.) significa "na mesma pasta".
-# Agora que os arquivos têm os nomes corretos, estas importações funcionarão.
-from ..models import ProjectContext, SystemConfig
-from ..services.file_service import FileService
-from ..services.llm_client import get_llm_client
-from ..services.observability_service import log
-from .planner import Planner
-from .executor import Executor
+from src.models.project_context import ProjectContext
+from src.services.llm_client import LLMClient
+from src.services.file_service import FileService
+# Adicione esta importação
+from src.services.shell_service import ShellService
+from src.agents.planner import Planner
+from src.agents.executor import Executor
+from src.services.observability_service import log
 
 class Orchestrator:
-    def __init__(self, config: SystemConfig, context: ProjectContext):
-        self.config = config
-        self.context = context
-        self.llm_client = get_llm_client()
-        self.file_service = FileService(self.context.get_workspace_path())
-        self.planner = Planner(self.llm_client)
-        self.executor = Executor(self.llm_client, self.file_service)
+    # Atualize a assinatura do __init__
+    def __init__(self, llm_client: LLMClient, file_service: FileService, shell_service: ShellService):
+        self.planner = Planner(llm_client)
+        # Passe o shell_service para o Executor
+        self.executor = Executor(llm_client, file_service, shell_service)
 
-    def run(self):
-        log.info("Orchestrator starting run.", goal=self.context.goal)
-        plan = self.planner.create_plan(
-            goal=self.context.goal,
-            model=self.config.model_mapping.planner
-        )
-        log.info("Plan created successfully.", plan=plan.model_dump())
-        self.context.add_plan(plan)
-        self.executor.execute_plan(
-            context=self.context,
-            model=self.config.model_mapping.executor
-        )
+    # O resto do arquivo permanece o mesmo...
+    def run(self, context: ProjectContext, model: str):
+        log.info("Orchestrator starting run.", goal=context.goal)
+        
+        if not context.plan:
+            plan = self.planner.create_plan(context, model)
+            context.plan = plan
+            log.info("Plan created successfully.", plan=plan.model_dump())
+        else:
+            log.info("Using existing plan from context.")
+
+        self.executor.execute_plan(context, model)
+        
         log.info("Orchestrator run finished.")
