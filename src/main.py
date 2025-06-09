@@ -50,6 +50,9 @@ class ContextManager:
         log.info(f"Project context for '{context.project_id}' saved.", path=str(context_file_path))
         return context
 
+# ... (código anterior permanece igual)
+# ... (código anterior permanece igual)
+
 def main():
     parser = argparse.ArgumentParser(description="Evolux Engine - An autonomous AI agent.")
     parser.add_argument('--goal', type=str, required=True, help='The high-level goal for the agent.')
@@ -57,6 +60,10 @@ def main():
     args = parser.parse_args()
 
     try:
+        # Verificar configurações essenciais
+        if not global_settings.openrouter_api_key:
+            raise ValueError("EVOLUX_OPENROUTER_API_KEY não está configurada no arquivo .env")
+
         context_manager = ContextManager(global_settings.project_base_dir)
         context = context_manager.create_project_context(args.goal)
         log.info(f"New project '{context.project_id}' created successfully.")
@@ -64,7 +71,7 @@ def main():
         log_file_path = Path(context.logs_path) / "execution.log"
         log_file_path.parent.mkdir(parents=True, exist_ok=True)
         
-        # Configuração atualizada do structlog
+        # Configuração do structlog
         structlog.configure(
             processors=[
                 structlog.contextvars.merge_contextvars,
@@ -82,7 +89,10 @@ def main():
         
         log.info("Logging initialized.", log_file=str(log_file_path.absolute()))
 
-        llm_client = LLMClient(provider=global_settings.llm_provider)
+        # Inicializar serviços
+        # CORREÇÃO: Inicialização do LLMClient sem chamar get_secret_value()
+        llm_client = LLMClient(api_key=global_settings.openrouter_api_key)
+        
         file_service = FileService(workspace_path=context.workspace_path)
         shell_service = ShellService(workspace_path=context.workspace_path)
         orchestrator = Orchestrator(llm_client, file_service, shell_service)
