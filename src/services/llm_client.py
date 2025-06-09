@@ -1,66 +1,53 @@
-# src/services/llm_client.py (VERSÃO FINALÍSSIMA, COMPLETA E CORRETA)
-
-import httpx
-from pydantic import SecretStr
-from .observability_service import log
-from ..config import settings  # Importa as configurações para usar a chave
+from typing import Optional, Dict, Any
+import requests
+import json
+from src.config import settings as global_settings
+from src.services.observability_service import log
 
 class LLMClient:
-    """Um cliente HTTP para interagir com a API do LLM (OpenRouter)."""
-
-    def __init__(self, api_key: SecretStr, base_url: str = "https://openrouter.ai/api/v1"):
-        self.api_key = api_key.get_secret_value()
-        self.base_url = base_url
-        
-        # CORREÇÃO 1: Adiciona o prefixo "Bearer " exigido pela API.
+    def __init__(self, api_key: str, model: str = "anthropic/claude-3-haiku"):
+        """
+        Inicializa o cliente LLM com a chave de API e o modelo padrão.
+        """
+        self.api_key = api_key
+        self.model = model
+        self.base_url = "https://openrouter.ai/api/v1"
         self.headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
         }
-        
-        # Define um timeout mais longo para dar tempo ao LLM de "pensar"
-        self.http_client = httpx.Client(
-            base_url=self.base_url, 
-            headers=self.headers,
-            timeout=120.0 
-        )
+        log.info("LLMClient initialized.", model=self.model)
 
-    def chat_completion(self, model: str, messages: list) -> str:
-        """Envia uma requisição de chat completion para o LLM."""
-        log.info("Requesting chat completion from LLM.", model=model)
-        
+    def generate_response(self, prompt: str, max_tokens: int = 1000) -> str:
+        """
+        Gera uma resposta para o prompt fornecido usando o modelo configurado.
+        """
         try:
-            response = self.http_client.post(
-                url="/chat/completions",
-                json={
-                    "model": model,
-                    "messages": messages,
-                }
+            data = {
+                "model": self.model,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": max_tokens
+            }
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=self.headers,
+                json=data
             )
-            response.raise_for_status()  # Lança exceção para erros HTTP 4xx/5xx
-            
-            data = response.json()
-            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
-            
-            log.info("LLM response received successfully.")
-            return content
-
-        except httpx.HTTPStatusError as e:
-            error_msg = f"Error code: {e.response.status_code} - {e.response.text}"
-            log.error("Error during LLM chat completion.", error=error_msg, exc_info=True)
-            raise Exception(error_msg)
+            response.raise_for_status()
+            result = response.json()
+            return result['choices'][0]['message']['content']
         except Exception as e:
-            log.error("An unexpected error occurred during LLM communication.", error=str(e), exc_info=True)
+            log.error("Error generating LLM response.", error=str(e))
             raise
 
-# --- Ponto de acesso Singleton ---
-# CORREÇÃO 2: Esta função foi omitida por engano e está sendo restaurada.
-_llm_client_instance = None
-
-def get_llm_client() -> LLMClient:
-    """Retorna uma instância única do LLMClient (padrão Singleton)."""
-    global _llm_client_instance
-    if _llm_client_instance is None:
-        log.info("Creating a new LLMClient instance.")
-        _llm_client_instance = LLMClient(api_key=settings.openrouter_api_key)
-    return _llm_client_instance
+    def list_models(self) -> Dict[str, Any]:
+        """
+        Lista os modelos disponíveis no OpenRouter.
+        """
+        try:
+            response = requests.get(f"{self.base_url}/models", headers=self.headers)
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            log.error("Error listing models.", error=str(e))
+            raise

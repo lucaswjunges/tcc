@@ -1,2 +1,0 @@
-{"log_file": "/home/lucas-junges/Documents/evolux-engine/proj_20250609_181848_f43c00/logs/execution.log", "event": "Logging initialized.", "level": "info", "timestamp": "2025-06-09T21:18:48.162659Z"}
-{"error": "'str' object has no attribute 'get_secret_value'", "exc_info": true, "event": "A critical error occurred.", "level": "critical", "timestamp": "2025-06-09T21:18:48.162750Z"}
