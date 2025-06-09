@@ -1,33 +1,46 @@
-# src/schemas/contracts.py (VERSÃO UNIFICADA E FINAL)
+from pydantic import BaseModel, Field
+from typing import List, Dict, Any, Optional
+from pydantic_settings import SettingsConfigDict
+from pydantic.v1 import BaseSettings  # Se estiver usando Pydantic v2
 
-from pydantic import BaseModel, Field, SecretStr
-from typing import List, Dict, Any
 
-# --- Modelos de Configuração ---
 
+class Task(BaseModel):
+    id: int
+    description: str
+    tool: str
+    parameters: Dict[str, Any]
+    dependencies: List[int] = Field(default_factory=list)
+
+class Plan(BaseModel):
+    goal: str
+    tasks: List[Task]
+
+class ActionResult(BaseModel):
+    task_id: int
+    status: str
+    result: str
+
+
+# Definições de configuração
 class ModelMapping(BaseModel):
-    """Mapeia os papéis dos agentes para modelos de LLM específicos."""
     planner: str
     executor: str
 
-class SystemConfig(BaseModel):
-    """A configuração principal do sistema, carregada do ambiente."""
+
+class SystemConfig(BaseSettings):
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', env_prefix='EVOLUX_')
     llm_provider: str = "openrouter"
-    openrouter_api_key: SecretStr
-    model_mapping: ModelMapping
-    project_workspace_dir: str = "project_workspaces"
+    openrouter_api_key: str
+    model_mapping: Dict[str, Any] = {
+        "default": "anthropic/claude-3-haiku",
+        "planner": "anthropic/claude-3-haiku",  # Adicionado
+        "executor": "anthropic/claude-3-haiku",  # Adicionado
+        "code_generation": "deepseek-coder-33b",
+        "validation": "claude-3-opus"
+    }
 
-# --- Modelos de Plano e Tarefas ---
+    project_base_dir: str = "project_workspaces"
 
-class Task(BaseModel):
-    """Define a estrutura de uma única tarefa executável."""
-    id: int = Field(..., description="Um ID numérico único para a tarefa.")
-    description: str = Field(..., description="Uma descrição clara e concisa do que a tarefa deve fazer.")
-    tool: str = Field(..., description="O nome da ferramenta a ser usada (ex: 'write_file', 'finish').")
-    parameters: Dict[str, Any] = Field(default_factory=dict, description="Os parâmetros a serem passados para a ferramenta.")
-    dependencies: List[int] = Field(default_factory=list, description="Uma lista de IDs de tarefas das quais esta tarefa depende.")
 
-class Plan(BaseModel):
-    """Representa o plano completo, que é uma lista de tarefas."""
-    goal: str = Field(..., description="O objetivo original de alto nível que este plano visa alcançar.")
-    tasks: List[Task] = Field(..., description="A sequência de tarefas a serem executadas.")
+

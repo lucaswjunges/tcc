@@ -1,4 +1,4 @@
-# src/services/context_manager.py (VERSÃO COMPLETA E FINAL)
+# src/services/context_manager.py
 
 import json
 from pathlib import Path
@@ -24,11 +24,21 @@ class ContextManager:
         goal_hash = hashlib.sha1(goal.encode()).hexdigest()[:6]
         project_id = f"proj_{timestamp}_{goal_hash}"
         
+        # Criar o contexto com os campos obrigatórios
         context = ProjectContext(
             project_id=project_id,
             goal=goal,
             workspace_dir=str(self.base_dir)
         )
+        
+        # Configurar os caminhos de logs e workspace
+        logs_dir = str(self.base_dir / project_id / "logs")
+        context.logs_dir = logs_dir
+
+        # Criar os diretórios fisicamente
+        (self.base_dir / project_id).mkdir(parents=True, exist_ok=True)
+        (self.base_dir / project_id / "workspace").mkdir(parents=True, exist_ok=True)
+        (self.base_dir / project_id / "logs").mkdir(parents=True, exist_ok=True)
         
         # Salva o contexto inicial para persistência
         self.save_project_context(context)

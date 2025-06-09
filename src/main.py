@@ -2,7 +2,6 @@
 
 import argparse
 from pathlib import Path
-from .config import settings
 from src.agents.orchestrator import Orchestrator
 from src.services.llm_client import LLMClient
 from src.services.file_service import FileService
@@ -11,6 +10,9 @@ from src.services.shell_service import ShellService
 from src.models import ProjectContext
 from src.services.observability_service import log
 import structlog
+from src.config import settings as global_settings
+
+
 
 # A classe ContextManager permanece a mesma
 

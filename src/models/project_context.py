@@ -1,15 +1,14 @@
-# src/models/project_context.py (VERSÃO FINAL E CORRIGIDA)
+# src/models/project_context.py
 
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
-# Removido a necessidade de UUID aqui
 from ..schemas.contracts import Plan
 
 # Para armazenar o resultado de cada ação
 class ActionHistory(BaseModel):
     task_id: int
-    status: str # 'success' ou 'error'
+    status: str  # 'success' ou 'error'
     result: str
 
 class ProjectContext(BaseModel):
@@ -25,7 +24,11 @@ class ProjectContext(BaseModel):
     # CORREÇÃO: O nome do campo é 'workspace_dir', não 'workspace_path'.
     workspace_dir: str
 
-    plan: Plan | None = None
+    # Campos opcionais para logs e planos
+    logs_dir: Optional[str] = None
+    plan: Optional[Plan] = None
+
+    # Histórico de ações
     history: List[ActionHistory] = Field(default_factory=list)
 
     def get_workspace_path(self) -> Path:
