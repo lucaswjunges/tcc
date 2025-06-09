@@ -9,6 +9,7 @@ from src.services.shell_service import ShellService
 from src.models import ProjectContext
 from src.services.observability_service import log
 import structlog
+from structlog.processors import JSONRenderer, TimeStamper, add_log_level
 from src.config import settings as global_settings
 
 class ContextManager:
@@ -62,19 +63,23 @@ def main():
 
         log_file_path = Path(context.logs_path) / "execution.log"
         log_file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Configuração atualizada do structlog
         structlog.configure(
             processors=[
                 structlog.contextvars.merge_contextvars,
-                structlog.processors.add_log_level,
+                add_log_level,
                 structlog.processors.StackInfoRenderer(),
                 structlog.dev.set_exc_info,
-                structlog.processors.TimeStamper(fmt="iso"),
-                structlog.processors.JSONRenderer()
+                TimeStamper(fmt="iso"),
+                JSONRenderer()
             ],
-            wrapper_class=structlog.make_filtering_bound_logger(min_level=structlog.INFO),
+            wrapper_class=structlog.BoundLogger,
             logger_factory=structlog.PrintLoggerFactory(file=log_file_path.open('w')),
-            cache_logger_on_first_use=True
+            cache_logger_on_first_use=True,
+            context_class=dict
         )
+        
         log.info("Logging initialized.", log_file=str(log_file_path.absolute()))
 
         llm_client = LLMClient(provider=global_settings.llm_provider)

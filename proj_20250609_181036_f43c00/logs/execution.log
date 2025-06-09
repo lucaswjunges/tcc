@@ -1,0 +1,2 @@
+{"log_file": "/home/lucas-junges/Documents/evolux-engine/proj_20250609_181036_f43c00/logs/execution.log", "event": "Logging initialized.", "level": "info", "timestamp": "2025-06-09T21:10:36.578955Z"}
+{"error": "LLMClient.__init__() got an unexpected keyword argument 'provider'", "exc_info": true, "event": "A critical error occurred.", "level": "critical", "timestamp": "2025-06-09T21:10:36.579042Z"}
