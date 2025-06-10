@@ -24,4 +24,16 @@ pip install -r requirements.txt
 
 echo "Criando arquivo .env..."
 # Cuidado para não sobrescrever .env se já existir e tiver segredos
+# O delimitador EOF deve estar sozinho em sua própria linha, sem espaços/tabs antes ou depois.
 cat << EOF > .env
+EVOLUX_OPENROUTER_API_KEY=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
+EVOLUX_PROJECT_BASE_DIR=${HOME}/Documents/evolux-engine/project_workspaces
+EVOLUX_LLM_PROVIDER=openrouter
+EVOLUX_MODEL_PLANNER=anthropic/claude-3-haiku
+EVOLUX_MODEL_EXECUTOR=anthropic/claude-3-haiku
+EVOLUX_MAX_CONCURRENT_TASKS=5
+EVOLUX_LOGGING_LEVEL=INFO
+EOF # <---------------- CORRIGIDO: EOF SOZINHO NA LINHA
+
+echo "Arquivo .env criado/atualizado." # Adicionado um log
+echo "Script de limpeza executado."

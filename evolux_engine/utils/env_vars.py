@@ -13,13 +13,10 @@ from pydantic import Field
 # mas não prejudicial.
 load_dotenv()
 
+# Em evolux_engine/utils/env_vars.py
+# ...
 class SystemConfig(BaseSettings):
-    """
-    Configurações do sistema carregadas de variáveis de ambiente e arquivos .env.
-    Utiliza um prefixo EVOLUX_ para as variáveis de ambiente.
-    """
-    OPENROUTER_API_KEY: Optional[str] = Field(None, validation_alias='EVOLUX_OPENROUTER_API_KEY_ALIAS_TEST') # Teste com alias se o nome direto não funcionar
-    # OPENROUTER_API_KEY: Optional[str] = None # Se o prefixo funcionar, esta é a forma normal
+    OPENROUTER_API_KEY: Optional[str] = None  # Campo para a chave
     OPENAI_API_KEY: Optional[str] = None
     PROJECT_BASE_DIR: str = Field(default_factory=lambda: os.path.join(os.getcwd(), "project_workspaces"))
     LLM_PROVIDER: Literal["openrouter", "openai"] = "openrouter"
@@ -28,14 +25,15 @@ class SystemConfig(BaseSettings):
     MAX_CONCURRENT_TASKS: int = 5
     LOGGING_LEVEL: str = "INFO"
 
-    # Pydantic V2 model_config
     model_config = SettingsConfigDict(
-        env_prefix="EVOLUX_",  # Procura por EVOLUX_OPENROUTER_API_KEY, EVOLUX_PROJECT_BASE_DIR, etc.
-        env_file=".env",        # Explicitamente diz para ler do .env
+        env_prefix="EVOLUX_",
+        env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore",         # Ignora variáveis de ambiente extras não definidas na classe
-        case_sensitive=False    # Nomes de variáveis de ambiente não são case-sensitive
+        extra="ignore",
+        case_sensitive=False
     )
+# ...
+
 
     # Para depuração, mostrar de onde os valores vieram
     # @root_validator(pre=True)

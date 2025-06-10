@@ -2,37 +2,28 @@
 import argparse
 import os
 import sys
+import uuid # Para gerar IDs de projeto únicos
 
 # Adiciona o diretório raiz do projeto ao sys.path
-# Isso permite que 'evolux_engine' seja importado como um pacote de nível superior
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 # ---- DEBUG SYS.PATH ----
-print("--- DEBUG SYS.PATH ANTES DO IMPORT ---")
-print(f"Arquivo sendo executado (__file__): {__file__}")
-print(f"Diretório do arquivo: {os.path.dirname(__file__)}")
-print(f"Diretório absoluto do arquivo: {project_root}")
-print(f"Current Working Directory (os.getcwd()): {os.getcwd()}")
-print("Conteúdo de sys.path:")
-for i, path_entry in enumerate(sys.path):
-    print(f"  sys.path[{i}]: {path_entry}")
-print("--- FIM DO BLOCO DE DEPURAÇÃO SYS.PATH ---")
+# print("--- DEBUG SYS.PATH ANTES DO IMPORT ---")
+# ... (pode comentar ou remover esses prints de debug do sys.path se quiser)
+# print("--- FIM DO BLOCO DE DEPURAÇÃO SYS.PATH ---")
 # ---- FIM DEBUG ----
 
-# Agora importe de evolux_engine
-# A função load_env_variables agora retorna a instância settings
 from evolux_engine.utils.env_vars import load_env_variables, settings
 from evolux_engine.core.agent import Agent
-from evolux_engine.utils.logging_utils import log # Importa o logger configurado
+from evolux_engine.utils.logging_utils import log
+from evolux_engine.core.context_manager import ContextManager # <--- IMPORTAR ContextManager
+from evolux_engine.models.project_context import ProjectContext # <--- IMPORTAR ProjectContext
 
 def main():
-    # Carrega as variáveis de ambiente usando a função de env_vars.py
-    # Esta chamada também imprime as variáveis para depuração.
     load_env_variables()
 
-    # Agora você pode acessar as configurações via 'settings'
     log.info("Configurações carregadas.",
              provider=settings.LLM_PROVIDER,
              base_dir=settings.PROJECT_BASE_DIR)
@@ -46,25 +37,53 @@ def main():
 
     parser = argparse.ArgumentParser(description="Evolux Engine: Agente de IA para desenvolvimento de software.")
     parser.add_argument("--goal", type=str, required=True, help="O objetivo principal para o agente.")
-    # Adicione outros argumentos conforme necessário
-
+    parser.add_argument("--project_id", type=str, default=None, help="ID do projeto existente para continuar ou um novo será criado.")
     args = parser.parse_args()
 
     log.info(f"Objetivo recebido: {args.goal}")
 
-    agent = Agent(goal=args.goal)
-    # agent.plan_and_execute() # Ou o método principal do seu agente
-    log.info("Planejamento iniciado (simulação).") # Simulação
-    # Simular alguma ação do agente
+    # Configurar o ContextManager
+    project_id = args.project_id or str(uuid.uuid4()) # Usa ID fornecido ou gera um novo
+    project_base_path = settings.PROJECT_BASE_DIR     # Definido em env_vars.py
+    
+    # Certifique-se de que o diretório base para todos os projetos exista
+    if not os.path.exists(project_base_path):
+        try:
+            os.makedirs(project_base_path)
+            log.info(f"Diretório base de projetos criado em: {project_base_path}")
+        except OSError as e:
+            log.error(f"Não foi possível criar o diretório base de projetos {project_base_path}: {e}")
+            sys.exit(1)
+            
+    project_path = os.path.join(project_base_path, project_id)
+    
+    # Criar ProjectContext (se ContextManager não o fizer internamente ao ser inicializado)
+    # Supondo que ProjectContext também precisa do project_path
+    # Verifique a definição de ProjectContext e ContextManager
+    # Por simplicidade, vamos assumir que ContextManager lida com a criação/carregamento do contexto.
+    
     try:
-        llm_client_instance = agent.llm_factory.get_llm_client()
-        # response = llm_client_instance.generate_response(prompt="Olá, mundo!")
-        # log.info(f"Resposta simulada do LLM: {response}")
-        log.info("Agente obteve cliente LLM.")
-        log.info("Execução do agente (simulada) concluída.")
+        context_manager = ContextManager(project_id=project_id, project_dir=project_path)
+        log.info(f"ContextManager inicializado para o projeto: {project_id} em {project_path}")
     except Exception as e:
-        log.error(f"Erro durante a execução do agente: {e}", exc_info=True)
+        log.error(f"Falha ao inicializar ContextManager: {e}", exc_info=True)
+        sys.exit(1)
 
+    # Agora instancie o Agente com o context_manager
+    try:
+        agent = Agent(goal=args.goal, context_manager=context_manager) # <--- PASSAR context_manager
+        log.info("Agente instanciado com sucesso.")
+        
+        # Executar o agente
+        agent.run() # <--- Linha para realmente executar a lógica do agente
+        
+        log.info("Execução do agente (simulada ou real) concluída.")
+    except ValueError as ve: # Capturar ValueErrors específicos (ex: API key, provider)
+        log.error(f"Erro de configuração ou valor inválido ao inicializar ou executar o agente: {ve}", exc_info=True)
+        sys.exit(1)
+    except Exception as e:
+        log.error(f"Erro durante a inicialização ou execução do agente: {e}", exc_info=True)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
