@@ -2,6 +2,8 @@
 import logging # Adicionar import logging
 import os
 from typing import Optional
+from evolux_engine.models.project_context import ProjectContext
+
 
 from evolux_engine.core.context_manager import ContextManager
 from evolux_engine.llms.llm_factory import LLMFactory
