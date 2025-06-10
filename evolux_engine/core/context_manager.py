@@ -1,81 +1,99 @@
-# src/services/context_manager.py
-
+import os
 import json
-from pathlib import Path
 from datetime import datetime
-import hashlib
-from ..models import ProjectContext
-from .observability_service import log
+from evolux_engine.utils.logging_utils import log # Usar o logger global configurado
+from typing import Optional # <--- ADICIONE ESTA LINHA
+
 
 class ContextManager:
-    """Gerencia o ciclo de vida dos contextos de projeto (criar, carregar, salvar)."""
-
-    def __init__(self, base_dir: str):
-        self.base_dir = Path(base_dir)
-        self.base_dir.mkdir(parents=True, exist_ok=True)
-        log.info("ContextManager initialized.", base_dir=str(self.base_dir))
-
-    def create_new_project_context(self, goal: str) -> ProjectContext:
+    """
+    Gerencia o contexto de um projeto específico, incluindo logs e estado.
+    """
+    def __init__(self, project_id: str, project_dir: str):
         """
-        Cria um novo contexto para um novo projeto, com um ID único.
-        """
-        log.info("Creating a new project context.", goal=goal)
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        goal_hash = hashlib.sha1(goal.encode()).hexdigest()[:6]
-        project_id = f"proj_{timestamp}_{goal_hash}"
-        
-        # Criar o contexto com os campos obrigatórios
-        context = ProjectContext(
-            project_id=project_id,
-            goal=goal,
-            workspace_dir=str(self.base_dir)
-        )
-        
-        # Configurar os caminhos de logs e workspace
-        logs_dir = str(self.base_dir / project_id / "logs")
-        context.logs_dir = logs_dir
+        Inicializa o ContextManager.
 
-        # Criar os diretórios fisicamente
-        (self.base_dir / project_id).mkdir(parents=True, exist_ok=True)
-        (self.base_dir / project_id / "workspace").mkdir(parents=True, exist_ok=True)
-        (self.base_dir / project_id / "logs").mkdir(parents=True, exist_ok=True)
-        
-        # Salva o contexto inicial para persistência
-        self.save_project_context(context)
-        log.info(f"New project '{project_id}' created successfully.")
-        return context
+        Args:
+            project_id: O ID único do projeto.
+            project_dir: O caminho completo para o diretório do projeto.
+        """
+        self.project_id: str = project_id
+        self.project_dir: str = project_dir
+        self.log_file_name: str = "project_audit.jsonl" # Log específico do projeto
+        self.log_file_path: str = os.path.join(self.project_dir, self.log_file_name)
 
-    def load_project_context(self, project_id: str) -> ProjectContext:
+        if not os.path.exists(self.project_dir):
+            try:
+                os.makedirs(self.project_dir, exist_ok=True)
+                log.info(f"Diretório do projeto criado: {self.project_dir}", project_id=self.project_id)
+                self.add_log_entry("system", f"Diretório do projeto {self.project_id} criado em {self.project_dir}.")
+            except OSError as e:
+                log.error(f"Falha ao criar diretório do projeto {self.project_dir}: {e}", project_id=self.project_id)
+                raise  # Re-lança a exceção para o chamador lidar
+
+        log.debug(f"ContextManager inicializado para projeto {self.project_id}", path=self.project_dir)
+
+    def add_log_entry(self, source: str, message: str, data: Optional[dict] = None):
         """
-        Carrega um contexto de projeto existente a partir de seu arquivo JSON.
+        Adiciona uma entrada de log ao arquivo de log do projeto.
+
+        Args:
+            source: A origem da entrada de log (ex: "system", "llm", "agent").
+            message: A mensagem de log.
+            data: Dados adicionais a serem incluídos no log (opcional).
         """
-        log.info(f"Loading project context for '{project_id}'.")
-        context_path = self.base_dir / project_id / "context.json"
-        
-        if not context_path.exists():
-            log.error("Project context file not found.", path=str(context_path))
-            raise FileNotFoundError(f"No project found with ID '{project_id}'.")
-            
+        log_entry = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "project_id": self.project_id,
+            "source": source,
+            "message": message,
+        }
+        if data:
+            log_entry.update(data)
+
         try:
-            data = json.loads(context_path.read_text(encoding='utf-8'))
-            context = ProjectContext(**data)
-            log.info("Project context loaded successfully.")
-            return context
-        except Exception as e:
-            log.error("Failed to load or parse project context.", error=str(e), exc_info=True)
+            with open(self.log_file_path, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(log_entry) + "\n")
+        except IOError as e:
+            log.error(f"Falha ao escrever no arquivo de log do projeto {self.log_file_path}: {e}",
+                      project_id=self.project_id)
+
+    # Você pode adicionar mais métodos aqui para:
+    # - Salvar/carregar o estado do projeto (ex: ProjectContext)
+    # - Gerenciar arquivos dentro do project_dir
+    # - Interagir com o versionamento (git)
+    # - etc.
+
+    def get_project_file_path(self, relative_path: str) -> str:
+        """Retorna o caminho absoluto para um arquivo dentro do diretório do projeto."""
+        return os.path.join(self.project_dir, relative_path)
+
+    def save_file(self, relative_path: str, content: str):
+        """Salva conteúdo em um arquivo dentro do diretório do projeto."""
+        full_path = self.get_project_file_path(relative_path)
+        try:
+            parent_dir = os.path.dirname(full_path)
+            if parent_dir and not os.path.exists(parent_dir):
+                os.makedirs(parent_dir, exist_ok=True)
+                log.info(f"Diretório pai criado: {parent_dir}", project_id=self.project_id)
+            
+            with open(full_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            log.info(f"Arquivo salvo: {full_path}", project_id=self.project_id)
+            self.add_log_entry("system", f"Arquivo salvo: {relative_path}")
+        except IOError as e:
+            log.error(f"Falha ao salvar arquivo {full_path}: {e}", project_id=self.project_id)
+            self.add_log_entry("system_error", f"Falha ao salvar arquivo {relative_path}: {e}")
             raise
 
-    def save_project_context(self, context: ProjectContext):
-        """
-        Salva o estado atual do contexto do projeto em seu arquivo JSON.
-        """
-        project_path = self.base_dir / context.project_id
-        project_path.mkdir(parents=True, exist_ok=True)
-        context_path = project_path / "context.json"
-        
+    def create_directory(self, relative_path: str):
+        """Cria um diretório dentro do diretório do projeto."""
+        full_path = self.get_project_file_path(relative_path)
         try:
-            context_path.write_text(context.model_dump_json(indent=2), encoding='utf-8')
-            log.info(f"Project context for '{context.project_id}' saved.", path=str(context_path))
-        except Exception as e:
-            log.error("Failed to save project context.", error=str(e), exc_info=True)
+            os.makedirs(full_path, exist_ok=True)
+            log.info(f"Diretório criado: {full_path}", project_id=self.project_id)
+            self.add_log_entry("system", f"Diretório criado: {relative_path}")
+        except OSError as e:
+            log.error(f"Falha ao criar diretório {full_path}: {e}", project_id=self.project_id)
+            self.add_log_entry("system_error", f"Falha ao criar diretório {relative_path}: {e}")
             raise

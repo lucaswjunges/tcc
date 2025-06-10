@@ -1,68 +1,73 @@
-# Conteúdo para: evolux_engine/utils/env_vars.py
 import os
 from typing import Optional, Literal
-from dotenv import load_dotenv
-from pydantic_settings import BaseSettings, SettingsConfigDict
+
 from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from dotenv import load_dotenv
 
-# Carrega as variáveis do .env para o ambiente ANTES do Pydantic tentar lê-las.
-# É importante que load_dotenv() seja chamado antes de SystemConfig()
-# se você quiser que .env tenha prioridade ou preencha o que não está no ambiente.
-# Pydantic-settings também pode ler .env diretamente se model_config.env_file for definido,
-# tornando esta chamada explícita de load_dotenv() às vezes redundante,
-# mas não prejudicial.
-load_dotenv()
+# Garante que load_dotenv() seja chamado para carregar o arquivo .env
+# O Pydantic também tentará carregar, mas chamar explicitamente é uma boa prática.
+# verbose=True pode ajudar a depurar se o .env não está sendo encontrado.
+# override=True fará com que as variáveis do .env sobrescrevam as do sistema.
+if load_dotenv(verbose=True, override=True):
+    print("Arquivo .env carregado por python-dotenv.")
+else:
+    print("Arquivo .env não encontrado ou não carregado por python-dotenv. Pydantic tentará carregar.")
 
-# Em evolux_engine/utils/env_vars.py
-# ...
+
 class SystemConfig(BaseSettings):
-    OPENROUTER_API_KEY: Optional[str] = None  # Campo para a chave
-    OPENAI_API_KEY: Optional[str] = None
-    PROJECT_BASE_DIR: str = Field(default_factory=lambda: os.path.join(os.getcwd(), "project_workspaces"))
+    """
+    Configurações do sistema carregadas de variáveis de ambiente ou arquivo .env.
+    O prefixo EVOLUX_ é esperado nas variáveis de ambiente.
+    Ex: EVOLUX_OPENROUTER_API_KEY será mapeado para settings.OPENROUTER_API_KEY
+    """
+    OPENROUTER_API_KEY: Optional[str] = Field(None)
+    OPENAI_API_KEY: Optional[str] = Field(None)
+
+    PROJECT_BASE_DIR: str = Field(
+        default_factory=lambda: os.path.join(os.getcwd(), "project_workspaces")
+    )
     LLM_PROVIDER: Literal["openrouter", "openai"] = "openrouter"
-    MODEL_PLANNER: str = "anthropic/claude-3-haiku"
-    MODEL_EXECUTOR: str = "anthropic/claude-3-haiku"
+    MODEL_PLANNER: str = "anthropic/claude-3-haiku-20240307" # Usar nomes de modelo completos
+    MODEL_EXECUTOR: str = "anthropic/claude-3-haiku-20240307"
+
     MAX_CONCURRENT_TASKS: int = 5
     LOGGING_LEVEL: str = "INFO"
 
+    # Configuração do Pydantic para carregar variáveis
     model_config = SettingsConfigDict(
-        env_prefix="EVOLUX_",
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore",
-        case_sensitive=False
+        env_prefix="EVOLUX_",      # Ex: EVOLUX_LOGGING_LEVEL
+        env_file=".env",           # Nome do arquivo .env a ser procurado
+        env_file_encoding="utf-8", # Encoding do arquivo .env
+        extra="ignore",            # Ignorar variáveis extras no .env que não estão no modelo
+        case_sensitive=False       # Nomes de env vars geralmente são case-insensitive na prática
     )
-# ...
 
-
-    # Para depuração, mostrar de onde os valores vieram
-    # @root_validator(pre=True)
-    # def log_settings_sources(cls, values):
-    #     print("Raw environment variables being considered by Pydantic:")
-    #     for key in cls.model_fields:
-    #         env_var_name_with_prefix = cls.model_config.get('env_prefix', '') + key.upper()
-    #         env_var_name_direct = key.upper()
-    #         print(f"  For field '{key}':")
-    #         print(f"    Checking env var (with prefix): {env_var_name_with_prefix} -> {os.getenv(env_var_name_with_prefix)}")
-    #         print(f"    Checking env var (direct): {env_var_name_direct} -> {os.getenv(env_var_name_direct)}")
-    #     return values
-
-
-# Cria uma instância única das configurações para ser importada por outros módulos
+# Instância única das configurações
 settings = SystemConfig()
 
-# Função para carregar e opcionalmente imprimir as variáveis (pode ser usada no início do run.py)
-def load_env_variables():
-    print("Variáveis de ambiente carregadas (via Pydantic settings):")
-    print(f"  EVOLUX_OPENROUTER_API_KEY (campo OPENROUTER_API_KEY): {'********' if settings.OPENROUTER_API_KEY else 'None'}")
-    print(f"  EVOLUX_PROJECT_BASE_DIR (campo PROJECT_BASE_DIR): {settings.PROJECT_BASE_DIR}")
-    print(f"  EVOLUX_LLM_PROVIDER (campo LLM_PROVIDER): {settings.LLM_PROVIDER}")
-    # Adicione outras variáveis que queira depurar
+# Função para carregar e opcionalmente imprimir as variáveis
+# (pode ser chamada no início do run.py)
+def load_env_variables(print_vars: bool = False) -> SystemConfig:
+    """
+    Retorna a instância das configurações.
+    Opcionalmente, imprime as variáveis carregadas (com chaves API mascaradas).
+    """
+    if print_vars:
+        print("Variáveis de ambiente carregadas (via Pydantic settings):")
+        for key, value in settings.model_dump().items():
+            env_var_name = f"{settings.model_config.get('env_prefix', '').upper()}{key.upper()}"
+            display_value = value
+            if "API_KEY" in key.upper() and value is not None:
+                display_value = f"{value[:5]}********{value[-4:]}" if len(value) > 9 else "********"
+            
+            print(f"  {env_var_name} (campo {key}): {display_value}")
     return settings
 
-# Para compatibilidade com o import que run.py faz, se ele ainda espera estas:
-# EVOLUX_PROJECT_BASE_DIR = settings.PROJECT_BASE_DIR
-# EVOLUX_LLM_PROVIDER = settings.LLM_PROVIDER
-# EVOLUX_OPENROUTER_API_KEY = settings.OPENROUTER_API_KEY
-# OPENAI_API_KEY = settings.OPENAI_API_KEY
-# ... mas o ideal é que outros módulos importem 'settings' e use 'settings.FIELD_NAME'
+if __name__ == "__main__":
+    # Para testar o carregamento das configurações diretamente
+    print("Executando env_vars.py diretamente para teste:")
+    current_settings = load_env_variables(print_vars=True)
+    # Você pode acessar as configurações assim:
+    # print(f"Project base dir: {current_settings.PROJECT_BASE_DIR}")
+    # print(f"OpenRouter Key: {'Present' if current_settings.OPENROUTER_API_KEY else 'Not Present'}")

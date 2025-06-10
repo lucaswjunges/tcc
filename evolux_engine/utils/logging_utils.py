@@ -1,63 +1,50 @@
-# Conteúdo para: evolux_engine/utils/logging_utils.py
 import logging
 import sys
 import structlog
-from structlog.types import Processor
+from structlog.types import FilteringBoundLogger
 
-# Tentar importar settings para LOGGING_LEVEL de forma segura
-try:
-    from evolux_engine.utils.env_vars import settings
-    LOGGING_LEVEL_FROM_SETTINGS = settings.LOGGING_LEVEL.upper()
-except ImportError:
-    # Fallback se settings não puder ser importado (ex: durante setup inicial ou testes isolados)
-    LOGGING_LEVEL_FROM_SETTINGS = "INFO"
-    # print("DEBUG logging_utils: Não foi possível importar 'settings', usando LOGGING_LEVEL padrão.")
+# Configuração global do logger, acessível como 'log' após setup_logging ser chamado.
+log: FilteringBoundLogger = structlog.get_logger()
 
-
-def setup_logging(log_level_str: str = "INFO"):
+def setup_logging(level: str = "INFO"):
     """
-    Configura o structlog.
+    Configura o structlog para logging.
     """
-    # Converte o nível de string para o valor numérico do logging
-    numeric_log_level = getattr(logging, log_level_str.upper(), logging.INFO)
+    numeric_level = getattr(logging, level.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError(f"Nível de log inválido: {level}")
 
-    # Configuração padrão do logging do Python (structlog encaminha para aqui)
+    # Configuração padrão para logging (para bibliotecas que usam logging nativo)
     logging.basicConfig(
-        format="%(message)s",  # O formato é controlado pelo renderer do structlog
+        format="%(message)s",
         stream=sys.stdout,
-        level=numeric_log_level,
+        level=numeric_level,
     )
 
-    # Processadores comuns do structlog
-    shared_processors: list[Processor] = [
-        structlog.contextvars.merge_contextvars,
-        structlog.stdlib.add_logger_name,
-        structlog.stdlib.add_log_level,
-        structlog.stdlib.PositionalArgumentsFormatter(),
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
-        structlog.dev.set_exc_info,
-    ]
-
-    # Configuração do structlog
+    # Configuração do Structlog
     structlog.configure(
-        processors=shared_processors + [
-            structlog.dev.ConsoleRenderer(), # Para desenvolvimento local
-            # structlog.processors.JSONRenderer(), # Para produção, se preferir JSON
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.stdlib.add_logger_name,
+            structlog.stdlib.add_log_level,
+            structlog.stdlib.PositionalArgumentsFormatter(),
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.StackInfoRenderer(),
+            structlog.dev.set_exc_info,
+            structlog.dev.ConsoleRenderer(), # Para output colorido e legível no console
+            # Para output JSON, descomente a linha abaixo e comente ConsoleRenderer:
+            # structlog.processors.JSONRenderer(),
         ],
         logger_factory=structlog.stdlib.LoggerFactory(),
         wrapper_class=structlog.stdlib.BoundLogger,
         cache_logger_on_first_use=True,
     )
-    # print(f"DEBUG logging_utils: structlog configurado com nível {log_level_str}.")
+    # Atualiza a instância global 'log'
+    global log
+    log = structlog.get_logger("evolux_engine") # Pode dar um nome ao logger principal
+    log.info(f"Logging configurado para o nível: {level}")
 
-
-# Chama a configuração quando o módulo é importado
-# Usa o nível das settings se disponível, senão o fallback
-setup_logging(LOGGING_LEVEL_FROM_SETTINGS)
-
-# Cria e exporta uma instância do logger para ser usada por outros módulos
-log = structlog.get_logger() #  <-------------------- ADICIONAR ESTA LINHA
-
-# Teste rápido (opcional, remova após confirmar que funciona)
-# log.info("Logger 'log' de logging_utils.py inicializado e pronto para uso.")
+# Exemplo de como usar o logger em outros módulos:
+# from evolux_engine.utils.logging_utils import log
+# log.info("Esta é uma mensagem de info", dado_extra="valor")
+# log.error("Esta é uma mensagem de erro", erro_detalhe="falha X")
