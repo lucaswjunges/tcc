@@ -46,12 +46,12 @@ echo "Criando arquivo .env com valores padrão (se não existir ou se descomenta
 if [ ! -f .env ]; then
     echo "Criando novo arquivo .env..."
     cat << EOF > .env
-EVOLUX_OPENROUTER_API_KEY=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
+EVOLUX_OPENROUTER_API_KEY=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
 EVOLUX_OPENAI_API_KEY=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
 EVOLUX_PROJECT_BASE_DIR=${HOME}/Documents/evolux-engine/project_workspaces
 EVOLUX_LLM_PROVIDER=openrouter
-EVOLUX_MODEL_PLANNER=anthropic/claude-3-haiku-20240307 # Modelo específico
-EVOLUX_MODEL_EXECUTOR=anthropic/claude-3-haiku-20240307 # Modelo específico
+EVOLUX_MODEL_PLANNER=anthropic/claude-3-haiku-20240307
+EVOLUX_MODEL_EXECUTOR=anthropic/claude-3-haiku-20240307
 EVOLUX_MAX_CONCURRENT_TASKS=5
 EVOLUX_LOGGING_LEVEL=INFO
 EOF
