@@ -46,7 +46,7 @@ echo "Criando arquivo .env com valores padrão (se não existir ou se descomenta
 if [ ! -f .env ]; then
     echo "Criando novo arquivo .env..."
     cat << EOF > .env
-EVOLUX_OPENROUTER_API_KEY=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
+EVOLUX_OPENROUTER_API_KEY=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
 EVOLUX_OPENAI_API_KEY=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
 EVOLUX_PROJECT_BASE_DIR=${HOME}/Documents/evolux-engine/project_workspaces
 EVOLUX_LLM_PROVIDER=openrouter

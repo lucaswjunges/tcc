@@ -7,12 +7,16 @@ evolux_engine.egg-info/top_level.txt
 src/__init__.py
 src/config.py
 src/main.py
+src/task_executor.py
 src/agents/__init__.py
 src/agents/executor.py
+src/agents/executor_prompts.py
 src/agents/orchestrator.py
 src/agents/planner.py
 src/agents/planner_prompts.py
 src/agents/prompts.py
+src/agents/semantic_validator.py
+src/agents/task_executor.py
 src/models/__init__.py
 src/models/project_context.py
 src/schemas/__init__.py
