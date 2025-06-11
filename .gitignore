@@ -1,5 +1,6 @@
 # Arquivo de segredos - NUNCA ENVIE ISSO!
 .env
+limpeza.sh
 
 # Pasta do ambiente virtual do Python
 venv/
