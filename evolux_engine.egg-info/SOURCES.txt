@@ -16,6 +16,7 @@ src/agents/planner.py
 src/agents/planner_prompts.py
 src/agents/prompts.py
 src/agents/semantic_validator.py
+src/agents/settings.py
 src/agents/task_executor.py
 src/models/__init__.py
 src/models/project_context.py
