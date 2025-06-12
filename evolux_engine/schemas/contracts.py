@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field, validator
 from enum import Enum
@@ -380,7 +381,7 @@ class GlobalConfig(BaseModel):
 
     class Config:
         env_file = ".env"
-        env_file_encoding = "utf-8"_
+        env_file_encoding = "utf-8"
         extra = "ignore" # Ignora variáveis de ambiente extras
         case_sensitive = False # Nomes de variáveis de ambiente são insensíveis a maiúsculas/minúsculas
 
