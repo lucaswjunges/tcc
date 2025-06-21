@@ -1,8 +1,12 @@
 # Conteúdo para: evolux_engine/llms/openai_llm.py
 from typing import Optional
-import requests # Ou use a biblioteca 'openai' que já está no requirements.txt
+import requests
 
-from evolux_engine.utils.logging_utils import log
+# --- INÍCIO DA CORREÇÃO ---
+# Importa o logger diretamente do Loguru, assim como nos outros arquivos.
+from loguru import logger as log
+# --- FIM DA CORREÇÃO ---
+
 from .base_llm import BaseLLM
 
 # Se for usar a biblioteca oficial `openai`:
@@ -53,27 +57,3 @@ class OpenAILLM(BaseLLM):
         except Exception as e:
             log.error(f"Erro inesperado ao comunicar com OpenAI API: {e}", model=self.model_name, exc_info=True)
         return None
-
-        # --- ALTERNATIVA USANDO A BIBLIOTECA 'openai' ---
-        # (Se optar por esta, comente ou remova a implementação com 'requests' acima)
-        # try:
-        #     log.debug(f"Enviando requisição para OpenAI via biblioteca, modelo: {self.model_name}")
-        #     chat_completion = self.client.chat.completions.create(
-        #         messages=[{"role": "user", "content": prompt}],
-        #         model=self.model_name,
-        #         temperature=temperature,
-        #         max_tokens=max_tokens,
-        #     )
-        #     if chat_completion.choices and len(chat_completion.choices) > 0:
-        #         content = chat_completion.choices[0].message.content
-        #         log.debug("Resposta recebida da OpenAI (biblioteca).", model=self.model_name, response_length=len(content) if content else 0)
-        #         return content.strip() if content else None
-        #     else:
-        #         log.warning("Resposta da OpenAI (biblioteca) não continha 'choices' ou estava vazia.",
-        #                     response_object=chat_completion, model=self.model_name)
-        #         return None
-        # except openai.APIError as e: # Captura erros específicos da API da OpenAI
-        #     log.error(f"Erro da API OpenAI: {e}", model=self.model_name, exc_info=True)
-        # except Exception as e:
-        #     log.error(f"Erro inesperado ao comunicar com OpenAI (biblioteca): {e}", model=self.model_name, exc_info=True)
-        # return None

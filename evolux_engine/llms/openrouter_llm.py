@@ -1,20 +1,26 @@
 import requests # Certifique-se que 'requests' está no requirements.txt
-from evolux_engine.utils.logging_utils import log
+
+# --- INÍCIO DA CORREÇÃO ---
+# Importa o logger diretamente do Loguru, o padrão do nosso projeto.
+from loguru import logger as log
+# --- FIM DA CORREÇÃO ---
+
 from .base_llm import BaseLLM # Importa o BaseLLM do mesmo pacote
 
 class OpenRouterLLM(BaseLLM):
-    def __init__(self, api_key: str, model_name: str): # model_name é obrigatório
+    def __init__(self, api_key: str, model_name: str, http_referer: str, x_title: str): # Adicionados referer e title
         super().__init__(api_key, model_name) # Passa model_name para o super
         self.api_url = "https://openrouter.ai/api/v1/chat/completions"
-        # O log de inicialização pode ser movido para o Agent ou Factory se preferir
+        self.http_referer = http_referer
+        self.x_title = x_title
         log.debug(f"OpenRouterLLM inicializado para modelo: {self.model_name}")
 
     def generate_response(self, prompt: str, temperature: float = 0.7, max_tokens: int = 2000) -> str | None:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/lucaswjunges/tcc", # Opcional, mas bom para OpenRouter
-            "X-Title": "Evolux Engine (TCC Lucas Junges)", # Opcional
+            "HTTP-Referer": self.http_referer,
+            "X-Title": self.x_title,
         }
         data = {
             "model": self.model_name, # Usa o model_name da instância

@@ -16,3 +16,4 @@ typer[all]
 openai
 pydantic-settings
 loguru
+google-generativeai

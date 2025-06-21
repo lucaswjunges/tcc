@@ -1,4 +1,10 @@
-from evolux_engine.utils.logging_utils import log
+# --- INÍCIO DA CORREÇÃO ---
+# 1. Importa o logger da forma correta (padrão do projeto)
+from loguru import logger as log
+# 2. Importa as settings para obter os valores de referer e title
+from evolux_engine.settings import settings
+# --- FIM DA CORREÇÃO ---
+
 from .openai_llm import OpenAILLM
 from .openrouter_llm import OpenRouterLLM
 
@@ -21,9 +27,19 @@ class LLMFactory:
         log.debug(f"LLMFactory tentando criar cliente para provider: {provider}, modelo: {model}")
 
         if provider.lower() == "openai":
+            # A classe OpenAILLM não precisa dos headers extras
             return OpenAILLM(api_key=self.api_key, model_name=model)
+        
         elif provider.lower() == "openrouter":
-            return OpenRouterLLM(api_key=self.api_key, model_name=model)
+            # --- INÍCIO DA CORREÇÃO ---
+            # 3. Passa os argumentos que faltavam para o OpenRouterLLM, pegando-os das settings.
+            return OpenRouterLLM(
+                api_key=self.api_key, 
+                model_name=model,
+                http_referer=settings.HTTP_REFERER,
+                x_title=settings.APP_TITLE
+            )
+            # --- FIM DA CORREÇÃO ---
         else:
             log.error(f"LLMFactory: Provedor LLM desconhecido: {provider}")
             raise ValueError(f"Provedor LLM desconhecido: {provider}")

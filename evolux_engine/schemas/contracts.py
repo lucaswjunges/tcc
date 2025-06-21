@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field, validator
 from enum import Enum
 import uuid
 from datetime import datetime
+import os # Adicionado para o GlobalConfig
 
 # --- Enumerações ---
 
@@ -380,7 +381,7 @@ class GlobalConfig(BaseModel):
 
     class Config:
         env_file = ".env"
-        env_file_encoding = "utf-8"_
+        # --- CORREÇÃO: Removido o underscore '_' no final da linha ---
+        env_file_encoding = "utf-8"
         extra = "ignore" # Ignora variáveis de ambiente extras
         case_sensitive = False # Nomes de variáveis de ambiente são insensíveis a maiúsculas/minúsculas
-

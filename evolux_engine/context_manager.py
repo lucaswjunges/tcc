@@ -1,13 +1,16 @@
-# evolux_engine/context_manager.py
 import os
 import json
 from pathlib import Path
-from evolux_engine.utils.logging_utils import log
+# --- INÍCIO DA CORREÇÃO ---
+# Importa o logger da forma correta, assim como fizemos no agent.py
+from loguru import logger as log
+# --- FIM DA CORREÇÃO ---
 
 class ContextManager:
-    def __init__(self, project_id: str, base_path: str = "project_workspaces"):
+    def __init__(self, project_id: str, base_project_dir: str): # Nome do parâmetro corrigido para corresponder ao Agent
         self.project_id = project_id
-        self.base_path = Path(base_path)
+        # Garante que o base_project_dir seja um objeto Path
+        self.base_path = Path(base_project_dir)
         self.project_path = self.base_path / self.project_id
         self._ensure_project_dir_exists()
         log.info("ContextManager inicializado para projeto.", path=str(self.project_path), project_id=self.project_id)
