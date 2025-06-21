@@ -1,26 +1,19 @@
-import sys # Necessário para o handler de log de debug
+import sys
 from typing import Optional, List
 from pathlib import Path
 
 from pydantic import Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
-# from pydantic_settings import PydanticSettingsSource # Descomente se usar settings_customise_sources
 
-# --- Configuração de Logger para Debug Interno do Settings ---
-# Usamos um logger separado aqui para garantir que as mensagens de debug de carregamento
-# apareçam mesmo que o logging principal ainda não esteja totalmente configurado
-# ou se settings.py for importado antes do setup_logging.
 try:
     from loguru import logger as settings_logger
     IS_LOGURU_AVAILABLE = True
-    settings_logger.remove() # Remove handlers padrão para evitar duplicação se loguru já estiver configurado
-    # Adiciona um handler simples para imprimir no stderr, fácil de ver no início
+    settings_logger.remove()
     settings_logger.add(lambda msg_record: print(msg_record, file=sys.stderr, flush=True), 
                         level="DEBUG", 
                         format="<level>[Settings Debug]</level> {time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {message}")
 except ImportError:
     IS_LOGURU_AVAILABLE = False
-    # Fallback para print simples se loguru não estiver disponível neste ponto
     def simple_debug_print(message):
         print(f"[Settings Debug Fallback] | DEBUG    | {message}", file=sys.stderr, flush=True)
     class MockLogger:
@@ -29,14 +22,7 @@ except ImportError:
         def warning(self, msg, **kwargs): simple_debug_print(f"{msg} {kwargs if kwargs else ''}")
         def error(self, msg, **kwargs): simple_debug_print(f"{msg} {kwargs if kwargs else ''}")
     settings_logger = MockLogger()
-# --- Fim da Configuração de Logger para Debug Interno ---
 
-
-# Define o diretório base do projeto para facilitar a construção de caminhos
-# __file__ é o caminho para este arquivo (settings.py)
-# .resolve() torna o caminho absoluto
-# .parent é o diretório 'evolux_engine'
-# .parent.parent é o diretório raiz do projeto (onde .env e run.py devem estar)
 BASE_PROJECT_DIR_PATH = Path(__file__).resolve().parent.parent
 EXPECTED_ENV_FILE_PATH = BASE_PROJECT_DIR_PATH / '.env'
 
@@ -47,7 +33,7 @@ if EXPECTED_ENV_FILE_PATH.exists():
     settings_logger.info(f"Verificação de existência: Arquivo .env ENCONTRADO em '{EXPECTED_ENV_FILE_PATH}'.")
     try:
         with open(EXPECTED_ENV_FILE_PATH, "r", encoding="utf-8") as f_env:
-            env_content_preview = f_env.read(200) # Lê os primeiros 200 chars
+            env_content_preview = f_env.read(200)
         settings_logger.debug(f"Conteúdo inicial do .env (primeiros 200 chars): \n---\n{env_content_preview}\n---")
     except Exception as e:
         settings_logger.warning(f"Não foi possível ler o conteúdo do .env para preview: {e}")
@@ -64,13 +50,18 @@ class EvoluxSettings(BaseSettings):
     # --- Chaves de API ---
     OPENROUTER_API_KEY: Optional[str] = Field(
         default=None,
-        env="EVOLUX_OPENROUTER_API_KEY", # Nome da variável no ambiente ou .env
+        env="EVOLUX_OPENROUTER_API_KEY",
         description="API Key for OpenRouter.ai."
     )
     OPENAI_API_KEY: Optional[str] = Field(
         default=None,
         env="EVOLUX_OPENAI_API_KEY",
         description="API Key for OpenAI (if used directly)."
+    )
+    GOOGLE_API_KEY: Optional[str] = Field(
+        default=None,
+        env="EVOLUX_GOOGLE_API_KEY",
+        description="API Key for Google AI (Gemini)."
     )
 
     # --- Configurações do Projeto ---
@@ -84,7 +75,7 @@ class EvoluxSettings(BaseSettings):
     LLM_PROVIDER: str = Field(
         default="openrouter",
         env="EVOLUX_LLM_PROVIDER",
-        description="Provedor LLM padrão (ex: 'openrouter', 'openai')."
+        description="Provedor LLM padrão (ex: 'openrouter', 'openai', 'google')."
     )
     MODEL_PLANNER: str = Field(
         default="deepseek/deepseek-r1-0528-qwen3-8b:free",
@@ -139,42 +130,12 @@ class EvoluxSettings(BaseSettings):
     LOG_SERIALIZE_JSON: bool = Field(default=False, env="EVOLUX_LOG_SERIALIZE_JSON")
     
     model_config = SettingsConfigDict(
-        env_file=str(EXPECTED_ENV_FILE_PATH), # Pydantic tentará carregar deste arquivo
+        env_file=str(EXPECTED_ENV_FILE_PATH),
         env_file_encoding='utf-8',
         extra='ignore',
-        case_sensitive=False # Nomes de variáveis de ambiente não são case_sensitive por padrão
+        case_sensitive=False
     )
 
-    # --- Debug Avançado Pydantic (descomente se necessário) ---
-    # @classmethod
-    # def settings_customise_sources(
-    #     cls,
-    #     settings_cls: type[BaseSettings],
-    #     init_settings: PydanticSettingsSource,
-    #     env_settings: PydanticSettingsSource,
-    #     dotenv_settings: PydanticSettingsSource, # Este é o que carrega do env_file
-    #     file_secret_settings: PydanticSettingsSource,
-    # ) -> tuple[PydanticSettingsSource, ...]:
-    #     
-    #     # Loga o que cada fonte de configuração encontrou (ou não)
-    #     # Isso é bem verboso, mas pode mostrar exatamente de onde Pydantic está pegando cada valor
-    #     settings_logger.debug(f"Pydantic - init_settings (argumentos do construtor): {init_settings.load_config()}")
-    #     settings_logger.debug(f"Pydantic - env_settings (variáveis de ambiente do sistema): {env_settings.load_config().get('EVOLUX_OPENROUTER_API_KEY', 'NÃO PRESENTE NAS VARS DE AMBIENTE')}")
-    #     
-    #     dotenv_config = dotenv_settings.load_config()
-    #     settings_logger.debug(f"Pydantic - dotenv_settings (do arquivo .env): {dotenv_config.get('EVOLUX_OPENROUTER_API_KEY', 'NÃO ENCONTRADO NO .ENV PELO PYDANTIC')}")
-    #     settings_logger.debug(f"Pydantic - Todos os valores do dotenv_settings: {dotenv_config}")
-    #     
-    #     settings_logger.debug(f"Pydantic - file_secret_settings (Docker secrets, etc.): {file_secret_settings.load_config()}")
-    #     
-    #     return (
-    #         init_settings,
-    #         env_settings,
-    #         dotenv_settings,
-    #         file_secret_settings,
-    #     )
-
-# --- Instanciação das Configurações ---
 settings_logger.info("Preparando para instanciar EvoluxSettings...")
 try:
     settings = EvoluxSettings()
@@ -183,12 +144,9 @@ try:
 except Exception as e:
     settings_logger.error(f"Falha ao instanciar EvoluxSettings: {e}", exc_info=True)
     SETTINGS_LOADED_SUCCESSFULLY = False
-    # Se falhar aqui, o programa provavelmente não pode continuar.
-    # Você pode querer levantar a exceção ou sair.
-    # Para este debug, vamos permitir que continue para ver os logs.
-    class FallbackSettings: # Cria um objeto settings com defaults para o resto do código não quebrar imediatamente
+    class FallbackSettings:
         OPENROUTER_API_KEY = None
-        # Adicione outros campos com seus valores default se necessário para o programa não quebrar na importação
+        GOOGLE_API_KEY = None
         PROJECT_BASE_DIR = str(BASE_PROJECT_DIR_PATH / "project_workspaces_fallback")
         LLM_PROVIDER = "openrouter"
         MODEL_PLANNER = "deepseek/deepseek-r1-0528-qwen3-8b:free"
@@ -196,32 +154,35 @@ except Exception as e:
         HTTP_REFERER = None
         APP_TITLE = "Evolux Engine (Fallback)"
         LOGGING_LEVEL = "INFO"
-        # ... etc
     settings = FallbackSettings()
 
-
-# --- Logar Valores Carregados (após Pydantic ter feito seu trabalho) ---
 if SETTINGS_LOADED_SUCCESSFULLY:
     settings_logger.info("--- Valores Finais Carregados em 'settings' (Pydantic) ---")
-    
-    # Acessar model_fields da classe para Pydantic v2.11+
     if hasattr(EvoluxSettings, 'model_fields'):
         for field_name in EvoluxSettings.model_fields:
             value = getattr(settings, field_name, "CAMPO_NAO_ENCONTRADO_NA_INSTANCIA")
-            env_var_name = EvoluxSettings.model_fields[field_name].validation_alias or field_name.upper()
             
+            # Corrigido para buscar 'env' de forma segura
+            env_var_name = ""
+            field_info = EvoluxSettings.model_fields.get(field_name)
+            if field_info:
+                # O argumento 'env' é armazenado em json_schema_extra a partir do Pydantic v2
+                if field_info.json_schema_extra and 'env' in field_info.json_schema_extra:
+                     env_var_name = field_info.json_schema_extra['env']
+                else: # Fallback para o nome do campo em maiúsculas
+                    env_var_name = field_name.upper()
+
             if "API_KEY" in env_var_name and value and isinstance(value, str) and len(value) > 4:
                 value_display = f"'{value[:4]}...{value[-4:]}'" if len(value) > 8 else "'****'"
             else:
                 value_display = f"'{value}'" if isinstance(value, str) else value
 
-            default_value = EvoluxSettings.model_fields[field_name].default
+            default_value = field_info.default if field_info else None
             source_info = "(do default)" if value == default_value and default_value is not None else ""
             if value is None and default_value is None:
                 source_info = "(None, default também é None)"
 
-
-            if field_name == "OPENROUTER_API_KEY":
+            if "API_KEY" in field_name.upper():
                 if value:
                     settings_logger.info(f"  >>>> {field_name} ({env_var_name}): {value_display} {source_info} <<<<")
                 else:
@@ -235,4 +196,3 @@ if SETTINGS_LOADED_SUCCESSFULLY:
     settings_logger.info("--- Fim dos Valores Finais Carregados ---")
 else:
     settings_logger.error("Settings não foram carregadas corretamente. Verifique os logs anteriores.")
-

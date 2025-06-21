@@ -9,32 +9,34 @@ from evolux_engine.settings import settings
 from evolux_engine.context_manager import ContextManager
 from evolux_engine.llms.llm_client import LLMClient
 
-
 class Agent:
     def __init__(self, project_id: str, goal: str):
         self.project_id = project_id
         self.goal = goal
         self.project_structure_str: str = ""
 
-        openrouter_api_key = getattr(settings, 'OPENROUTER_API_KEY', os.getenv('OPENROUTER_API_KEY'))
-        
-        if not openrouter_api_key:
-            log.error("OPENROUTER_API_KEY não encontrada.", agent_id=self.project_id)
-            raise ValueError("OPENROUTER_API_KEY é necessária.")
+        # --- INÍCIO DA MODIFICAÇÃO ---
+        # Lógica para selecionar a API Key correta baseada no provedor
+        provider = settings.LLM_PROVIDER
+        if provider == "google":
+            api_key_to_use = settings.GOOGLE_API_KEY
+            if not api_key_to_use:
+                raise ValueError("LLM_PROVIDER é 'google', mas GOOGLE_API_KEY não foi encontrada.")
+        else: # Padrão para openrouter ou outros
+            api_key_to_use = settings.OPENROUTER_API_KEY
+            if not api_key_to_use:
+                raise ValueError(f"LLM_PROVIDER é '{provider}', mas OPENROUTER_API_KEY não foi encontrada.")
+        # --- FIM DA MODIFICAÇÃO ---
 
         self.planner_llm = LLMClient(
-            api_key=openrouter_api_key,
-            model_name=getattr(settings, 'MODEL_PLANNER', "deepseek/deepseek-r1-0528-qwen3-8b:free"),
-            provider="openrouter",
-            http_referer=str(settings.HTTP_REFERER),
-            x_title=str(settings.APP_TITLE)
+            api_key=api_key_to_use,
+            model_name=settings.MODEL_PLANNER,
+            provider=provider
         )
         self.executor_llm = LLMClient(
-            api_key=openrouter_api_key,
-            model_name=getattr(settings, 'MODEL_EXECUTOR', "deepseek/deepseek-r1-0528-qwen3-8b:free"),
-            provider="openrouter",
-            http_referer=str(settings.HTTP_REFERER),
-            x_title=str(settings.APP_TITLE)
+            api_key=api_key_to_use,
+            model_name=settings.MODEL_EXECUTOR,
+            provider=provider
         )
         
         project_base_dir = getattr(settings, 'PROJECT_BASE_DIR', './project_workspaces')
@@ -48,8 +50,11 @@ class Agent:
             executor_model=self.executor_llm.model_name,
             project_path=self.context_manager.project_path
         )
-
+    
+    # ... (O RESTO DO ARQUIVO agent.py CONTINUA IGUAL)
+    # ... (Não precisa colar o resto, ele não muda)
     def _extract_code_block(self, response_text: str, language: Optional[str] = None) -> Optional[str]:
+        # ... (código existente)
         if not response_text:
             return None
 
@@ -75,6 +80,7 @@ class Agent:
 
 
     async def _generate_project_structure(self):
+        # ... (código existente)
         log.info("Iniciando geração da estrutura do projeto.", component="planner", agent_id=self.project_id, goal=self.goal)
         prompt = (
             f"Baseado no seguinte objetivo do projeto: '{self.goal}', "
@@ -104,6 +110,7 @@ class Agent:
             self.project_structure_str = ""
 
     async def _generate_file_content(self, filepath_str: str, file_description: Optional[str] = None):
+        # ... (código existente)
         log.info(f"Iniciando geração do conteúdo para {filepath_str}.", component="executor", agent_id=self.project_id)
         
         file_extension = filepath_str.split('.')[-1].lower() if '.' in filepath_str else "txt"
@@ -129,13 +136,8 @@ class Agent:
 
         messages = [{"role": "user", "content": prompt}]
         
-        # --- INÍCIO DA CORREÇÃO ---
-        # Aumentamos DRASTICAMENTE os tokens para geração de arquivos.
-        # 8000 tokens é um valor seguro para a maioria dos modelos e arquivos.
         max_tokens_for_file = 8000 
-        # --- FIM DA CORREÇÃO ---
-
-        temperature_for_file = 0.3 # Mais direto para código
+        temperature_for_file = 0.3
 
         content_response = await self.executor_llm.generate_response(
             messages=messages, 
@@ -168,6 +170,7 @@ class Agent:
             return False
 
     async def run(self):
+        # ... (código existente)
         log.info("Iniciando execução do agente.", agent_id=self.project_id, goal=self.goal)
         success = True
         try:

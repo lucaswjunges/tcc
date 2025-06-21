@@ -8,7 +8,7 @@ echo "Limpando ambiente virtual antigo (se existir) e arquivos de cache..."
 rm -rf venv
 find . -type d -name "__pycache__" -exec rm -r {} +
 find . -type f -name "*.pyc" -delete
-rm -rf build dist *.egg-info evolux_engine.egg-info # Adicionado evolux_engine.egg-info
+rm -rf build dist *.egg-info evolux_engine.egg-info
 
 
 # Comente as linhas abaixo se não quiser recriar o .env ou o diretório de workspaces
@@ -46,14 +46,36 @@ echo "Criando arquivo .env com valores padrão (se não existir ou se descomenta
 if [ ! -f .env ]; then
     echo "Criando novo arquivo .env..."
     cat << EOF > .env
-EVOLUX_OPENROUTER_API_KEY=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
-EVOLUX_OPENAI_API_KEY=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
-EVOLUX_PROJECT_BASE_DIR=${HOME}/Documents/evolux-engine/project_workspaces
-EVOLUX_LLM_PROVIDER=openrouter
-EVOLUX_MODEL_PLANNER=anthropic/claude-3-haiku-20240307
-EVOLUX_MODEL_EXECUTOR=anthropic/claude-3-haiku-20240307
-EVOLUX_MAX_CONCURRENT_TASKS=5
+# --- Chaves de API (POR FAVOR, PREENCHA COM SUAS CHAVES REAIS) ---
+EVOLUX_OPENROUTER_API_KEY=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
+EVOLUX_OPENAI_API_KEY=sk-proj-pzow2j29yNVz-uiaxlAuIiXd9k_WuK1ylbLagIBRNqo1hu8XrZaF3NvXJfwW148R3lPER4
+EVOLUX_GOOGLE_API_KEY=AIzaSyBp-PRpkDEpbBuuKQIF7_hiyQueqpJLAtE
+OPENROUTER_API_KEY=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
+OPENAI_API_KEY=sk-proj-pzow2j29yNVz-uiaxlAuIiXd9k_WuK1ylbLagIBRNqo1hu8XrZaF3NvXJfwW148R3lPER4
+GOOGLE_API_KEY=AIzaSyBp-PRpkDEpbBuuKQIF7_hiyQueqpJLAtE
+
+# --- Configurações do Projeto ---
+# O padrão será o diretório 'project_workspaces' dentro da pasta atual.
+EVOLUX_PROJECT_BASE_DIR=${PWD}/project_workspaces
+
+# --- Configurações de LLM (padrão configurado para Gemini) ---
+EVOLUX_LLM_PROVIDER=google
+EVOLUX_MODEL_PLANNER=gemini-1.5-pro-latest
+EVOLUX_MODEL_EXECUTOR=gemini-1.5-pro-latest
+
+# --- Configurações de Rede (usado pelo OpenRouter) ---
+EVOLUX_HTTP_REFERER="http://localhost:3000"
+EVOLUX_APP_TITLE="Evolux Engine (TCC)"
+
+# --- Configurações de Execução ---
+EVOLUX_MAX_CONCURRENT_TASKS=3
+EVOLUX_MAX_ITERATIONS=10
+EVOLUX_MAX_REPLAN_ATTEMPTS=3
+
+# --- Configurações de Logging ---
 EVOLUX_LOGGING_LEVEL=INFO
+EVOLUX_LOG_TO_FILE=False
+
 EOF
     echo "Arquivo .env criado. POR FAVOR, EDITE-O COM SUAS API KEYS REAIS."
 else
@@ -61,17 +83,10 @@ else
 fi
 
 # Cria o diretório de workspaces se não existir
-PROJECT_BASE_DIR_VALUE=$(grep EVOLUX_PROJECT_BASE_DIR .env | cut -d '=' -f2)
-if [ -z "$PROJECT_BASE_DIR_VALUE" ]; then
-    # Tenta pegar do default se não estiver no .env (improvável se .env foi criado acima)
-    PROJECT_BASE_DIR_VALUE="${HOME}/Documents/evolux-engine/project_workspaces"
-fi
-# Expande o ~ para o diretório home real
-EVAL_PROJECT_BASE_DIR=$(eval echo "$PROJECT_BASE_DIR_VALUE")
-
-if [ ! -d "$EVAL_PROJECT_BASE_DIR" ]; then
-    echo "Criando diretório base de projetos em ${EVAL_PROJECT_BASE_DIR}..."
-    mkdir -p "$EVAL_PROJECT_BASE_DIR"
+# Usando PWD para garantir que o caminho seja absoluto e correto
+if [ ! -d "${PWD}/project_workspaces" ]; then
+    echo "Criando diretório base de projetos em ${PWD}/project_workspaces..."
+    mkdir -p "${PWD}/project_workspaces"
 fi
 
 
