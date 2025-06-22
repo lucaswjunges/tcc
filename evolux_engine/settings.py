@@ -2,6 +2,11 @@ import sys
 from typing import Optional, List
 from pathlib import Path
 
+# --- INÍCIO DA MODIFICAÇÃO ---
+# Importa a função para ler o .env diretamente
+from dotenv import dotenv_values
+# --- FIM DA MODIFICAÇÃO ---
+
 from pydantic import Field, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -48,102 +53,60 @@ class EvoluxSettings(BaseSettings):
     """
 
     # --- Chaves de API ---
-    OPENROUTER_API_KEY: Optional[str] = Field(
-        default=None,
-        env="EVOLUX_OPENROUTER_API_KEY",
-        description="API Key for OpenRouter.ai."
-    )
-    OPENAI_API_KEY: Optional[str] = Field(
-        default=None,
-        env="EVOLUX_OPENAI_API_KEY",
-        description="API Key for OpenAI (if used directly)."
-    )
-    GOOGLE_API_KEY: Optional[str] = Field(
-        default=None,
-        env="EVOLUX_GOOGLE_API_KEY",
-        description="API Key for Google AI (Gemini)."
-    )
+    OPENROUTER_API_KEY: Optional[str] = Field(default=None)
+    OPENAI_API_KEY: Optional[str] = Field(default=None)
+    GOOGLE_API_KEY: Optional[str] = Field(default=None)
 
     # --- Configurações do Projeto ---
-    PROJECT_BASE_DIR: str = Field(
-        default=str(BASE_PROJECT_DIR_PATH / "project_workspaces"),
-        env="EVOLUX_PROJECT_BASE_DIR",
-        description="Diretório base onde os workspaces dos projetos serão criados."
-    )
+    PROJECT_BASE_DIR: str = Field(default=str(BASE_PROJECT_DIR_PATH / "project_workspaces"))
 
     # --- Configurações de LLM ---
-    LLM_PROVIDER: str = Field(
-        default="openrouter",
-        env="EVOLUX_LLM_PROVIDER",
-        description="Provedor LLM padrão (ex: 'openrouter', 'openai', 'google')."
-    )
-    MODEL_PLANNER: str = Field(
-        default="deepseek/deepseek-r1-0528-qwen3-8b:free",
-        env="EVOLUX_MODEL_PLANNER",
-        description="Modelo LLM padrão para o agente de planejamento."
-    )
-    MODEL_EXECUTOR: str = Field(
-        default="deepseek/deepseek-r1-0528-qwen3-8b:free",
-        env="EVOLUX_MODEL_EXECUTOR",
-        description="Modelo LLM padrão para o agente executor de tarefas."
-    )
-    MODEL_VALIDATOR: Optional[str] = Field(
-        default=None,
-        env="EVOLUX_MODEL_VALIDATOR",
-        description="Modelo LLM padrão para o agente validador semântico (opcional)."
-    )
-    HTTP_REFERER: Optional[HttpUrl] = Field(
-        default="http://localhost:3000",
-        env="EVOLUX_HTTP_REFERER",
-        description="HTTP Referer a ser enviado para APIs como OpenRouter."
-    )
-    APP_TITLE: Optional[str] = Field(
-        default="Evolux Engine (TCC)",
-        env="EVOLUX_APP_TITLE",
-        description="X-Title a ser enviado para APIs como OpenRouter (nome do seu app)."
-    )
+    LLM_PROVIDER: str = Field(default="openrouter")
+    MODEL_PLANNER: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free")
+    MODEL_EXECUTOR: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free")
+    MODEL_VALIDATOR: Optional[str] = Field(default=None)
+    HTTP_REFERER: Optional[HttpUrl] = Field(default="http://localhost:3000")
+    APP_TITLE: Optional[str] = Field(default="Evolux Engine (TCC)")
 
     # --- Configurações de Execução ---
-    MAX_CONCURRENT_TASKS: int = Field(
-        default=3,
-        env="EVOLUX_MAX_CONCURRENT_TASKS",
-        description="Número máximo de tarefas que o executor pode processar em paralelo."
-    )
-    MAX_ITERATIONS: int = Field(
-        default=10,
-        env="EVOLUX_MAX_ITERATIONS",
-        description="Número máximo de iterações para um objetivo."
-    )
-    MAX_REPLAN_ATTEMPTS: int = Field(
-        default=3,
-        env="EVOLUX_MAX_REPLAN_ATTEMPTS",
-        description="Número máximo de tentativas de replanejamento para uma tarefa falha."
-    )
+    MAX_CONCURRENT_TASKS: int = Field(default=3)
+    MAX_ITERATIONS: int = Field(default=10)
+    MAX_REPLAN_ATTEMPTS: int = Field(default=3)
 
     # --- Configurações de Logging ---
-    LOGGING_LEVEL: str = Field(default="INFO", env="EVOLUX_LOGGING_LEVEL")
-    LOG_TO_FILE: bool = Field(default=False, env="EVOLUX_LOG_TO_FILE")
-    LOG_FILE_PATH: str = Field(default=str(BASE_PROJECT_DIR_PATH / "logs" / "evolux_engine.log"), env="EVOLUX_LOG_FILE_PATH")
-    LOG_LEVEL_FILE: str = Field(default="DEBUG", env="EVOLUX_LOG_LEVEL_FILE")
-    LOG_FILE_ROTATION: str = Field(default="10 MB", env="EVOLUX_LOG_FILE_ROTATION")
-    LOG_FILE_RETENTION: str = Field(default="7 days", env="EVOLUX_LOG_FILE_RETENTION")
-    LOG_SERIALIZE_JSON: bool = Field(default=False, env="EVOLUX_LOG_SERIALIZE_JSON")
+    LOGGING_LEVEL: str = Field(default="INFO")
+    LOG_TO_FILE: bool = Field(default=False)
+    LOG_FILE_PATH: str = Field(default=str(BASE_PROJECT_DIR_PATH / "logs" / "evolux_engine.log"))
+    LOG_LEVEL_FILE: str = Field(default="DEBUG")
+    LOG_FILE_ROTATION: str = Field(default="10 MB")
+    LOG_FILE_RETENTION: str = Field(default="7 days")
+    LOG_SERIALIZE_JSON: bool = Field(default=False)
     
-    model_config = SettingsConfigDict(
-        env_file=str(EXPECTED_ENV_FILE_PATH),
-        env_file_encoding='utf-8',
-        extra='ignore',
-        case_sensitive=False
-    )
+    # Removido model_config daqui para forçar o carregamento manual abaixo
+    # model_config = SettingsConfigDict(...)
 
+# --- Instanciação das Configurações ---
 settings_logger.info("Preparando para instanciar EvoluxSettings...")
 try:
-    settings = EvoluxSettings()
+    # --- INÍCIO DA MODIFICAÇÃO ---
+    # 1. Carrega os valores do .env para um dicionário, ignorando o cache do sistema.
+    #    Os nomes das chaves aqui devem ser SEM o prefixo "EVOLUX_".
+    config_from_env_file = {
+        key.replace("EVOLUX_", ""): value 
+        for key, value in dotenv_values(EXPECTED_ENV_FILE_PATH).items()
+    }
+    
+    # 2. Instancia as settings, passando os valores do arquivo .env diretamente.
+    #    Isso força o Pydantic a usar esses valores.
+    settings = EvoluxSettings(**config_from_env_file)
+    # --- FIM DA MODIFICAÇÃO ---
+    
     settings_logger.info("EvoluxSettings instanciado com sucesso.")
     SETTINGS_LOADED_SUCCESSFULLY = True
 except Exception as e:
     settings_logger.error(f"Falha ao instanciar EvoluxSettings: {e}", exc_info=True)
     SETTINGS_LOADED_SUCCESSFULLY = False
+    # ... (código de fallback permanece o mesmo)
     class FallbackSettings:
         OPENROUTER_API_KEY = None
         GOOGLE_API_KEY = None
@@ -156,43 +119,20 @@ except Exception as e:
         LOGGING_LEVEL = "INFO"
     settings = FallbackSettings()
 
+
+# --- Logar Valores Carregados (após Pydantic ter feito seu trabalho) ---
 if SETTINGS_LOADED_SUCCESSFULLY:
-    settings_logger.info("--- Valores Finais Carregados em 'settings' (Pydantic) ---")
-    if hasattr(EvoluxSettings, 'model_fields'):
-        for field_name in EvoluxSettings.model_fields:
-            value = getattr(settings, field_name, "CAMPO_NAO_ENCONTRADO_NA_INSTANCIA")
-            
-            # Corrigido para buscar 'env' de forma segura
-            env_var_name = ""
-            field_info = EvoluxSettings.model_fields.get(field_name)
-            if field_info:
-                # O argumento 'env' é armazenado em json_schema_extra a partir do Pydantic v2
-                if field_info.json_schema_extra and 'env' in field_info.json_schema_extra:
-                     env_var_name = field_info.json_schema_extra['env']
-                else: # Fallback para o nome do campo em maiúsculas
-                    env_var_name = field_name.upper()
-
-            if "API_KEY" in env_var_name and value and isinstance(value, str) and len(value) > 4:
-                value_display = f"'{value[:4]}...{value[-4:]}'" if len(value) > 8 else "'****'"
-            else:
-                value_display = f"'{value}'" if isinstance(value, str) else value
-
-            default_value = field_info.default if field_info else None
-            source_info = "(do default)" if value == default_value and default_value is not None else ""
-            if value is None and default_value is None:
-                source_info = "(None, default também é None)"
-
-            if "API_KEY" in field_name.upper():
-                if value:
-                    settings_logger.info(f"  >>>> {field_name} ({env_var_name}): {value_display} {source_info} <<<<")
-                else:
-                    settings_logger.warning(f"  >>>> {field_name} ({env_var_name}): {value_display} {source_info} - AINDA ESTÁ NONE! <<<<")
-            else:
-                settings_logger.debug(f"  {field_name} ({env_var_name}): {value_display} {source_info}")
-    else:
-        settings_logger.warning("Não foi possível iterar por EvoluxSettings.model_fields para logar valores carregados.")
-
-    settings_logger.debug(f"Pydantic usou o arquivo .env: '{settings.model_config.get('env_file')}'")
+    # Este bloco de log agora é mais simples e direto
+    settings_logger.info("--- Valores Finais Carregados em 'settings' ---")
+    for field_name, value in settings.model_dump().items():
+        display_value = value
+        if "API_KEY" in field_name.upper() and value and isinstance(value, str):
+            display_value = f"'{value[:4]}...{value[-4:]}'" if len(value) > 8 else "'****'"
+        
+        if "API_KEY" in field_name.upper() and not value:
+            settings_logger.warning(f"  >>>> {field_name}: {display_value} - ATENÇÃO: CHAVE NÃO CARREGADA! <<<<")
+        else:
+            settings_logger.info(f"  > {field_name}: {display_value}")
     settings_logger.info("--- Fim dos Valores Finais Carregados ---")
 else:
     settings_logger.error("Settings não foram carregadas corretamente. Verifique os logs anteriores.")
