@@ -1,58 +1,79 @@
 import argparse
 import asyncio
-import uuid
+import logging
+from dotenv import load_dotenv
 
-# --- INÍCIO DA MODIFICAÇÃO ---
-# Importa a instância 'settings' que agora é criada de forma robusta dentro de settings.py
-from evolux_engine.settings import settings
-# Importa o logger e a função de setup
-from evolux_engine.utils.logging_utils import setup_logging
-from loguru import logger as log
-# Importa o Agente
-from evolux_engine.core.agent import Agent
-# --- FIM DA MODIFICAÇÃO ---
+# Carrega o .env no início para garantir que todas as variáveis de ambiente
+# estejam disponíveis para os módulos que serão importados em seguida.
+load_dotenv()
+
+# Reduzir logs verbosos do httpcore/httpx
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
+# Agora, importa os componentes da nova arquitetura
+from evolux_engine.services.config_manager import ConfigManager
+from evolux_engine.services.context_manager import ContextManager
+from evolux_engine.core.orchestrator import Orchestrator
+from evolux_engine.services.observability_service import init_logging, get_logger
+
+# Define um logger para este script de inicialização
+log = get_logger("evolux_engine_main")
 
 async def main():
-    # Configurar logging com as settings que já foram importadas e criadas
-    setup_logging(
-        level=settings.LOGGING_LEVEL,
-        sink_file=settings.LOG_TO_FILE,
-        file_path=str(settings.LOG_FILE_PATH),
-        file_level=settings.LOG_LEVEL_FILE,
-        file_rotation=settings.LOG_FILE_ROTATION,
-        file_retention=settings.LOG_FILE_RETENTION,
-        serialize_json=settings.LOG_SERIALIZE_JSON
-    )
+    """
+    Função principal que inicializa e executa o agente.
+    """
+    # 1. Carrega as configurações globais usando o ConfigManager
+    try:
+        config = ConfigManager()
+        # 2. Inicializa o sistema de logging com as configurações carregadas
+        log_dir = config.get_global_setting("log_dir", "./logs")
+        init_logging(log_dir=log_dir, console_level=config.get_global_setting("logging_level", "INFO"))
+    except Exception as e:
+        # Se a configuração falhar, é um erro crítico.
+        log.error("Falha crítica na inicialização das configurações. Encerrando.", error=str(e), exc_info=True)
+        return
 
-    parser = argparse.ArgumentParser(description="Evolux Engine - Agente de Desenvolvimento")
+    log.info("ConfigManager e Logging inicializados com sucesso.")
+    log.info(f"PROVEDOR DE LLM CONFIGURADO: {config.get_global_setting('default_llm_provider')}")
+
+    # 3. Processa os argumentos da linha de comando
+    parser = argparse.ArgumentParser(description="Evolux Engine - Orquestrador de Agentes de IA")
     parser.add_argument("--goal", type=str, required=True, help="O objetivo principal do projeto.")
-    parser.add_argument("--project-id", type=str, help="ID de um projeto existente ou a ser usado.")
+    parser.add_argument("--project-id", type=str, help="ID de um projeto existente para continuar trabalhando nele.")
     args = parser.parse_args()
 
-    log.info("Evolux Engine iniciando...", component="__main__")
-    log.info(f"PROVEDOR DE LLM CONFIGURADO: {settings.LLM_PROVIDER}") # Log para confirmar
+    # 4. Cria ou carrega o contexto do projeto
+    context_manager = ContextManager(base_dir=config.project_base_directory)
+    project_context = None
 
-    project_id_to_use = args.project_id or str(uuid.uuid4())
+    if args.project_id:
+        try:
+            log.info(f"Tentando carregar projeto existente com ID: {args.project_id}")
+            project_context = context_manager.load_project_context(args.project_id)
+        except FileNotFoundError:
+            log.error(f"Projeto com ID '{args.project_id}' não encontrado. Criando um novo projeto.")
+            # Se não encontrar, segue para criar um novo
     
-    log.info(f"Objetivo recebido: {args.goal}", component="__main__", project_id_arg=args.project_id)
+    if not project_context:
+        log.info("Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.")
+        project_context = context_manager.create_new_project_context(goal=args.goal)
 
+    log.info(f"Trabalhando com o Projeto ID: {project_context.project_id}")
+    log.info(f"Objetivo: {project_context.project_goal}")
+
+    # 5. Inicializa e executa o Orquestrador
     try:
-        log.info(f"Inicializando Agente...", component="__main__", agent_id=project_id_to_use, goal=args.goal)
-        agent = Agent(project_id=project_id_to_use, goal=args.goal)
+        orchestrator = Orchestrator(
+            project_context=project_context,
+            config_manager=config,
+        )
+        await orchestrator.run_project_cycle()
+        log.info("Ciclo do Orquestrador concluído.")
         
-        log.info("Agente instanciado. Iniciando execução...", component="__main__")
-        
-        success = await agent.run()
-
-        if success:
-            log.info("Execução do agente principal concluída com sucesso.", component="__main__", project_id=project_id_to_use)
-        else:
-            log.error("Execução do agente principal concluída com falhas.", component="__main__", project_id=project_id_to_use)
-
-    except ValueError as ve:
-        log.error(f"Erro de valor ou configuração: {str(ve)}", component="__main__", exc_info=True)
     except Exception as e:
-        log.error(f"Erro inesperado durante a execução: {str(e)}", component="__main__", exc_info=True)
+        log.error("Erro fatal no ciclo principal do Orquestrador.", error=str(e), exc_info=True)
 
 if __name__ == "__main__":
     asyncio.run(main())

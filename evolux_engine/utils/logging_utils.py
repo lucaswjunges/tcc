@@ -1,101 +1,161 @@
+import logging
 import sys
-import os
+import structlog
+from structlog.types import Processor
 from typing import Optional
 
-from loguru import logger
+# Tentar importar settings para LOGGING_LEVEL de forma segura
+try:
+    from evolux_engine.utils.env_vars import settings
+    LOGGING_LEVEL_FROM_SETTINGS = settings.LOGGING_LEVEL.upper()
+except ImportError:
+    # Fallback se settings não puder ser importado (ex: durante setup inicial ou testes isolados)
+    LOGGING_LEVEL_FROM_SETTINGS = "INFO"
 
-# Não precisamos de uma variável global 'log' como antes,
-# pois o `logger` importado de `loguru` já é globalmente acessível e configurável.
-# No entanto, se você quiser um logger nomeado específico para seu engine,
-# você pode obtê-lo assim, mas geralmente não é necessário com Loguru
-# se você configurar o logger padrão corretamente.
-# evolux_logger = logger.bind(name="evolux_engine")
+def setup_logging(log_level_str: str = "INFO", use_json: bool = False):
+    """
+    Configura o structlog com opções flexíveis.
+    
+    Args:
+        log_level_str: Nível de log (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+        use_json: Se True, usa formato JSON para logs estruturados
+    """
+    # Converte o nível de string para o valor numérico do logging
+    numeric_log_level = getattr(logging, log_level_str.upper(), logging.INFO)
 
+    # Configuração padrão do logging do Python (structlog encaminha para aqui)
+    logging.basicConfig(
+        format="%(message)s",  # O formato é controlado pelo renderer do structlog
+        stream=sys.stdout,
+        level=numeric_log_level,
+    )
 
-def setup_logging(
-    level: str = "INFO",
-    sink_console: bool = True,
-    console_format: Optional[str] = None,
-    sink_file: bool = False, # Desabilitado por padrão, pode ser habilitado via config
-    file_path: Optional[str] = "logs/evolux_engine.log",
-    file_level: str = "DEBUG",
-    file_rotation: str = "10 MB",
-    file_retention: str = "7 days",
-    file_format: Optional[str] = None,
-    serialize_json: bool = False, # Para logs em JSON no arquivo, se desejado
+    # Processadores comuns do structlog
+    shared_processors: list[Processor] = [
+        structlog.contextvars.merge_contextvars,
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.StackInfoRenderer(),
+        structlog.dev.set_exc_info,
+    ]
+
+    # Escolhe o renderer baseado na configuração
+    if use_json:
+        renderer = structlog.processors.JSONRenderer()
+    else:
+        renderer = structlog.dev.ConsoleRenderer()
+
+    # Configuração do structlog
+    structlog.configure(
+        processors=shared_processors + [renderer],
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        wrapper_class=structlog.stdlib.BoundLogger,
+        cache_logger_on_first_use=True,
+    )
+
+def get_structured_logger(name: Optional[str] = None) -> structlog.stdlib.BoundLogger:
+    """
+    Obtém um logger estruturado com contexto.
+    
+    Args:
+        name: Nome do logger (opcional)
+        
+    Returns:
+        Logger estruturado configurado
+    """
+    if name:
+        return structlog.get_logger(name)
+    return structlog.get_logger()
+
+def add_log_context(**kwargs) -> None:
+    """
+    Adiciona contexto global aos logs.
+    
+    Args:
+        **kwargs: Pares chave-valor para adicionar ao contexto
+    """
+    for key, value in kwargs.items():
+        structlog.contextvars.bind_contextvars(**{key: value})
+
+def clear_log_context() -> None:
+    """Remove todo o contexto global dos logs."""
+    structlog.contextvars.clear_contextvars()
+
+class LoggingMixin:
+    """
+    Mixin para adicionar capacidades de logging estruturado a classes.
+    """
+    
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls._logger = get_structured_logger(cls.__name__)
+    
+    @property
+    def logger(self) -> structlog.stdlib.BoundLogger:
+        """Retorna o logger da classe com contexto."""
+        if not hasattr(self, '_logger'):
+            self._logger = get_structured_logger(self.__class__.__name__)
+        return self._logger
+    
+    def log_with_context(self, level: str, message: str, **context):
+        """
+        Faz log com contexto adicional.
+        
+        Args:
+            level: Nível do log (info, warning, error, etc.)
+            message: Mensagem do log
+            **context: Contexto adicional
+        """
+        log_method = getattr(self.logger, level.lower())
+        log_method(message, **context)
+
+# Configurações específicas para o Evolux Engine
+def setup_evolux_logging(
+    level: str = LOGGING_LEVEL_FROM_SETTINGS,
+    use_json: bool = False,
+    add_project_context: bool = True
 ):
     """
-    Configura o Loguru para logging. Remove handlers existentes e adiciona novos.
-
+    Configura logging específico para o Evolux Engine.
+    
     Args:
-        level (str): Nível de log para o console (e padrão). Ex: "DEBUG", "INFO".
-        sink_console (bool): Se True, adiciona um handler para o console (stderr).
-        console_format (Optional[str]): Formato customizado para o console.
-                                         Se None, usa um formato padrão com cores.
-        sink_file (bool): Se True, adiciona um handler para logging em arquivo.
-        file_path (Optional[str]): Caminho para o arquivo de log.
-        file_level (str): Nível de log para o arquivo.
-        file_rotation (str): Condição para rotacionar o arquivo (ex: "10 MB", "1 week").
-        file_retention (str): Período para manter os arquivos de log rotacionados.
-        file_format (Optional[str]): Formato customizado para o arquivo.
-                                     Se None, usa um formato padrão.
-        serialize_json (bool): Se True e sink_file for True, os logs no arquivo
-                               serão serializados como JSON.
+        level: Nível de logging
+        use_json: Se deve usar formato JSON
+        add_project_context: Se deve adicionar contexto do projeto
     """
-    logger.remove()  # Remove todos os handlers previamente configurados
-
-    if sink_console:
-        default_console_format = (
-            "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
-            "<level>{level: <8}</level> | "
-            "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
-        )
-        logger.add(
-            sys.stderr,
-            level=level.upper(),
-            format=console_format or default_console_format,
-            colorize=True,  # Habilita cores no console
-            diagnose=True, # Mostra variáveis em exceções por padrão
-            catch=True    # Captura exceções não tratadas e as loga (cuidado em produção)
+    setup_logging(level, use_json)
+    
+    if add_project_context:
+        add_log_context(
+            service="evolux_engine",
+            version="2.0"
         )
 
-    if sink_file and file_path:
-        # Garante que o diretório do log exista
-        try:
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        except Exception as e:
-            logger.warning(f"Não foi possível criar o diretório de log '{os.path.dirname(file_path)}': {e}. Logging em arquivo desabilitado.")
-            sink_file = False # Desabilita se não puder criar
+# Chama a configuração quando o módulo é importado
+setup_evolux_logging()
 
-    if sink_file and file_path: # Verifica novamente caso tenha sido desabilitado acima
-        default_file_format = "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} | {message}"
-        logger.add(
-            file_path,
-            level=file_level.upper(),
-            rotation=file_rotation,
-            retention=file_retention,
-            format=file_format or default_file_format,
-            encoding="utf-8",
-            serialize=serialize_json, # Loga como JSON se True
-            diagnose=True,
-            catch=True
-        )
+# Cria e exporta uma instância do logger para ser usada por outros módulos
+log = get_structured_logger("evolux_engine")
 
-    logger.info(f"Logging configurado. Nível Console: {level.upper() if sink_console else 'DESABILITADO'}. "
-                f"Nível Arquivo: {file_level.upper() if sink_file else 'DESABILITADO'}.")
+# Funções de conveniência para logging rápido
+def log_info(message: str, **context):
+    """Log de informação com contexto."""
+    log.info(message, **context)
 
-# Como usar em outros módulos:
-# from loguru import logger # Importar diretamente o logger do loguru
-#
-# # Você chamaria setup_logging() uma vez no início da sua aplicação (ex: em run.py)
-# # setup_logging(level="DEBUG", sink_file=True, file_path="meu_app.log")
-#
-# def minha_funcao():
-#     logger.info("Esta é uma mensagem de info.", dado_extra="valor")
-#     logger.debug("Detalhes para depuração.")
-#     try:
-#         x = 1 / 0
-#     except ZeroDivisionError:
-#         logger.exception("Ocorreu um erro!") # Loga a exceção com traceback
-#
-# logger.warning("Isso é um aviso fora de qualquer função específica.")
+def log_warning(message: str, **context):
+    """Log de aviso com contexto."""
+    log.warning(message, **context)
+
+def log_error(message: str, **context):
+    """Log de erro com contexto."""
+    log.error(message, **context)
+
+def log_debug(message: str, **context):
+    """Log de debug com contexto."""
+    log.debug(message, **context)
+
+def log_critical(message: str, **context):
+    """Log crítico com contexto."""
+    log.critical(message, **context)

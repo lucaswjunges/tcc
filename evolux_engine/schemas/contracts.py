@@ -1,5 +1,6 @@
 from typing import List, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field, validator
+from pydantic_settings import BaseSettings
 from enum import Enum
 import uuid
 from datetime import datetime
@@ -360,10 +361,11 @@ class LLMClientConfig(BaseModel):
     # Outros parâmetros específicos do provedor (temperature, top_p, etc.)
     api_base_url: Optional[str] = None # Para OpenAI ou compatíveis
 
-class GlobalConfig(BaseModel):
+class GlobalConfig(BaseSettings):
     """Configurações globais do Evolux Engine."""
     evolux_openrouter_api_key: Optional[str] = Field(None, alias="OPENROUTER_API_KEY", env="EVOLUX_OPENROUTER_API_KEY")
     evolux_openai_api_key: Optional[str] = Field(None, alias="OPENAI_API_KEY", env="EVOLUX_OPENAI_API_KEY")
+    evolux_google_api_key: Optional[str] = Field(None, alias="GOOGLE_API_KEY", env="EVOLUX_GOOGLE_API_KEY")
     # Adicione outras chaves de API conforme necessário
 
     project_base_dir: str = Field(default=os.path.join(os.getcwd(), "project_workspaces"), env="EVOLUX_PROJECT_BASE_DIR")
@@ -371,10 +373,10 @@ class GlobalConfig(BaseModel):
     default_llm_provider: LLMProvider = Field(default=LLMProvider.OPENROUTER, env="EVOLUX_LLM_PROVIDER")
     
     # Modelos padrão para diferentes funções (usados se não especificados no ProjectContext.engine_config)
-    default_model_planner: str = Field(default="anthropic/claude-3-opus-20240229", env="EVOLUX_MODEL_PLANNER")
-    default_model_executor_content_gen: str = Field(default="anthropic/claude-3-haiku-20240307", env="EVOLUX_MODEL_EXECUTOR_CONTENT_GEN")
-    default_model_executor_command_gen: str = Field(default="anthropic/claude-3-haiku-20240307", env="EVOLUX_MODEL_EXECUTOR_COMMAND_GEN")
-    default_model_validator: str = Field(default="anthropic/claude-3-sonnet-20240229", env="EVOLUX_MODEL_VALIDATOR")
+    default_model_planner: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free", env="EVOLUX_MODEL_PLANNER")
+    default_model_executor_content_gen: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free", env="EVOLUX_MODEL_EXECUTOR_CONTENT_GEN")
+    default_model_executor_command_gen: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free", env="EVOLUX_MODEL_EXECUTOR_COMMAND_GEN")
+    default_model_validator: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free", env="EVOLUX_MODEL_VALIDATOR")
 
     max_concurrent_tasks: int = Field(default=1, env="EVOLUX_MAX_CONCURRENT_TASKS") # Começar com 1 para simplicidade
     logging_level: str = Field(default="INFO", env="EVOLUX_LOGGING_LEVEL")
