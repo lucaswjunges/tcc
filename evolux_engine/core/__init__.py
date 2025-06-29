@@ -1,7 +1,7 @@
 from .orchestrator import Orchestrator  
-from .planner import Planner
-from .executor import Executor
-from .validator import Validator
+from .planner import PlannerAgent
+from .executor import TaskExecutorAgent
+from .validator import SemanticValidatorAgent
 from .project_scaffolding import (
     IntelligentProjectScaffolding,
     ProjectType,
@@ -13,9 +13,9 @@ from .project_scaffolding import (
 
 __all__ = [
     "Orchestrator",
-    "Planner", 
-    "Executor",
-    "Validator",
+    "PlannerAgent", 
+    "TaskExecutorAgent",
+    "SemanticValidatorAgent",
     "IntelligentProjectScaffolding",
     "ProjectType",
     "Framework", 

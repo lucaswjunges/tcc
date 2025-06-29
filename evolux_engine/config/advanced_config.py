@@ -1,7 +1,6 @@
 from typing import Optional, Dict, Any, List, Union
-from pydantic import BaseSettings, Field, validator, root_validator
-from pydantic.fields import FieldInfo
-from pydantic.config import ConfigDict
+from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic_settings import BaseSettings
 from pathlib import Path
 import os
 import yaml
@@ -210,53 +209,56 @@ class AdvancedSystemConfig(BaseSettings):
         description="Habilitar profiling de performance"
     )
     
-    # Configuração Pydantic
-    model_config = ConfigDict(
-        env_prefix="EVOLUX_",
-        env_file=".env",
-        env_file_encoding="utf-8",
-        extra="ignore",
-        case_sensitive=False,
-        validate_assignment=True,
-        use_enum_values=True
-    )
+    # Configuração Pydantic v2
+    model_config = {
+        "env_prefix": "EVOLUX_",
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "extra": "ignore",
+        "case_sensitive": False,
+        "validate_assignment": True,
+        "use_enum_values": True
+    }
     
-    @validator('logging_level')
+    @field_validator('logging_level')
+    @classmethod
     def validate_logging_level(cls, v):
         valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
         if v.upper() not in valid_levels:
             raise ValueError(f'logging_level deve ser um de: {valid_levels}')
         return v.upper()
     
-    @validator('security_level')
+    @field_validator('security_level')
+    @classmethod
     def validate_security_level(cls, v):
         valid_levels = ['strict', 'permissive', 'development']
         if v.lower() not in valid_levels:
             raise ValueError(f'security_level deve ser um de: {valid_levels}')
         return v.lower()
     
-    @root_validator
-    def validate_api_keys(cls, values):
+    @model_validator(mode='after')
+    def validate_api_keys(self):
         """Valida que pelo menos uma chave API está configurada"""
         api_keys = [
-            values.get('OPENROUTER_API_KEY'),
-            values.get('OPENAI_API_KEY'), 
-            values.get('GOOGLE_API_KEY')
+            self.OPENROUTER_API_KEY,
+            self.OPENAI_API_KEY, 
+            self.GOOGLE_API_KEY
         ]
         
-        if not any(api_keys):
+        # Em desenvolvimento, permitir funcionamento sem API keys
+        if not any(api_keys) and not self.development_mode:
             raise ValueError(
                 'Pelo menos uma chave API deve estar configurada: '
                 'EVOLUX_OPENROUTER_API_KEY, EVOLUX_OPENAI_API_KEY, ou EVOLUX_GOOGLE_API_KEY'
             )
         
-        return values
+        return self
     
-    @root_validator
-    def validate_directories(cls, values):
+    @model_validator(mode='after')
+    def validate_directories(self):
         """Valida e cria diretórios necessários"""
-        for dir_field in ['project_base_directory', 'log_dir']:
-            dir_path = values.get(dir_field)
+        for field_name in ['project_base_directory', 'log_dir']:
+            dir_path = getattr(self, field_name)
             if dir_path:
                 try:
                     Path(dir_path).mkdir(parents=True, exist_ok=True)
@@ -264,7 +266,7 @@ class AdvancedSystemConfig(BaseSettings):
                 except Exception as e:
                     logger.warning(f"Failed to create directory {dir_path}: {e}")
         
-        return values
+        return self
     
     def get_api_key(self, provider: str) -> Optional[str]:
         """Obtém chave API para um provedor específico"""
@@ -294,7 +296,7 @@ class AdvancedSystemConfig(BaseSettings):
     
     def to_dict(self) -> Dict[str, Any]:
         """Converte configuração para dicionário (sem chaves sensíveis)"""
-        config_dict = self.dict()
+        config_dict = self.model_dump()
         
         # Mascarar chaves API
         sensitive_keys = ['OPENROUTER_API_KEY', 'OPENAI_API_KEY', 'GOOGLE_API_KEY']
@@ -364,7 +366,7 @@ class ConfigurationManager:
                              issues=validation_issues)
             
             # 4. Calcular hash para detectar mudanças
-            config_data = base_config.json()
+            config_data = base_config.model_dump_json()
             self._config_hash = hashlib.sha256(config_data.encode()).hexdigest()
             self._load_timestamp = datetime.now()
             
@@ -394,7 +396,7 @@ class ConfigurationManager:
     
     def _merge_configs(self, base: AdvancedSystemConfig, override: Dict[str, Any]) -> AdvancedSystemConfig:
         """Mescla configurações priorizando override"""
-        base_dict = base.dict()
+        base_dict = base.model_dump()
         
         # Merge recursivo preservando tipos
         for key, value in override.items():
@@ -435,7 +437,7 @@ class ConfigurationManager:
         
         try:
             current_config = AdvancedSystemConfig()
-            current_data = current_config.json()
+            current_data = current_config.model_dump_json()
             current_hash = hashlib.sha256(current_data.encode()).hexdigest()
             
             return current_hash != self._config_hash

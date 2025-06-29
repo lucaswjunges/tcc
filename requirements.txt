@@ -18,3 +18,4 @@ pydantic-settings
 loguru
 psutil
 jinja2
+google-generativeai
