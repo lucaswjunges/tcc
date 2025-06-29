@@ -1,0 +1,38 @@
+{
+  "proj_20250629_165357_5c798e07": {
+    "context_id": "proj_20250629_165357_5c798e07",
+    "project_name": "Test Project",
+    "project_goal": "Test project for system validation",
+    "status": "active",
+    "created_at": "2025-06-29T16:53:57.820148",
+    "last_modified": "2025-06-29T16:53:57.821452",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 688,
+    "file_count": 5
+  },
+  "proj_20250629_165430_5c798e07": {
+    "context_id": "proj_20250629_165430_5c798e07",
+    "project_name": "Test Project",
+    "project_goal": "Test project for system validation",
+    "status": "active",
+    "created_at": "2025-06-29T16:54:30.688017",
+    "last_modified": "2025-06-29T16:54:30.690815",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 688,
+    "file_count": 5
+  },
+  "proj_20250629_165456_5c798e07": {
+    "context_id": "proj_20250629_165456_5c798e07",
+    "project_name": "Test Project",
+    "project_goal": "Test project for system validation",
+    "status": "active",
+    "created_at": "2025-06-29T16:54:56.888933",
+    "last_modified": "2025-06-29T16:54:56.891650",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 688,
+    "file_count": 5
+  }
+}

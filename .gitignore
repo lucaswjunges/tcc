@@ -1,22 +1,86 @@
-# Arquivo de segredos - NUNCA ENVIE ISSO!
+# Environment and secrets
 .env
+.env.*
+*.env
 3.env
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.cache
+nosetests.xml
+coverage.xml
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+project_workspaces/*/logs/
+
+# Generated project workspaces (keep structure but not content)
+project_workspaces/*/
+!project_workspaces/.gitkeep
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+*.backup
+*.bak
+
+# System files
+.directory
+desktop.ini
+
+# Test files
+test_*.py
+test_*.txt
+*_test.out
+
+# Legacy cleanup files
 limpeza.sh
 descricao_da_pasta.txt
 descricao.txt
 descricao.sh
-
-# Pasta do ambiente virtual do Python
-venv/
-/venv
-
-# Arquivos de cache do Python
-__pycache__/
-*.pyc
-
-# Pastas de workspaces geradas pelo projeto
-project_workspaces/
-
-# Arquivos de configuração de IDEs comuns
-.idea/
-.vscode/
