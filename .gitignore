@@ -3,6 +3,7 @@
 .env.*
 *.env
 3.env
+*.zip
 
 # Python cache and compiled files
 __pycache__/

@@ -30,6 +30,7 @@ class PlannerAgent:
         self.next_task_id = self._generate_next_id()
         self.failure_history = {}  # Track failures for recovery
         self.recovery_strategies = {}  # Store recovery strategies
+        self.max_recovery_attempts = 3  # Maximum recovery attempts per task
         logger.info("PlannerAgent inicializado com componentes necessários")
 
     def _generate_next_id(self) -> str:

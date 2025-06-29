@@ -1,8 +1,10 @@
 import logging
 import sys
+from pathlib import Path
 import structlog
 from structlog.types import Processor
 from typing import Optional
+from logging.handlers import RotatingFileHandler
 
 # Tentar importar settings para LOGGING_LEVEL de forma segura
 try:
@@ -12,22 +14,52 @@ except ImportError:
     # Fallback se settings não puder ser importado (ex: durante setup inicial ou testes isolados)
     LOGGING_LEVEL_FROM_SETTINGS = "INFO"
 
-def setup_logging(log_level_str: str = "INFO", use_json: bool = False):
+def setup_logging(
+    log_level_str: str = "INFO", 
+    use_json: bool = False,
+    log_dir: str = "./logs",
+    max_bytes: int = 10*1024*1024,
+    backup_count: int = 5
+):
     """
-    Configura o structlog com opções flexíveis.
+    Configura o structlog com opções flexíveis e RotatingFileHandler.
     
     Args:
         log_level_str: Nível de log (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         use_json: Se True, usa formato JSON para logs estruturados
+        log_dir: Diretório para arquivos de log
+        max_bytes: Tamanho máximo do arquivo de log (10MB padrão)
+        backup_count: Número de arquivos de backup a manter
     """
     # Converte o nível de string para o valor numérico do logging
     numeric_log_level = getattr(logging, log_level_str.upper(), logging.INFO)
 
-    # Configuração padrão do logging do Python (structlog encaminha para aqui)
+    # Criar diretório de logs se não existir
+    log_path = Path(log_dir)
+    log_path.mkdir(parents=True, exist_ok=True)
+    log_file = log_path / "events.log"
+
+    # Limpar handlers existentes
+    logging.getLogger().handlers.clear()
+
+    # Console Handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(numeric_log_level)
+    
+    # Rotating File Handler
+    file_handler = RotatingFileHandler(
+        log_file, 
+        maxBytes=max_bytes, 
+        backupCount=backup_count, 
+        encoding='utf-8'
+    )
+    file_handler.setLevel(numeric_log_level)
+
+    # Configuração padrão do logging do Python
     logging.basicConfig(
         format="%(message)s",  # O formato é controlado pelo renderer do structlog
-        stream=sys.stdout,
         level=numeric_log_level,
+        handlers=[console_handler, file_handler]
     )
 
     # Processadores comuns do structlog

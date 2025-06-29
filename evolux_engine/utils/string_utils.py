@@ -222,3 +222,106 @@ def truncate_text_safely(text: str, max_length: int, suffix: str = "...") -> str
         truncated = truncated[:last_space]
     
     return truncated + suffix
+
+
+def clean_llm_response(response: str) -> str:
+    """
+    Limpa uma resposta de LLM removendo artefatos comuns de formatação.
+    """
+    # Remove múltiplas quebras de linha consecutivas
+    response = re.sub(r'\n{3,}', '\n\n', response)
+    
+    # Remove espaços no final das linhas
+    response = '\n'.join(line.rstrip() for line in response.split('\n'))
+    
+    # Remove marcadores de pensamento comuns
+    response = re.sub(r'^\s*\*\s*thinking\s*\*.*?\*\s*/thinking\s*\*\s*', '', response, flags=re.DOTALL | re.IGNORECASE)
+    
+    # Remove avisos de AI comuns
+    ai_disclaimers = [
+        r"As an AI.*?[.!]",
+        r"I'm an AI.*?[.!]", 
+        r"I am an AI.*?[.!]",
+        r"Please note that.*?[.!]"
+    ]
+    
+    for disclaimer in ai_disclaimers:
+        response = re.sub(disclaimer, '', response, flags=re.IGNORECASE)
+    
+    return response.strip()
+
+
+def extract_json_from_text(text: str) -> dict | None:
+    """
+    Extrai e parseia JSON válido de uma string que pode conter outros conteúdos.
+    """
+    import json
+    
+    # Tenta encontrar estruturas JSON válidas no texto
+    json_pattern = r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
+    matches = re.findall(json_pattern, text, re.DOTALL)
+    
+    for match in matches:
+        try:
+            return json.loads(match)
+        except (json.JSONDecodeError, ValueError):
+            continue
+    
+    return None
+
+
+def normalize_whitespace(text: str) -> str:
+    """
+    Normaliza espaços em branco em uma string.
+    """
+    # Remove espaços múltiplos
+    text = re.sub(r' +', ' ', text)
+    
+    # Remove tabs e substitui por espaços
+    text = text.replace('\t', ' ')
+    
+    # Normaliza quebras de linha
+    text = re.sub(r'\r\n|\r', '\n', text)
+    
+    # Remove espaços no início e fim das linhas
+    text = '\n'.join(line.strip() for line in text.split('\n'))
+    
+    # Remove linhas vazias consecutivas
+    text = re.sub(r'\n\s*\n', '\n\n', text)
+    
+    return text.strip()
+
+
+def extract_file_content_from_response(response: str, language: str = None) -> str:
+    """
+    Extrai conteúdo de arquivo de uma resposta de LLM, priorizando blocos de código.
+    
+    Args:
+        response: Resposta do LLM
+        language: Linguagem esperada do código
+        
+    Returns:
+        Conteúdo extraído limpo
+    """
+    # Primeiro tenta extrair de blocos de código
+    if language:
+        content = extract_first_code_block(response, language)
+        if content:
+            return content
+    
+    # Tenta qualquer bloco de código
+    content = extract_first_code_block(response, "")
+    if content:
+        return content
+    
+    # Tenta extrair de JSON
+    content = extract_content_from_json_response(response, "file_content")
+    if content:
+        return content
+    
+    content = extract_content_from_json_response(response, "content")
+    if content:
+        return content
+    
+    # Fallback: limpa e retorna a resposta inteira
+    return clean_llm_response(response)
