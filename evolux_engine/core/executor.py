@@ -8,6 +8,7 @@ from loguru import logger
 from evolux_engine.utils.string_utils import extract_json_from_llm_response, sanitize_llm_response, extract_content_from_json_response
 
 from evolux_engine.llms.llm_client import LLMClient
+from evolux_engine.core.iterative_refiner import IterativeRefiner, RefinementStrategy
 from evolux_engine.models.project_context import ProjectContext, ArtifactState
 from evolux_engine.schemas.contracts import Task
 from evolux_engine.schemas.contracts import (
@@ -56,6 +57,9 @@ class TaskExecutorAgent:
         shell_service: ShellService,
         # security_gateway: SecurityGateway, # Adicionar quando implementado
         agent_id: str,
+        enable_iterative_refinement: bool = True,
+        reviewer_llm_client: Optional[LLMClient] = None,
+        validator_llm_client: Optional[LLMClient] = None
     ):
         self.executor_llm = executor_llm_client
         self.project_context = project_context
@@ -63,8 +67,24 @@ class TaskExecutorAgent:
         self.shell_service = shell_service
         # self.security_gateway = security_gateway
         self.agent_id = agent_id
+        self.enable_refinement = enable_iterative_refinement
+        
+        # Inicializar refinador iterativo se habilitado
+        if enable_iterative_refinement and reviewer_llm_client and validator_llm_client:
+            from evolux_engine.prompts.prompt_engine import PromptEngine
+            self.prompt_engine = PromptEngine()
+            self.iterative_refiner = IterativeRefiner(
+                primary_llm=executor_llm_client,
+                reviewer_llm=reviewer_llm_client,
+                validator_llm=validator_llm_client,
+                prompt_engine=self.prompt_engine,
+                project_context=project_context
+            )
+        else:
+            self.iterative_refiner = None
+        
         logger.info(
-            f"TaskExecutorAgent (ID: {self.agent_id}) inicializado para o projeto ID: {self.project_context.project_id}"
+            f"TaskExecutorAgent (ID: {self.agent_id}) inicializado para o projeto ID: {self.project_context.project_id}. Refinamento iterativo: {self.enable_refinement}"
         )
 
     async def _invoke_llm_for_json_output(
@@ -85,10 +105,14 @@ class TaskExecutorAgent:
             model_to_use = self.project_context.engine_config.default_executor_model or \
                            self.executor_llm.model_name # Fallback para o modelo padrão do cliente
             
-            llm_response_text = await self.executor_llm.generate_response(
-                messages,
-                max_tokens=4096,
-                temperature=0.7
+            # Usar timeout e parâmetros otimizados para performance
+            llm_response_text = await asyncio.wait_for(
+                self.executor_llm.generate_response(
+                    messages,
+                    max_tokens=2048,  # Reduzido para melhor performance
+                    temperature=0.3   # Mais determinístico
+                ),
+                timeout=60.0  # Timeout de 1 minuto
             )
             latency_ms = int((asyncio.get_event_loop().time() - start_time) * 1000)
 
@@ -137,7 +161,7 @@ class TaskExecutorAgent:
                 return None
 
         except asyncio.TimeoutError:
-            logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Timeout ao consultar LLM.")
+            logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Timeout ao consultar LLM (60s).")
             return None
         except Exception as e:
             logger.opt(exception=True).error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Erro inesperado ao consultar LLM.")
@@ -352,9 +376,9 @@ class TaskExecutorAgent:
             return ExecutionResult(command_executed=command_to_execute, exit_code=1, stderr=f"Erro ao executar comando: {e}")
 
 
-    async def execute_task(self, task: Task) -> ExecutionResult:
+    async def execute_task(self, task: Task, use_refinement: bool = None) -> ExecutionResult:
         """
-        Executa uma tarefa com base no seu tipo.
+        Executa uma tarefa com base no seu tipo, opcionalmente usando refinamento iterativo.
         """
         logger.info(
             f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): Iniciando execução - Tipo: {task.type.value}, Desc: {task.description}"
@@ -364,6 +388,18 @@ class TaskExecutorAgent:
             logger.error(f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): Tarefa não possui detalhes. Não pode ser executada.")
             return ExecutionResult(exit_code=1, stderr="Detalhes da tarefa ausentes.")
 
+        # Determinar se deve usar refinamento
+        should_refine = (
+            use_refinement if use_refinement is not None 
+            else self.enable_refinement and self.iterative_refiner is not None
+        )
+        
+        # Executar com refinamento iterativo se habilitado
+        if should_refine and self._should_use_refinement_for_task(task):
+            logger.info(f"Using iterative refinement for task {task.task_id}")
+            return await self._execute_with_refinement(task)
+        
+        # Execução padrão
         exec_func_map = {
             TaskType.CREATE_FILE: self._execute_create_file,
             TaskType.MODIFY_FILE: self._execute_modify_file,
@@ -388,7 +424,76 @@ class TaskExecutorAgent:
                 stderr=f"Tipo de tarefa não suportado para execução: {task.type.value}",
             )
         
-        # Para consistência, o Orchestrator deve adicionar o ExecutionResult ao histórico da tarefa.
-        # O TaskExecutor apenas executa e retorna o resultado.
         return execution_result
+    
+    def _should_use_refinement_for_task(self, task: Task) -> bool:
+        """
+        Determina se uma tarefa deve usar refinamento iterativo baseado em sua complexidade.
+        """
+        # Usar refinamento para tarefas críticas ou complexas
+        complex_keywords = [
+            "api", "database", "authentication", "security", "algorithm", 
+            "optimization", "performance", "integration", "architecture"
+        ]
+        
+        task_desc_lower = task.description.lower()
+        is_complex = any(keyword in task_desc_lower for keyword in complex_keywords)
+        
+        # Sempre usar refinamento para CREATE_FILE e MODIFY_FILE de código crítico
+        is_code_task = task.type in [TaskType.CREATE_FILE, TaskType.MODIFY_FILE]
+        
+        return is_complex or is_code_task
+    
+    async def _execute_with_refinement(self, task: Task) -> ExecutionResult:
+        """
+        Executa tarefa usando refinamento iterativo.
+        """
+        try:
+            # Determinar estratégia de refinamento baseada no tipo de tarefa
+            if task.type in [TaskType.CREATE_FILE, TaskType.MODIFY_FILE]:
+                strategy = RefinementStrategy.ITERATIVE_IMPROVEMENT
+            elif task.type == TaskType.EXECUTE_COMMAND:
+                strategy = RefinementStrategy.CROSS_VALIDATION  
+            else:
+                strategy = RefinementStrategy.SINGLE_PASS
+            
+            # Executar refinamento
+            refinement_result = await self.iterative_refiner.refine_task_iteratively(
+                task, strategy
+            )
+            
+            # Log do resultado do refinamento
+            logger.info(
+                f"Refinement completed for task {task.task_id}: "
+                f"{refinement_result.total_iterations} iterations, "
+                f"final score: {refinement_result.final_quality_score:.2f}, "
+                f"converged: {refinement_result.convergence_achieved}"
+            )
+            
+            return refinement_result.final_result
+            
+        except Exception as e:
+            logger.error(f"Error in iterative refinement: {e}")
+            # Fallback para execução padrão
+            return await self._execute_standard_task(task)
+    
+    async def _execute_standard_task(self, task: Task) -> ExecutionResult:
+        """
+        Executa tarefa usando método padrão (sem refinamento).
+        """
+        exec_func_map = {
+            TaskType.CREATE_FILE: self._execute_create_file,
+            TaskType.MODIFY_FILE: self._execute_modify_file,
+            TaskType.DELETE_FILE: self._execute_delete_file,
+            TaskType.EXECUTE_COMMAND: self._execute_command,
+        }
+        
+        if task.type in exec_func_map:
+            return await exec_func_map[task.type](task)
+        else:
+            return ExecutionResult(
+                command_executed=task.description,
+                exit_code=1,
+                stderr=f"Tipo de tarefa não suportado: {task.type.value}"
+            )
 

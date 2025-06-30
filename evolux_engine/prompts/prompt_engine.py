@@ -62,37 +62,69 @@ class PromptEngine:
     def _initialize_default_templates(self):
         """Inicializa templates padrão do sistema"""
         
-        # Template para geração de código
+        # Template avançado para geração de código com revisão
         self.register_template(PromptTemplate(
             name="code_generation",
-            content="""You are a senior software engineer. Create high-quality code for the following task:
+            content="""You are a senior software engineer and code reviewer. Create high-quality, production-ready code for the following task:
 
 **Project Goal:** {project_goal}
 **Project Type:** {project_type}
 **Task:** {task_description}
+**Iteration:** {iteration_count}
 
 **Current Project Structure:**
 {current_artifacts}
 
-**Requirements:**
-- Write clean, maintainable code
-- Include appropriate error handling
-- Add necessary imports
-- Follow best practices for {project_type}
-- Ensure code is production-ready
+**Previous Errors (if any):**
+{error_history}
+
+**CRITICAL REQUIREMENTS:**
+- Write clean, maintainable, and well-documented code
+- Include comprehensive error handling and input validation
+- Add necessary imports and type hints (where applicable) 
+- Follow industry best practices and design patterns for {project_type}
+- Ensure code is production-ready and scalable
+- Consider security implications and implement defensive programming
+- Add meaningful comments for complex logic
+- Ensure proper code structure and organization
+
+**QUALITY CHECKLIST - Verify each item:**
+1. Code compiles/runs without errors
+2. Follows language-specific conventions and style guides
+3. Handles edge cases and error conditions
+4. Is secure and doesn't introduce vulnerabilities
+5. Is efficient and performant
+6. Is maintainable and well-organized
+7. Includes appropriate tests or test hooks
+8. Follows SOLID principles where applicable
+
+**SELF-REVIEW PROCESS:**
+Before finalizing, ask yourself:
+- Does this code solve the problem completely?
+- Are there any obvious bugs or issues?
+- Could this be implemented more efficiently?
+- Is the code readable by other developers?
+- Have I considered security and error scenarios?
 
 **Response Format:**
 ```json
 {{
-    "file_content": "your code here"
+    "file_content": "your complete, production-ready code here",
+    "quality_review": {{
+        "code_quality_score": 1-10,
+        "potential_issues": ["list any concerns"],
+        "improvement_suggestions": ["list potential improvements"],
+        "security_considerations": ["list security aspects addressed"]
+    }}
 }}
 ```""",
             task_category=TaskCategory.CODE_GENERATION,
-            temperature=0.3,
+            temperature=0.2,  # Menor temperatura para maior consistência
+            max_tokens=6000,  # Mais tokens para respostas detalhadas
             examples=[
                 {
-                    "task": "Create Flask app.py",
-                    "response": '{"file_content": "from flask import Flask\\napp = Flask(__name__)\\n\\n@app.route(\'/\')\\ndef home():\\n    return \'Hello World\'\\n\\nif __name__ == \'__main__\':\\n    app.run(debug=True)"}'
+                    "task": "Create Flask app.py with authentication",
+                    "response": '{"file_content": "from flask import Flask, request, jsonify, session\\nfrom werkzeug.security import generate_password_hash, check_password_hash\\nimport os\\nfrom functools import wraps\\n\\napp = Flask(__name__)\\napp.secret_key = os.environ.get(\'SECRET_KEY\', \'dev-key-change-in-production\')\\n\\n# Mock user database\\nusers = {}\\n\\ndef login_required(f):\\n    @wraps(f)\\n    def decorated_function(*args, **kwargs):\\n        if \'user_id\' not in session:\\n            return jsonify({\'error\': \'Authentication required\'}), 401\\n        return f(*args, **kwargs)\\n    return decorated_function\\n\\n@app.route(\'/\')\\ndef home():\\n    return jsonify({\'message\': \'Hello World\', \'authenticated\': \'user_id\' in session})\\n\\n@app.route(\'/register\', methods=[\'POST\'])\\ndef register():\\n    try:\\n        data = request.get_json()\\n        if not data or not data.get(\'username\') or not data.get(\'password\'):\\n            return jsonify({\'error\': \'Username and password required\'}), 400\\n        \\n        username = data[\'username\'].strip()\\n        password = data[\'password\']\\n        \\n        if username in users:\\n            return jsonify({\'error\': \'User already exists\'}), 409\\n        \\n        users[username] = generate_password_hash(password)\\n        return jsonify({\'message\': \'User registered successfully\'}), 201\\n    except Exception as e:\\n        return jsonify({\'error\': \'Registration failed\'}), 500\\n\\nif __name__ == \'__main__\':\\n    app.run(debug=os.environ.get(\'FLASK_DEBUG\', False))", "quality_review": {"code_quality_score": 8, "potential_issues": ["Mock database not suitable for production"], "improvement_suggestions": ["Add real database integration", "Add input validation middleware"], "security_considerations": ["Password hashing implemented", "Secret key from environment", "Basic input validation"]}}'
                 }
             ]
         ))
@@ -133,45 +165,111 @@ class PromptEngine:
             temperature=0.5
         ))
         
-        # Template para validação
+        # Template rigoroso para validação com checklist detalhada
         self.register_template(PromptTemplate(
             name="validation_analysis",
-            content="""You are a quality assurance engineer. Analyze the execution result:
+            content="""You are a senior quality assurance engineer and code reviewer. Perform comprehensive validation:
 
 **Task:** {task_description}
 **Expected Outcome:** {expected_outcome}
+**Acceptance Criteria:** {acceptance_criteria}
 
 **Execution Result:**
 - Exit Code: {exit_code}
 - Output: {stdout}
 - Errors: {stderr}
+- Artifacts Changed: {artifacts_changed}
 
 **Project Context:**
 {current_artifacts}
+**Iteration:** {iteration_count}
 
-**Analysis Required:**
-1. Did the task complete successfully?
-2. Does the output meet the acceptance criteria?
-3. Are there any issues or improvements needed?
+**COMPREHENSIVE VALIDATION CHECKLIST:**
+
+1. **Functional Correctness:**
+   - Does the task achieve its stated objective?
+   - Are all requirements satisfied?
+   - Does the output match expectations?
+
+2. **Technical Quality:**
+   - Is the implementation technically sound?
+   - Are there any obvious bugs or issues?
+   - Does it follow best practices?
+
+3. **Code Quality (if applicable):**
+   - Is the code readable and maintainable?
+   - Are there proper error handling mechanisms?
+   - Is the code secure and efficient?
+
+4. **Integration Assessment:**
+   - Does it integrate properly with existing components?
+   - Are there any breaking changes?
+   - Does it maintain system consistency?
+
+5. **Performance Evaluation:**
+   - Is the execution time reasonable?
+   - Are there performance bottlenecks?
+   - Is resource usage appropriate?
+
+6. **Security Review:**
+   - Are there any security vulnerabilities?
+   - Is sensitive data handled properly?
+   - Are inputs properly validated?
+
+7. **Completeness Check:**
+   - Are all parts of the task completed?
+   - Are there any missing components?
+   - Is documentation adequate?
 
 **Response Format:**
 ```json
 {{
     "validation_passed": true/false,
     "confidence_score": 0.0-1.0,
-    "issues_found": ["list of issues"],
-    "suggested_improvements": ["list of improvements"],
-    "next_steps": ["recommended actions"]
+    "overall_quality_score": 1-10,
+    "checklist": {{
+        "correctness": true/false,
+        "completeness": true/false,
+        "efficiency": true/false,
+        "maintainability": true/false,
+        "security": true/false,
+        "integration": true/false
+    }},
+    "detailed_analysis": {{
+        "strengths": ["what was done well"],
+        "weaknesses": ["areas that need improvement"],
+        "risks": ["potential risks or issues"]
+    }},
+    "identified_issues": [
+        {{
+            "issue": "description of issue",
+            "severity": "critical|high|medium|low",
+            "impact": "description of impact",
+            "fix_suggestion": "how to fix it"
+        }}
+    ],
+    "suggested_improvements": [
+        {{
+            "improvement": "description of improvement",
+            "priority": "high|medium|low",
+            "effort_required": "low|medium|high",
+            "expected_benefit": "description of benefit"
+        }}
+    ],
+    "next_steps": ["prioritized list of recommended actions"],
+    "requires_iteration": true/false,
+    "iteration_focus": "what should be focused on in next iteration if needed"
 }}
 ```""",
             task_category=TaskCategory.VALIDATION,
-            temperature=0.2
+            temperature=0.1,  # Muito determinístico para validação
+            max_tokens=4000
         ))
         
-        # Template para análise de erros
+        # Template avançado para análise de erros com soluções múltiplas
         self.register_template(PromptTemplate(
             name="error_analysis",
-            content="""You are a debugging expert. Analyze this error and provide solutions:
+            content="""You are a senior debugging expert and solution architect. Perform comprehensive error analysis:
 
 **Task that failed:** {task_description}
 **Error Details:**
@@ -179,32 +277,81 @@ class PromptEngine:
 - Error Output: {stderr}
 - Standard Output: {stdout}
 
-**Error History:** {error_history}
+**Complete Error History:** {error_history}
+**Project Context:** {current_artifacts}
+**Iteration Count:** {iteration_count}
 
-**Project Context:**
-{current_artifacts}
+**COMPREHENSIVE ANALYSIS REQUIRED:**
 
-**Analysis Required:**
-1. Root cause of the error
-2. Specific fix recommendations
-3. Prevention strategies
+1. **Root Cause Analysis:**
+   - What exactly went wrong?
+   - Why did it happen?
+   - What conditions led to this failure?
+   - Is this a recurring pattern?
+
+2. **Error Classification:**
+   - Syntax error, runtime error, logic error, environment issue?
+   - Transient or persistent?
+   - Critical or recoverable?
+
+3. **Impact Assessment:**
+   - What parts of the project are affected?
+   - What are the downstream consequences?
+   - How urgent is the fix?
+
+4. **Multiple Solution Strategies:**
+   - Provide 2-3 different approaches to fix
+   - Rank them by probability of success
+   - Consider trade-offs and side effects
+
+5. **Prevention & Improvement:**
+   - How to prevent similar errors
+   - What processes or checks to add
+   - Code quality improvements
 
 **Response Format:**
 ```json
 {{
-    "root_cause": "explanation of what went wrong",
-    "fix_strategy": "how to fix this specific error",
-    "prevention_measures": "how to prevent similar errors",
-    "recovery_tasks": [
+    "root_cause": "detailed explanation of what went wrong and why",
+    "error_classification": {{
+        "type": "syntax|runtime|logic|environment|dependency",
+        "severity": "critical|high|medium|low",
+        "recurrence_risk": "high|medium|low"
+    }},
+    "impact_assessment": {{
+        "affected_components": ["list of affected parts"],
+        "urgency_level": "immediate|high|medium|low",
+        "potential_side_effects": ["list of potential issues"]
+    }},
+    "solution_strategies": [
         {{
-            "description": "task to fix the issue",
-            "command": "specific command or action"
+            "approach": "primary solution description",
+            "success_probability": 0.9,
+            "complexity": "low|medium|high",
+            "estimated_time": "time estimate",
+            "recovery_tasks": [
+                {{
+                    "description": "specific task to perform",
+                    "command": "exact command or action",
+                    "expected_outcome": "what should happen"
+                }}
+            ]
         }}
-    ]
+    ],
+    "prevention_measures": [
+        {{
+            "measure": "prevention strategy",
+            "implementation": "how to implement",
+            "effectiveness": "high|medium|low"
+        }}
+    ],
+    "quality_improvements": ["broader improvements to prevent similar issues"],
+    "debugging_tips": ["specific debugging approaches for this type of error"]
 }}
 ```""",
             task_category=TaskCategory.ERROR_ANALYSIS,
-            temperature=0.4
+            temperature=0.3,  # Mais determinístico para análise
+            max_tokens=5000   # Mais espaço para análise detalhada
         ))
         
         # Template para documentação
@@ -241,6 +388,21 @@ class PromptEngine:
         logger.debug("Template registered", 
                     name=template.name,
                     category=template.task_category.value)
+    
+    def build_iterative_prompt(self, 
+                              template_name: str,
+                              context: PromptContext,
+                              previous_attempts: List[str] = None,
+                              additional_vars: Optional[Dict[str, Any]] = None) -> Optional[str]:
+        """
+        Constrói prompt iterativo com melhorias baseadas em tentativas anteriores.
+        """
+        # Adicionar histórico de tentativas ao contexto
+        if previous_attempts:
+            context.additional_context['previous_attempts'] = previous_attempts
+            context.additional_context['iteration_feedback'] = "Learn from previous attempts and improve"
+        
+        return self.build_prompt(template_name, context, additional_vars)
     
     def build_prompt(self, 
                     template_name: str,

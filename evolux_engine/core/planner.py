@@ -8,9 +8,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 import logging
 
-# Configuração básica do logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Removido logging.basicConfig para evitar conflitos
+# logger = logging.getLogger(__name__)
+from evolux_engine.utils.logging_utils import get_structured_logger
+logger = get_structured_logger("planner")
 
 # Imports from contracts
 from evolux_engine.schemas.contracts import (
@@ -289,22 +290,94 @@ class PlannerAgent:
         ]
 
     async def replan_task(self, failed_task: Task, error_feedback: str) -> List[Task]:
-        """Replanneja uma tarefa que falhou"""
+        """Replanneja uma tarefa que falhou com análise inteligente"""
         try:
-            logger.info(f"Replanejando tarefa {failed_task.task_id} devido a erro: {error_feedback}")
+            # Detectar loop infinito de correção
+            if "Corrigir erro na tarefa:" in failed_task.description:
+                logger.warning(f"Detectado loop de correção para tarefa {failed_task.task_id}. Tentando abordagem alternativa.")
+                
+                # Extrair descrição original removendo prefixos de correção
+                original_description = failed_task.description
+                while "Corrigir erro na tarefa:" in original_description:
+                    original_description = original_description.replace("Corrigir erro na tarefa:", "").strip()
+                
+                # Se ainda está vazio, falhar graciosamente
+                if not original_description:
+                    logger.error("Não foi possível extrair descrição original da tarefa. Cancelando replanejamento.")
+                    return []
+                
+                # Criar tarefa alternativa com abordagem diferente
+                alternative_task = Task(
+                    task_id=self._generate_next_id(),
+                    description=f"Implementar alternativa para: {original_description}",
+                    type=failed_task.type,
+                    details=failed_task.details,
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria=f"Abordagem alternativa para: {failed_task.acceptance_criteria}",
+                    max_retries=2  # Limite menor para evitar loops
+                )
+                
+                return [alternative_task]
             
-            # Criar uma nova tarefa de correção baseada no erro
-            new_task = Task(
-                task_id=self._generate_next_id(),
-                description=f"Corrigir erro na tarefa: {failed_task.description}",
-                type=failed_task.type,
-                details=failed_task.details,
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria=f"Correção aplicada para: {failed_task.acceptance_criteria}"
-            )
+            # Analisar tipo de erro para replanejamento inteligente
+            logger.info(f"Replanejando tarefa {failed_task.task_id} devido a erro: {error_feedback[:200]}...")
             
-            return [new_task]
+            # Determinar estratégia baseada no tipo de erro
+            if "validação semântica" in error_feedback.lower():
+                # Problema de validação - simplificar tarefa
+                simplified_task = Task(
+                    task_id=self._generate_next_id(),
+                    description=f"Versão simplificada: {failed_task.description}",
+                    type=failed_task.type,
+                    details=failed_task.details,
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria=f"Versão simplificada de: {failed_task.acceptance_criteria}",
+                    max_retries=2
+                )
+                return [simplified_task]
+            
+            elif "timeout" in error_feedback.lower() or "tempo" in error_feedback.lower():
+                # Problema de performance - dividir tarefa
+                subtask1 = Task(
+                    task_id=self._generate_next_id(),
+                    description=f"Parte 1 de: {failed_task.description}",
+                    type=failed_task.type,
+                    details=failed_task.details,
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria=f"Primeira parte de: {failed_task.acceptance_criteria}",
+                    max_retries=2
+                )
+                
+                subtask2 = Task(
+                    task_id=self._generate_next_id(),
+                    description=f"Parte 2 de: {failed_task.description}",
+                    type=failed_task.type,
+                    details=failed_task.details,
+                    status=TaskStatus.PENDING,
+                    dependencies=[subtask1.task_id],
+                    acceptance_criteria=f"Segunda parte de: {failed_task.acceptance_criteria}",
+                    max_retries=2
+                )
+                
+                return [subtask1, subtask2]
+            
+            else:
+                # Erro genérico - tentar com ajustes mínimos
+                adjusted_task = Task(
+                    task_id=self._generate_next_id(),
+                    description=f"Revisão: {failed_task.description}",
+                    type=failed_task.type,
+                    details=failed_task.details,
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria=f"Versão revisada de: {failed_task.acceptance_criteria}",
+                    max_retries=1  # Apenas uma tentativa para evitar loops
+                )
+                
+                return [adjusted_task]
             
         except Exception as e:
             logger.error(f"Erro ao replanejar tarefa: {e}")

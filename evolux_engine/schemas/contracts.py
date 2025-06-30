@@ -112,6 +112,13 @@ class ValidationResult(BaseModel):
     identified_issues: List[str] = Field(default_factory=list, description="Problemas identificados.")
     suggested_improvements: List[str] = Field(default_factory=list, description="Sugestões para a próxima iteração.")
     llm_metrics: Optional[LLMCallMetrics] = None
+    
+    # Campos adicionais para sistema de refinamento iterativo
+    quality_rating: Optional[float] = Field(default=None, ge=0.0, le=10.0, description="Nota de qualidade de 0-10")
+    critical_problems: List[str] = Field(default_factory=list, description="Problemas críticos que impedem o progresso")
+    reviewer_feedback: Optional[str] = Field(default=None, description="Feedback detalhado de revisor")
+    requires_iteration: bool = Field(default=False, description="Indica se precisa de outra iteração")
+    iteration_focus: Optional[str] = Field(default=None, description="Foco recomendado para próxima iteração")
 
 
 # --- Schemas de Tarefas (Task) ---
@@ -192,6 +199,7 @@ class Task(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     retries: int = Field(default=0)
     max_retries: int = Field(default=3)
+    replan_count: int = Field(default=0, description="Número de vezes que esta tarefa foi replanejada")
     assigned_agent_id: Optional[str] = None # Se diferentes agentes puderem pegar tarefas
     execution_history: List[ExecutionResult] = Field(default_factory=list, description="Histórico de tentativas de execução para esta tarefa.")
     validation_history: List[ValidationResult] = Field(default_factory=list, description="Histórico de validações para esta tarefa.")

@@ -4,6 +4,8 @@
 .env
 .env.local
 *.env
+*.zip
+/project_workspaces/*
 
 # Python
 __pycache__/

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The **Evolux Engine** is an autonomous AI orchestration system designed to function as a "digital software engineering brain". It transforms high-level project goals into complete, validated deliverables through iterative, autonomous execution without continuous human supervision.
 
-The system implements a **P.O.D.A. cognitive cycle** (Plan, Orient, Decide, Act) with strict modular architecture, defense-in-depth security, and comprehensive observability. The goal is to achieve the complete specification outlined in `readme.md` - an enterprise-grade autonomous software development platform.
+The system implements a **P.O.D.A. cognitive cycle** (Plan, Orient, Decide, Act) with strict modular architecture, defense-in-depth security, and comprehensive observability. The goal is to achieve the complete specification outlined in `especificacao.md` - an enterprise-grade autonomous software development platform.
 
 ## Key Commands
 

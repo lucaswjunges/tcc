@@ -157,11 +157,30 @@ class Orchestrator:
                     # Lógica de replanejamento seria acionada aqui
                     error_feedback = (f"Tarefa '{current_task.description}' falhou após {current_task.retries} tentativas. "
                                       f"Último erro: {validation_result.identified_issues}")
-                    new_tasks = await self.planner_agent.replan_task(current_task, error_feedback)
-                    if new_tasks:
-                        # Substituir a tarefa antiga pelas novas
+                    
+                    # Limite de replanejamentos para evitar loops infinitos
+                    replan_count = getattr(current_task, 'replan_count', 0)
+                    if replan_count >= 3:  # Máximo 3 replanejamentos
+                        logger.error(f"Tarefa {current_task.task_id} excedeu limite de replanejamentos. Marcando como falha crítica.")
+                        current_task.status = TaskStatus.FAILED
                         self.project_context.task_queue = [t for t in self.project_context.task_queue if t.task_id != current_task.task_id]
-                        self.project_context.task_queue = new_tasks + self.project_context.task_queue
+                        self.project_context.failed_tasks.append(current_task)
+                    else:
+                        new_tasks = await self.planner_agent.replan_task(current_task, error_feedback)
+                        if new_tasks:
+                            # Propagar contador de replanejamento
+                            for new_task in new_tasks:
+                                new_task.replan_count = replan_count + 1
+                            
+                            # Substituir a tarefa antiga pelas novas
+                            self.project_context.task_queue = [t for t in self.project_context.task_queue if t.task_id != current_task.task_id]
+                            self.project_context.task_queue = new_tasks + self.project_context.task_queue
+                            logger.info(f"Tarefa replanejada ({replan_count + 1}/3): {len(new_tasks)} novas tarefas criadas")
+                        else:
+                            logger.error(f"Falha no replanejamento da tarefa {current_task.task_id}. Marcando como falha.")
+                            current_task.status = TaskStatus.FAILED
+                            self.project_context.task_queue = [t for t in self.project_context.task_queue if t.task_id != current_task.task_id]
+                            self.project_context.failed_tasks.append(current_task)
                 else:
                     logger.info(f"Tarefa {current_task.task_id} será tentada novamente.")
                     current_task.status = TaskStatus.PENDING # Volta para a fila

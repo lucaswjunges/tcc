@@ -53,21 +53,31 @@ def init_logging(log_dir: str, console_level: str = "INFO", file_level: str = "D
             cache_logger_on_first_use=True,
         )
 
-        # Configure separate log levels for different outputs
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setLevel(console_level)
-        console_handler.setFormatter(logging.Formatter("%(message)s"))
-
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setLevel(file_level)
-        file_handler.setFormatter(logging.Formatter("%(message)s"))
-
+        # Verificar se já tem handlers para evitar duplicação
         root_logger = logging.getLogger()
+        
+        # Limpar handlers existentes para evitar duplicação
+        if root_logger.handlers:
+            # Não usar logger antes da inicialização completa
+            print("Handlers já existem, limpando para evitar duplicação")
+            root_logger.handlers.clear()
+        
+        # Configurar nível do root logger
         root_logger.setLevel(min(
             getattr(logging, console_level),
             getattr(logging, file_level)
         ))
+        
+        # Configurar handler de console apenas se necessário
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(console_level)
+        console_handler.setFormatter(logging.Formatter("%(message)s"))
         root_logger.addHandler(console_handler)
+        
+        # Configurar handler de arquivo apenas se necessário
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(file_level)
+        file_handler.setFormatter(logging.Formatter("%(message)s"))
         root_logger.addHandler(file_handler)
 
         log.info(
