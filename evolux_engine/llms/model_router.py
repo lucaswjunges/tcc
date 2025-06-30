@@ -129,36 +129,70 @@ class ModelRouter:
             capabilities=[TaskCategory.PLANNING, TaskCategory.DOCUMENTATION, TaskCategory.GENERIC],
             quality_tier=2
         )
+        
+        # Gemini 2.5 Flash - Fast and efficient model for most tasks
+        self.available_models["gemini-2.5-flash"] = ModelInfo(
+            name="gemini-2.5-flash",
+            provider=LLMProvider.GOOGLE,
+            max_tokens=32000,
+            cost_per_1k_tokens=0.002,  # Much more cost-effective than Pro
+            capabilities=[TaskCategory.CODE_GENERATION, TaskCategory.PLANNING, TaskCategory.VALIDATION, 
+                         TaskCategory.ERROR_ANALYSIS, TaskCategory.DOCUMENTATION, TaskCategory.GENERIC],
+            quality_tier=1  # High quality tier with better speed
+        )
+        
+        # Gemini 2.5 Pro - Premium model for complex tasks (keeping as fallback)
+        self.available_models["gemini-2.5-pro"] = ModelInfo(
+            name="gemini-2.5-pro",
+            provider=LLMProvider.GOOGLE,
+            max_tokens=32000,
+            cost_per_1k_tokens=0.01,  # Premium pricing
+            capabilities=[TaskCategory.CODE_GENERATION, TaskCategory.PLANNING, TaskCategory.VALIDATION, 
+                         TaskCategory.ERROR_ANALYSIS, TaskCategory.DOCUMENTATION, TaskCategory.GENERIC],
+            quality_tier=1  # Highest quality tier
+        )
     
     def _initialize_fallback_chains(self):
         """Define cadeias de fallback por categoria"""
         self.fallback_chain = {
             TaskCategory.CODE_GENERATION: [
+                "gemini-2.5-flash",  # Fast and efficient for most code generation
+                "gemini-2.5-pro",   # Fallback to Pro for complex cases
                 "claude-3-haiku-20240307",
                 "gpt-4o-mini", 
                 "deepseek/deepseek-r1-0528-qwen3-8b:free"
             ],
             TaskCategory.PLANNING: [
+                "gemini-2.5-flash",  # Fast planning with excellent quality
+                "gemini-2.5-pro",   # For complex planning scenarios
                 "gpt-4o-mini",
                 "gemini-1.5-flash",
                 "deepseek/deepseek-r1-0528-qwen3-8b:free"
             ],
             TaskCategory.VALIDATION: [
+                "gemini-2.5-flash",  # Fast validation with strong reasoning
+                "gemini-2.5-pro",   # For complex validation cases
                 "claude-3-haiku-20240307",
                 "gpt-4o-mini",
                 "deepseek/deepseek-r1-0528-qwen3-8b:free"
             ],
             TaskCategory.ERROR_ANALYSIS: [
+                "gemini-2.5-flash",  # Excellent for error analysis with speed
+                "gemini-2.5-pro",   # For very complex error scenarios
                 "gpt-4o-mini",
                 "claude-3-haiku-20240307",
                 "deepseek/deepseek-r1-0528-qwen3-8b:free"
             ],
             TaskCategory.DOCUMENTATION: [
+                "gemini-2.5-flash",  # Great for fast documentation generation
+                "gemini-2.5-pro",   # For comprehensive documentation
                 "gemini-1.5-flash",
                 "gpt-3.5-turbo",
                 "deepseek/deepseek-r1-0528-qwen3-8b:free"
             ],
             TaskCategory.GENERIC: [
+                "gemini-2.5-flash",  # Primary general purpose model
+                "gemini-2.5-pro",   # Fallback for complex generic tasks
                 "deepseek/deepseek-r1-0528-qwen3-8b:free",
                 "gemini-1.5-flash",
                 "gpt-3.5-turbo"
@@ -240,7 +274,17 @@ class ModelRouter:
                           category: TaskCategory) -> str:
         """Seleciona modelo baseado em qualidade máxima"""
         
-        # Primeiro por tier de qualidade, depois por performance
+        # Prefer Gemini 2.5 Flash first (optimal balance of speed and quality)
+        for model_name, model_info in models:
+            if model_name == "gemini-2.5-flash":
+                return model_name
+        
+        # Then prefer Gemini 2.5 Pro if Flash not available
+        for model_name, model_info in models:
+            if model_name == "gemini-2.5-pro":
+                return model_name
+        
+        # Fallback to original logic if no Gemini models available
         quality_sorted = sorted(models, key=lambda x: (x[1].quality_tier, -self._get_performance(x[0], category).success_rate))
         return quality_sorted[0][0]
     

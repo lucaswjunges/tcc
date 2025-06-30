@@ -13,7 +13,8 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # Agora, importa os componentes da nova arquitetura
 from evolux_engine.services.config_manager import ConfigManager
-from evolux_engine.services.context_manager import ContextManager
+from evolux_engine.services.advanced_context_manager import AdvancedContextManager
+from evolux_engine.config.advanced_config import AdvancedSystemConfig
 from evolux_engine.core.orchestrator import Orchestrator
 from evolux_engine.services.observability_service import init_logging, get_logger
 
@@ -44,8 +45,9 @@ async def main():
     parser.add_argument("--project-id", type=str, help="ID de um projeto existente para continuar trabalhando nele.")
     args = parser.parse_args()
 
-    # 4. Cria ou carrega o contexto do projeto
-    context_manager = ContextManager(base_dir=config.project_base_directory)
+    # 4. Cria ou carrega o contexto do projeto usando AdvancedContextManager
+    advanced_config = AdvancedSystemConfig()
+    context_manager = AdvancedContextManager(config=advanced_config)
     project_context = None
 
     if args.project_id:

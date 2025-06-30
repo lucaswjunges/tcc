@@ -29,7 +29,9 @@ from evolux_engine.schemas.contracts import (
 )
 from evolux_engine.services.file_service import FileService
 from evolux_engine.services.shell_service import ShellService # Assumindo que ele retorna um dict com stdout, stderr, exit_code
-# from evolux_engine.services.security_gateway import SecurityGateway # A ser implementado
+from evolux_engine.security.security_gateway import SecurityGateway
+from evolux_engine.execution.secure_executor import SecureExecutor
+from evolux_engine.llms.model_router import ModelRouter
 
 # Prompts do executor_prompts.py
 from .executor_prompts import (
@@ -55,8 +57,10 @@ class TaskExecutorAgent:
         project_context: ProjectContext,
         file_service: FileService,
         shell_service: ShellService,
-        # security_gateway: SecurityGateway, # Adicionar quando implementado
-        agent_id: str,
+        security_gateway: Optional[SecurityGateway] = None,
+        secure_executor: Optional[SecureExecutor] = None,
+        model_router: Optional[ModelRouter] = None,
+        agent_id: str = "task_executor",
         enable_iterative_refinement: bool = True,
         reviewer_llm_client: Optional[LLMClient] = None,
         validator_llm_client: Optional[LLMClient] = None
@@ -65,7 +69,9 @@ class TaskExecutorAgent:
         self.project_context = project_context
         self.file_service = file_service
         self.shell_service = shell_service
-        # self.security_gateway = security_gateway
+        self.security_gateway = security_gateway
+        self.secure_executor = secure_executor
+        self.model_router = model_router
         self.agent_id = agent_id
         self.enable_refinement = enable_iterative_refinement
         
@@ -86,6 +92,114 @@ class TaskExecutorAgent:
         logger.info(
             f"TaskExecutorAgent (ID: {self.agent_id}) inicializado para o projeto ID: {self.project_context.project_id}. Refinamento iterativo: {self.enable_refinement}"
         )
+    
+    def _build_project_context(self, task: Task) -> str:
+        """Constrói contexto rico do projeto para injetar nas LLMs"""
+        context_parts = []
+        
+        # Objetivo do projeto
+        context_parts.append(f"OBJETIVO DO PROJETO: {self.project_context.project_goal}")
+        
+        # Tipo de projeto
+        if self.project_context.project_type:
+            context_parts.append(f"TIPO: {self.project_context.project_type}")
+        
+        # Arquivos já existentes
+        existing_files = self._get_existing_files_summary()
+        if existing_files:
+            context_parts.append(f"ARQUIVOS EXISTENTES:\n{existing_files}")
+        
+        # Tarefas concluídas relacionadas
+        related_tasks = self._get_related_completed_tasks(task)
+        if related_tasks:
+            context_parts.append(f"TAREFAS RELACIONADAS CONCLUÍDAS:\n{related_tasks}")
+        
+        # Padrões identificados no projeto
+        patterns = self._identify_project_patterns()
+        if patterns:
+            context_parts.append(f"PADRÕES DO PROJETO:\n{patterns}")
+        
+        return "\n\n".join(context_parts)
+    
+    def _get_existing_files_summary(self) -> str:
+        """Retorna resumo dos arquivos existentes com conteúdo relevante"""
+        if not self.project_context.artifacts_state:
+            return "Nenhum arquivo criado ainda."
+        
+        summary_lines = []
+        artifacts_dir = self.project_context.workspace_path / "artifacts"
+        
+        for file_path, artifact_state in self.project_context.artifacts_state.items():
+            summary_lines.append(f"- {file_path}")
+            
+            # Adicionar resumo do conteúdo se for arquivo pequeno
+            try:
+                full_path = artifacts_dir / file_path
+                if full_path.exists() and full_path.stat().st_size < 1000:  # Só arquivos pequenos
+                    content = full_path.read_text(encoding='utf-8')
+                    if file_path.endswith('.py'):
+                        # Extrair imports e classes/funções principais
+                        lines = content.split('\n')
+                        imports = [line.strip() for line in lines if line.strip().startswith(('import ', 'from '))]
+                        classes = [line.strip() for line in lines if line.strip().startswith('class ')]
+                        functions = [line.strip() for line in lines if line.strip().startswith('def ')]
+                        
+                        if imports:
+                            summary_lines.append(f"  Imports: {', '.join(imports[:3])}")
+                        if classes:
+                            summary_lines.append(f"  Classes: {', '.join([c.split('(')[0].replace('class ', '') for c in classes])}")
+                        if functions:
+                            summary_lines.append(f"  Funções: {', '.join([f.split('(')[0].replace('def ', '') for f in functions[:3]])}")
+            except:
+                pass  # Ignora erros de leitura
+        
+        return '\n'.join(summary_lines)
+    
+    def _get_related_completed_tasks(self, current_task: Task) -> str:
+        """Identifica tarefas concluídas relacionadas à tarefa atual"""
+        if not self.project_context.completed_tasks:
+            return ""
+        
+        related_lines = []
+        current_keywords = set(current_task.description.lower().split())
+        
+        for task in self.project_context.completed_tasks[-5:]:  # Últimas 5 tarefas
+            task_keywords = set(task.description.lower().split())
+            overlap = current_keywords & task_keywords
+            
+            if len(overlap) >= 2:  # Pelo menos 2 palavras em comum
+                related_lines.append(f"- {task.description} ✓")
+                if hasattr(task.details, 'file_path'):
+                    related_lines.append(f"  Arquivo: {task.details.file_path}")
+        
+        return '\n'.join(related_lines) if related_lines else ""
+    
+    def _identify_project_patterns(self) -> str:
+        """Identifica padrões no projeto baseado nos arquivos existentes"""
+        patterns = []
+        
+        if not self.project_context.artifacts_state:
+            return ""
+        
+        file_paths = list(self.project_context.artifacts_state.keys())
+        
+        # Padrão Flask
+        if any('app.py' in path for path in file_paths):
+            patterns.append("- Aplicação Flask detectada")
+            if any('models.py' in path for path in file_paths):
+                patterns.append("- Arquitetura MVC com modelos separados")
+            if any('templates/' in path for path in file_paths):
+                patterns.append("- Templates HTML organizados em diretório")
+        
+        # Padrão de dependências
+        if any('requirements.txt' in path for path in file_paths):
+            patterns.append("- Gerenciamento de dependências Python")
+        
+        # Padrão de documentação
+        if any('README.md' in path for path in file_paths):
+            patterns.append("- Documentação do projeto presente")
+        
+        return '\n'.join(patterns) if patterns else ""
 
     async def _invoke_llm_for_json_output(
         self,
@@ -105,15 +219,55 @@ class TaskExecutorAgent:
             model_to_use = self.project_context.engine_config.default_executor_model or \
                            self.executor_llm.model_name # Fallback para o modelo padrão do cliente
             
-            # Usar timeout e parâmetros otimizados para performance
-            llm_response_text = await asyncio.wait_for(
-                self.executor_llm.generate_response(
-                    messages,
-                    max_tokens=2048,  # Reduzido para melhor performance
-                    temperature=0.3   # Mais determinístico
-                ),
-                timeout=60.0  # Timeout de 1 minuto
-            )
+            # Tentar com modelo principal primeiro, depois fallback se falhar
+            llm_response_text = None
+            
+            try:
+                # Usar timeout e parâmetros otimizados para performance
+                llm_response_text = await asyncio.wait_for(
+                    self.executor_llm.generate_response(
+                        messages,
+                        max_tokens=2048,  # Reduzido para melhor performance
+                        temperature=0.3   # Mais determinístico
+                    ),
+                    timeout=60.0  # Timeout de 1 minuto
+                )
+            except Exception as e:
+                logger.warning(f"Modelo principal {self.executor_llm.model_name} falhou: {str(e)[:100]}...")
+                
+                # Tentar modelo de fallback se disponível
+                from evolux_engine.llms.model_router import ModelRouter, TaskCategory
+                router = ModelRouter()
+                fallback_model = router.get_fallback_model(self.executor_llm.model_name, TaskCategory.CODE_GENERATION)
+                
+                if fallback_model and fallback_model != self.executor_llm.model_name:
+                    logger.info(f"Tentando modelo de fallback: {fallback_model}")
+                    try:
+                        # Criar cliente temporário para fallback
+                        from evolux_engine.llms.llm_client import LLMClient
+                        from evolux_engine.services.config_manager import ConfigManager
+                        
+                        config_manager = ConfigManager()
+                        fallback_provider = router.available_models[fallback_model].provider
+                        fallback_api_key = config_manager.get_api_key(fallback_provider)
+                        
+                        if fallback_api_key:
+                            fallback_client = LLMClient(
+                                provider=fallback_provider,
+                                api_key=fallback_api_key,
+                                model_name=fallback_model
+                            )
+                            
+                            llm_response_text = await asyncio.wait_for(
+                                fallback_client.generate_response(messages, max_tokens=2048, temperature=0.3),
+                                timeout=60.0
+                            )
+                            logger.info(f"Sucesso com modelo de fallback: {fallback_model}")
+                    except Exception as fallback_error:
+                        logger.error(f"Fallback também falhou: {str(fallback_error)[:100]}...")
+                
+                if not llm_response_text:
+                    raise e  # Re-raise original exception if fallback also failed
             latency_ms = int((asyncio.get_event_loop().time() - start_time) * 1000)
 
             # TODO: Registrar LLMCallMetrics no ProjectContext.iteration_history
@@ -178,16 +332,16 @@ class TaskExecutorAgent:
 
         full_file_path = self.project_context.get_artifact_path(details.file_path)
         
-        # Preparar contexto para o LLM de geração de conteúdo
-        # TODO: Melhorar obtenção de contexto de dependências ou arquivos relevantes
-        existing_artifacts_summary = self.project_context.get_artifacts_structure_summary()
-
+        # Construir contexto rico do projeto
+        project_context_str = self._build_project_context(task)
+        
         user_prompt = get_file_content_generation_prompt(
             file_path=details.file_path,
             guideline=details.content_guideline,
             project_goal=self.project_context.project_goal,
             project_type=self.project_context.project_type,
-            existing_artifacts_summary=existing_artifacts_summary
+            existing_artifacts_summary=self.project_context.get_artifacts_structure_summary(),
+            project_context=project_context_str
         )
         messages = [{"role": "system", "content": FILE_MANIPULATION_SYSTEM_PROMPT}, {"role": "user", "content": user_prompt}]
 
@@ -305,10 +459,16 @@ class TaskExecutorAgent:
         
         logger.info(f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): Comando gerado pela LLM: '{command_to_execute}'")
 
-        # TODO: Integração com SecurityGateway
-        # if not await self.security_gateway.is_command_safe(command_to_execute, details.working_directory):
-        #     logger.error(f"TaskExecutor: Comando '{command_to_execute}' bloqueado pelo SecurityGateway.")
-        #     return ExecutionResult(command_executed=command_to_execute, exit_code=1, stderr="Comando bloqueado por razões de segurança.")
+        # Integração com SecurityGateway para validação de comando
+        if self.security_gateway:
+            try:
+                is_safe = await self.security_gateway.is_command_safe(command_to_execute, details.working_directory)
+                if not is_safe:
+                    logger.error(f"TaskExecutor: Comando '{command_to_execute}' bloqueado pelo SecurityGateway.")
+                    return ExecutionResult(command_executed=command_to_execute, exit_code=1, stderr="Comando bloqueado por razões de segurança.")
+            except Exception as e:
+                logger.warning(f"Erro no SecurityGateway, permitindo comando: {e}")
+                # Em caso de erro no gateway, ser permissivo mas logar
 
         try:
             working_dir = self.project_context.get_project_path("artifacts") # Comando executa na pasta artifacts
@@ -323,11 +483,27 @@ class TaskExecutorAgent:
             # Capturar estado dos artefatos ANTES do comando (para diff simples)
             # hashes_before = {p: s.hash for p, s in self.project_context.artifacts_state.items() if s.hash}
 
-            shell_result = await self.shell_service.execute_command(
-                command_to_execute,
-                working_directory=working_dir,
-                timeout=details.timeout_seconds
-            )
+            # Usar SecureExecutor se disponível, senão fallback para shell_service
+            if self.secure_executor:
+                try:
+                    shell_result = await self.secure_executor.execute_secure_command(
+                        command_to_execute,
+                        working_directory=working_dir,
+                        timeout_seconds=details.timeout_seconds
+                    )
+                except Exception as e:
+                    logger.warning(f"Erro no SecureExecutor, usando shell_service: {e}")
+                    shell_result = await self.shell_service.execute_command(
+                        command_to_execute,
+                        working_directory=working_dir,
+                        timeout=details.timeout_seconds
+                    )
+            else:
+                shell_result = await self.shell_service.execute_command(
+                    command_to_execute,
+                    working_directory=working_dir,
+                    timeout=details.timeout_seconds
+                )
             
             # Capturar estado dos artefatos DEPOIS e calcular diff
             # Esta é uma forma simplificada. Idealmente, o ShellService ou SecureExecutor poderiam

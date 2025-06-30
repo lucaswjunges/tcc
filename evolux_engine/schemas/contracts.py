@@ -379,13 +379,14 @@ class GlobalConfig(BaseSettings):
 
     project_base_dir: str = Field(default=os.path.join(os.getcwd(), "project_workspaces"), env="EVOLUX_PROJECT_BASE_DIR")
     
-    default_llm_provider: LLMProvider = Field(default=LLMProvider.OPENROUTER, env="EVOLUX_LLM_PROVIDER")
+    default_llm_provider: LLMProvider = Field(default=LLMProvider.GOOGLE, env="EVOLUX_LLM_PROVIDER")
     
     # Modelos padrão para diferentes funções (usados se não especificados no ProjectContext.engine_config)
-    default_model_planner: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free", env="EVOLUX_MODEL_PLANNER")
-    default_model_executor_content_gen: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free", env="EVOLUX_MODEL_EXECUTOR_CONTENT_GEN")
-    default_model_executor_command_gen: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free", env="EVOLUX_MODEL_EXECUTOR_COMMAND_GEN")
-    default_model_validator: str = Field(default="deepseek/deepseek-r1-0528-qwen3-8b:free", env="EVOLUX_MODEL_VALIDATOR")
+    # Using Gemini 2.5 Flash as optimal default model for all tasks (fast + high quality)
+    default_model_planner: str = Field(default="gemini-2.5-flash", env="EVOLUX_MODEL_PLANNER")
+    default_model_executor_content_gen: str = Field(default="gemini-2.5-flash", env="EVOLUX_MODEL_EXECUTOR_CONTENT_GEN")
+    default_model_executor_command_gen: str = Field(default="gemini-2.5-flash", env="EVOLUX_MODEL_EXECUTOR_COMMAND_GEN")
+    default_model_validator: str = Field(default="gemini-2.5-flash", env="EVOLUX_MODEL_VALIDATOR")
 
     max_concurrent_tasks: int = Field(default=1, env="EVOLUX_MAX_CONCURRENT_TASKS") # Começar com 1 para simplicidade
     logging_level: str = Field(default="INFO", env="EVOLUX_LOGGING_LEVEL")

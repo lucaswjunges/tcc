@@ -19,17 +19,27 @@ def get_file_content_generation_prompt(
     guideline: str,
     project_goal: str,
     project_type: str,
-    existing_artifacts_summary: str
+    existing_artifacts_summary: str,
+    project_context: str = ""
 ) -> str:
+    context_section = f"\n\nCONTEXTO DETALHADO DO PROJETO:\n{project_context}" if project_context else ""
+    
     return f"""
 Gere o conteúdo para o arquivo: {file_path}
 
-Diretriz: {guideline}
+DIRETRIZ ESPECÍFICA: {guideline}
 
-Contexto do projeto:
+CONTEXTO BÁSICO:
 - Objetivo: {project_goal}
 - Tipo: {project_type}
-- Artefatos existentes: {existing_artifacts_summary}
+- Artefatos existentes: {existing_artifacts_summary}{context_section}
+
+INSTRUÇÕES IMPORTANTES:
+1. Considere TODOS os arquivos já existentes para manter consistência
+2. Use os mesmos nomes de classes/funções já definidos em outros arquivos
+3. Mantenha o padrão arquitetural identificado no projeto
+4. Certifique-se de que imports sejam consistentes com arquivos existentes
+5. Se for um arquivo Python, verifique a sintaxe e imports corretos
 
 Retorne a resposta em formato JSON:
 {{

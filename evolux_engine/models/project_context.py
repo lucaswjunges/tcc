@@ -44,6 +44,7 @@ class ProjectContext(BaseModel):
     # Filas de tarefas
     task_queue: List[Task] = Field(default_factory=list)
     completed_tasks: List[Task] = Field(default_factory=list)
+    failed_tasks: List[Task] = Field(default_factory=list)
     
     # Estado dos artefatos
     artifacts_state: Dict[str, ArtifactState] = Field(default_factory=dict)

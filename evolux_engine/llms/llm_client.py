@@ -15,7 +15,7 @@ class LLMClient:
         model_name: str,
         provider: Union[str, LLMProvider],
         api_base_url: Optional[str] = None,
-        timeout: int = 180,
+        timeout: int = 60,  # Timeout reduzido para 60s
         http_referer: Optional[str] = None,
         x_title: Optional[str] = None,
     ):
@@ -65,9 +65,29 @@ class LLMClient:
             await self._async_client.aclose()
 
     async def _generate_gemini_response(self, messages: List[Dict[str, str]]) -> Optional[str]:
-        gemini_messages = [{'role': "model" if msg["role"] == "assistant" else msg["role"], 'parts': [msg['content']]} for msg in messages]
+        # Convert messages to Gemini format - combine system messages with user content
+        gemini_messages = []
+        system_content = ""
+        
+        for msg in messages:
+            if msg["role"] == "system":
+                system_content += msg["content"] + "\n\n"
+            elif msg["role"] == "assistant":
+                gemini_messages.append({'role': "model", 'parts': [msg['content']]})
+            elif msg["role"] == "user":
+                # Prepend system content to first user message if exists
+                content = msg["content"]
+                if system_content and not gemini_messages:
+                    content = system_content + content
+                    system_content = ""  # Only add once
+                gemini_messages.append({'role': "user", 'parts': [content]})
+        
+        # If no user messages but have system content, create a user message
+        if system_content and not any(msg['role'] == 'user' for msg in gemini_messages):
+            gemini_messages.append({'role': "user", 'parts': [system_content + "Please provide your response."]})
+        
         try:
-            logger.debug(f"Enviando requisição para Gemini: Modelo='{self.model_name}'")
+            logger.debug(f"Enviando requisição para Gemini: Modelo='{self.model_name}', Messages={len(gemini_messages)}")
             response = await self._gemini_model.generate_content_async(gemini_messages)
             return response.text
         except Exception:

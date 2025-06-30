@@ -125,7 +125,7 @@ class IntelligentProjectScaffolding:
             ],
             ProjectType.API_SERVICE: [
                 "api", "rest", "graphql", "service", "backend", "microservice",
-                "endpoint", "server", "rest api", "web service"
+                "endpoint", "server", "rest api", "web service", "express api"
             ],
             ProjectType.CLI_TOOL: [
                 "cli", "command line", "terminal", "console", "script",
@@ -395,11 +395,11 @@ class IntelligentProjectScaffolding:
         # Selecionar tipo com maior score
         best_project_type = max(project_type_scores.items(), key=lambda x: x[1])[0] if project_type_scores else ProjectType.WEB_APPLICATION
         
-        # Recomendar framework
-        recommended_frameworks = self.framework_recommendations.get(best_project_type, [Framework.VANILLA])
-        
         # Detectar linguagem preferida
         language = self._detect_language_preference(goal_lower)
+        
+        # Recomendar framework baseado no contexto e linguagem
+        recommended_frameworks = self._get_frameworks_for_language_and_type(language, best_project_type, goal_lower)
         
         # Detectar funcionalidades específicas
         features = self._detect_required_features(goal_lower)
@@ -421,21 +421,92 @@ class IntelligentProjectScaffolding:
     def _detect_language_preference(self, goal: str) -> str:
         """Detecta preferência de linguagem no goal"""
         language_keywords = {
-            "python": ["python", "flask", "django", "fastapi", "jupyter", "pandas"],
-            "javascript": ["javascript", "js", "react", "vue", "node", "express"],
-            "typescript": ["typescript", "ts", "angular"],
-            "java": ["java", "spring", "maven", "gradle"],
-            "csharp": ["c#", "csharp", ".net", "dotnet"],
+            "python": ["python", "flask", "django", "fastapi", "jupyter", "pandas", "py"],
+            "javascript": ["javascript", "js", "react", "vue", "node", "express", "npm"],
+            "typescript": ["typescript", "ts", "angular", "tsx"],
+            "java": ["java", "spring", "maven", "gradle", "kotlin"],
+            "csharp": ["c#", "csharp", ".net", "dotnet", "asp.net"],
             "go": ["go", "golang"],
-            "rust": ["rust"],
-            "php": ["php", "laravel", "symfony"]
+            "rust": ["rust", "cargo"],
+            "php": ["php", "laravel", "symfony", "composer"],
+            "ruby": ["ruby", "rails", "gem"],
+            "cpp": ["c++", "cpp", "cmake", "g++"],
+            "c": ["c language", "gcc", "make"],
+            "swift": ["swift", "ios", "xcode"],
+            "dart": ["dart", "flutter"],
+            "scala": ["scala", "sbt"],
+            "elixir": ["elixir", "phoenix"],
+            "html": ["html", "css", "static", "webpage"],
+            "shell": ["bash", "shell", "script", "sh"]
         }
         
         for language, keywords in language_keywords.items():
             if any(keyword in goal for keyword in keywords):
                 return language
         
-        return "python"  # Default
+        return "generic"  # Default - will be determined by project context
+    
+    def _get_frameworks_for_language_and_type(self, language: str, project_type: ProjectType, goal: str) -> List[Framework]:
+        """Determina frameworks apropriados baseado na linguagem, tipo de projeto e contexto"""
+        
+        # Detectar frameworks específicos mencionados no goal
+        framework_keywords = {
+            "react": Framework.REACT,
+            "vue": Framework.VUE,
+            "angular": Framework.ANGULAR,
+            "nextjs": Framework.NEXTJS,
+            "express": Framework.EXPRESS,
+            "flask": Framework.FLASK,
+            "django": Framework.DJANGO,
+            "fastapi": Framework.FASTAPI,
+            "spring": Framework.VANILLA,  # Java Spring não está mapeado, usar VANILLA
+            "rails": Framework.VANILLA,   # Ruby Rails não está mapeado, usar VANILLA
+            "flutter": Framework.FLUTTER,
+            "electron": Framework.ELECTRON,
+            "streamlit": Framework.STREAMLIT,
+            "dash": Framework.DASH
+        }
+        
+        # Primeiro, verificar se algum framework foi mencionado explicitamente
+        for keyword, framework in framework_keywords.items():
+            if keyword in goal:
+                return [framework]
+        
+        # Caso contrário, usar mapeamento baseado em linguagem e tipo
+        language_framework_map = {
+            "javascript": {
+                ProjectType.WEB_APPLICATION: [Framework.REACT, Framework.VUE, Framework.NEXTJS],
+                ProjectType.API_SERVICE: [Framework.EXPRESS],
+                ProjectType.DESKTOP_APP: [Framework.ELECTRON],
+                ProjectType.MOBILE_APP: [Framework.REACT_NATIVE]
+            },
+            "typescript": {
+                ProjectType.WEB_APPLICATION: [Framework.REACT, Framework.ANGULAR, Framework.NEXTJS],
+                ProjectType.API_SERVICE: [Framework.EXPRESS],
+                ProjectType.DESKTOP_APP: [Framework.ELECTRON]
+            },
+            "python": {
+                ProjectType.WEB_APPLICATION: [Framework.FLASK, Framework.DJANGO],
+                ProjectType.API_SERVICE: [Framework.FASTAPI, Framework.FLASK, Framework.DJANGO],
+                ProjectType.DATA_SCIENCE: [Framework.JUPYTER, Framework.STREAMLIT, Framework.DASH],
+                ProjectType.DESKTOP_APP: [Framework.TKINTER]
+            },
+            "dart": {
+                ProjectType.MOBILE_APP: [Framework.FLUTTER],
+                ProjectType.WEB_APPLICATION: [Framework.FLUTTER]
+            },
+            "swift": {
+                ProjectType.MOBILE_APP: [Framework.VANILLA]
+            },
+            "java": {
+                ProjectType.API_SERVICE: [Framework.VANILLA],  # Spring Boot
+                ProjectType.WEB_APPLICATION: [Framework.VANILLA],
+                ProjectType.DESKTOP_APP: [Framework.VANILLA]
+            }
+        }
+        
+        frameworks = language_framework_map.get(language, {}).get(project_type, [Framework.VANILLA])
+        return frameworks if frameworks else [Framework.VANILLA]
     
     def _detect_required_features(self, goal: str) -> List[str]:
         """Detecta funcionalidades específicas requeridas"""
@@ -508,13 +579,12 @@ class IntelligentProjectScaffolding:
             description=f"Basic {project_type.value} project using {framework.value}",
             project_type=project_type,
             framework=framework,
-            language="python",  # Default
+            language="generic",  # Will be determined by context
             root_directory=DirectoryStructure(
                 name="project",
                 path=".",
                 files=[
-                    FileTemplate("README.md", "README.md", f"# {project_type.value.title()} Project\n\nGenerated with Evolux Engine"),
-                    FileTemplate("main.py", "main.py", "#!/usr/bin/env python3\n\ndef main():\n    print('Hello, World!')\n\nif __name__ == '__main__':\n    main()\n")
+                    FileTemplate("README.md", "README.md", f"# {project_type.value.title()} Project\n\nGenerated with Evolux Engine\n\n## Getting Started\n\nThis is a generic project template. Add your implementation based on your chosen technology stack.\n")
                 ]
             )
         )
@@ -560,12 +630,28 @@ class IntelligentProjectScaffolding:
             scaffold.dependencies.setdefault("python", []).extend([
                 "flask-login", "werkzeug", "python-jose"
             ])
+        elif scaffold.language == "javascript":
+            scaffold.dependencies.setdefault("npm", []).extend([
+                "jsonwebtoken", "bcryptjs", "passport"
+            ])
+        elif scaffold.language == "java":
+            scaffold.dependencies.setdefault("maven", []).extend([
+                "spring-security", "jwt"
+            ])
     
     def _add_database_feature(self, scaffold: ProjectScaffold):
         """Adiciona funcionalidade de banco de dados"""
         if scaffold.language == "python":
             scaffold.dependencies.setdefault("python", []).extend([
                 "sqlalchemy", "alembic"
+            ])
+        elif scaffold.language == "javascript":
+            scaffold.dependencies.setdefault("npm", []).extend([
+                "mongoose", "sequelize", "prisma"
+            ])
+        elif scaffold.language == "java":
+            scaffold.dependencies.setdefault("maven", []).extend([
+                "spring-data-jpa", "hibernate"
             ])
     
     def _add_testing_feature(self, scaffold: ProjectScaffold):
@@ -575,6 +661,16 @@ class IntelligentProjectScaffolding:
                 "pytest", "pytest-cov"
             ])
             scaffold.scripts["test"] = "pytest tests/ --cov"
+        elif scaffold.language == "javascript":
+            scaffold.dependencies.setdefault("npm", []).extend([
+                "jest", "mocha", "chai"
+            ])
+            scaffold.scripts["test"] = "npm test"
+        elif scaffold.language == "java":
+            scaffold.dependencies.setdefault("maven", []).extend([
+                "junit", "mockito"
+            ])
+            scaffold.scripts["test"] = "mvn test"
     
     def _add_deployment_feature(self, scaffold: ProjectScaffold):
         """Adiciona funcionalidade de deployment"""
@@ -1010,8 +1106,8 @@ export default App"""
 }"""
     
     def _get_dockerfile_template(self, language: str) -> str:
-        if language == "python":
-            return """FROM python:3.9-slim
+        templates = {
+            "python": """FROM python:3.9-slim
 
 WORKDIR /app
 
@@ -1022,9 +1118,9 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]"""
-        else:
-            return """FROM node:18-alpine
+CMD ["python", "app.py"]""",
+            
+            "javascript": """FROM node:18-alpine
 
 WORKDIR /app
 
@@ -1035,4 +1131,61 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "start"]"""
+CMD ["npm", "start"]""",
+            
+            "typescript": """FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json tsconfig.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+EXPOSE 3000
+
+CMD ["npm", "start"]""",
+            
+            "java": """FROM openjdk:17-jre-slim
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "app.jar"]""",
+            
+            "go": """FROM golang:1.19-alpine AS builder
+
+WORKDIR /app
+COPY . .
+RUN go mod download
+RUN go build -o main .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/main .
+
+EXPOSE 8080
+
+CMD ["./main"]""",
+            
+            "rust": """FROM rust:1.70 AS builder
+
+WORKDIR /app
+COPY . .
+RUN cargo build --release
+
+FROM debian:bookworm-slim
+WORKDIR /app
+COPY --from=builder /app/target/release/app .
+
+EXPOSE 8080
+
+CMD ["./app"]"""
+        }
+        
+        return templates.get(language, templates["javascript"])  # Default to Node.js

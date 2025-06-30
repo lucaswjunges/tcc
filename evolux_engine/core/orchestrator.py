@@ -13,6 +13,9 @@ from evolux_engine.services.file_service import FileService
 from evolux_engine.services.shell_service import ShellService
 from evolux_engine.services.backup_system import BackupSystem
 from evolux_engine.services.criteria_engine import CriteriaEngine
+from evolux_engine.security.security_gateway import SecurityGateway
+from evolux_engine.execution.secure_executor import SecureExecutor
+from evolux_engine.services.enterprise_observability import EnterpriseObservabilityService
 from .planner import PlannerAgent
 from .executor import TaskExecutorAgent
 from .validator import SemanticValidatorAgent
@@ -64,6 +67,17 @@ class Orchestrator:
         self.backup_system = BackupSystem()
         self.criteria_engine = CriteriaEngine()
         
+        # Inicializar componentes de segurança e observabilidade
+        from evolux_engine.security.security_gateway import SecurityLevel
+        security_level_str = self.config_manager.get_global_setting("security_level", "strict")
+        security_level = SecurityLevel(security_level_str)  # Convert string to enum
+        self.security_gateway = SecurityGateway(security_level=security_level)
+        self.secure_executor = SecureExecutor(security_gateway=self.security_gateway)
+        # Precisamos de uma instância do AdvancedSystemConfig para o observability
+        from evolux_engine.config.advanced_config import AdvancedSystemConfig
+        advanced_config = AdvancedSystemConfig()
+        self.observability = EnterpriseObservabilityService(config=advanced_config)
+        
         # Passando o project_context para o planner agent
         self.planner_agent = PlannerAgent(
             context_manager=None,
@@ -76,6 +90,9 @@ class Orchestrator:
             project_context=self.project_context,
             file_service=self.file_service,
             shell_service=self.shell_service,
+            security_gateway=self.security_gateway,
+            secure_executor=self.secure_executor,
+            model_router=self.model_router,
             agent_id=f"executor-{self.project_context.project_id}"
         )
         self.semantic_validator_agent = SemanticValidatorAgent(
@@ -150,10 +167,27 @@ class Orchestrator:
 
             # P.O.D.A. PHASE 4: ACT (Agir) - Execute, validate and learn
             logger.info(f"⚡ ACT: Executando tarefa {current_task.task_id}")
+            
+            # Métricas de observabilidade - início da execução
+            start_time = asyncio.get_event_loop().time()
+            if self.observability:
+                await self.observability.record_task_start(current_task.task_id, current_task.type.value)
+            
             execution_result = await self.task_executor_agent.execute_task(current_task)
 
             # Validar resultado (ainda parte da fase ACT)
             validation_result = await self.semantic_validator_agent.validate_task_output(current_task, execution_result)
+            
+            # Métricas de observabilidade - fim da execução
+            end_time = asyncio.get_event_loop().time()
+            execution_time = end_time - start_time
+            if self.observability:
+                await self.observability.record_task_completion(
+                    current_task.task_id, 
+                    validation_result.validation_passed,
+                    execution_time,
+                    execution_result.exit_code
+                )
             
             # 3. Decidir Próximo Passo
             if validation_result.validation_passed:
@@ -163,14 +197,16 @@ class Orchestrator:
                 self.project_context.completed_tasks.append(current_task)
                 self.project_context.task_queue = [t for t in self.project_context.task_queue if t.task_id != current_task.task_id]
             else:
-                logger.warning(f"Validação para tarefa {current_task.task_id} falhou: {validation_result.identified_issues}")
+                issues_str = ', '.join(validation_result.identified_issues) if validation_result.identified_issues else "Motivos não especificados"
+                logger.warning(f"Validação para tarefa {current_task.task_id} falhou: {issues_str}")
                 current_task.retries += 1
                 if current_task.retries >= current_task.max_retries:
                     logger.error(f"Tarefa {current_task.task_id} excedeu o máximo de tentativas.")
                     current_task.status = TaskStatus.FAILED
                     # Lógica de replanejamento seria acionada aqui
+                    issues_list = validation_result.identified_issues if validation_result.identified_issues else ["Falha na validação sem detalhes específicos"]
                     error_feedback = (f"Tarefa '{current_task.description}' falhou após {current_task.retries} tentativas. "
-                                      f"Último erro: {validation_result.identified_issues}")
+                                      f"Últimos erros: {', '.join(issues_list)}")
                     
                     # Limite de replanejamentos para evitar loops infinitos
                     replan_count = getattr(current_task, 'replan_count', 0)

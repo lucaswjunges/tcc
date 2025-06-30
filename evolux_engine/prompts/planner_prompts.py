@@ -15,7 +15,7 @@ As ferramentas disponíveis são:
 
 Diretrizes para o plano:
 - **Pense Passo a Passo:** Decomponha o problema em partes lógicas e pequenas. Não tente fazer tudo em uma única tarefa.
-- **Prepare o Ambiente Primeiro:** Para projetos de código, uma das primeiras tarefas deve ser criar um arquivo de dependências (como `requirements.txt` ou `package.json`). A tarefa seguinte deve ser um `EXECUTE_COMMAND` para instalar essas dependências.
+- **Prepare o Ambiente Primeiro:** Para projetos de código, uma das primeiras tarefas deve ser criar um arquivo de dependências apropriado para a linguagem (como `requirements.txt` para Python, `package.json` para Node.js, `Cargo.toml` para Rust, `go.mod` para Go, etc.). A tarefa seguinte deve ser um `EXECUTE_COMMAND` para instalar essas dependências usando o gerenciador de pacotes apropriado.
 - **Seja Incremental:** Crie a estrutura de arquivos e diretórios primeiro. Depois, preencha os arquivos com código. Comece com um código básico ("Hello World") e depois adicione funcionalidades mais complexas em tarefas `MODIFY_FILE` subsequentes.
 - **Execute e Valide:** Após escrever o código, use `EXECUTE_COMMAND` para rodar o programa ou seus testes. Use `VALIDATE_ARTIFACT` para verificar se a saída de um comando foi a esperada ou se um arquivo foi criado corretamente.
 - **Use Dependências Corretamente:** O campo `dependencies` é crucial. Uma tarefa não deve tentar compilar um código antes que o arquivo de código seja criado. A tarefa com `id: 2` que depende da tarefa `id: 1` deve ter `dependencies: ["task-uuid-1"]`.
@@ -24,7 +24,7 @@ Diretrizes para o plano:
 Schema JSON do Plano (lembre-se, APENAS O JSON na saída):
 {
   "project_goal": "O objetivo original do usuário",
-  "project_type": "Tipo de projeto inferido (ex: 'python_flask_app', 'static_html_website', 'latex_document')",
+  "project_type": "Tipo de projeto inferido (ex: 'web_application', 'api_service', 'cli_tool', 'static_website', 'mobile_app', 'desktop_app', 'documentation')",
   "task_queue": [
     {
       "task_id": "task-uuid-1",

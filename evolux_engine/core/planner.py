@@ -123,43 +123,166 @@ class PlannerAgent:
         return tasks
 
     def _get_blog_tasks(self) -> List[Task]:
-        """Tarefas específicas para sistemas de blog"""
+        """Tarefas específicas para sistemas de blog com dependências inteligentes"""
+        
+        # Task IDs para dependências
+        models_task_id = self._generate_next_id()
+        app_task_id = self._generate_next_id()
+        base_template_id = self._generate_next_id()
+        index_template_id = self._generate_next_id()
+        post_template_id = self._generate_next_id()
+        create_template_id = self._generate_next_id()
+        auth_forms_id = self._generate_next_id()
+        init_db_id = self._generate_next_id()
+        
         return [
+            # 1. Modelos primeiro (base de tudo)
             Task(
-                task_id=self._generate_next_id(),
-                description="Criar modelos para blog",
+                task_id=models_task_id,
+                description="Criar modelos de dados para blog",
                 type=TaskType.CREATE_FILE,
                 details=TaskDetailsCreateFile(
                     file_path="models.py",
-                    content_guideline="Modelos para blog: Post, Category, Tag, Comment, Author com relacionamentos"
+                    content_guideline="""Criar modelos Flask-SQLAlchemy para blog completo:
+                    - User (para autenticação): id, username, email, password_hash, posts, comments
+                    - Post: id, title, content, date_posted, author_id, comments
+                    - Comment: id, content, date_posted, author_id, post_id
+                    Incluir relacionamentos bidirecionais e métodos __repr__"""
                 ),
                 status=TaskStatus.PENDING,
                 dependencies=[],
-                acceptance_criteria="Modelos de blog implementados"
+                acceptance_criteria="Modelos User, Post, Comment definidos com relacionamentos corretos"
             ),
+            
+            # 2. Formulários de autenticação
             Task(
-                task_id=self._generate_next_id(),
-                description="Criar aplicação Flask para blog",
+                task_id=auth_forms_id,
+                description="Criar formulários de autenticação",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="forms.py",
+                    content_guideline="""Criar formulários Flask-WTF:
+                    - RegistrationForm: username, email, password, confirm_password
+                    - LoginForm: username, password, remember_me
+                    - PostForm: title, content
+                    - CommentForm: content
+                    Com validações apropriadas"""
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Formulários WTF para autenticação e posts criados"
+            ),
+            
+            # 3. Aplicação Flask (depende dos modelos)
+            Task(
+                task_id=app_task_id,
+                description="Criar aplicação Flask principal",
                 type=TaskType.CREATE_FILE,
                 details=TaskDetailsCreateFile(
                     file_path="app.py",
-                    content_guideline="Aplicação Flask com rotas para blog: listar posts, criar post, visualizar post, comentários"
+                    content_guideline="""Criar aplicação Flask completa com:
+                    - Configuração do banco de dados SQLite
+                    - Flask-Login para autenticação
+                    - Rotas: /, /register, /login, /logout, /post/<id>, /create_post, /post/<id>/comment
+                    - Importar modelos User, Post, Comment (não Author)
+                    - Usar formulários do forms.py
+                    - Implementar user_loader para Flask-Login"""
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[models_task_id, auth_forms_id],
+                acceptance_criteria="Aplicação Flask com autenticação e CRUD de posts funcionando"
+            ),
+            
+            # 4. Template base
+            Task(
+                task_id=base_template_id,
+                description="Criar template base HTML",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="templates/base.html",
+                    content_guideline="""Criar template base com:
+                    - DOCTYPE, html, head, body
+                    - Bootstrap CSS para styling
+                    - Navbar com links para Home, Login/Logout
+                    - Flash messages para feedbacks
+                    - Block content para outros templates estenderem
+                    - Sintaxe Jinja2 correta"""
                 ),
                 status=TaskStatus.PENDING,
                 dependencies=[],
-                acceptance_criteria="Aplicação Flask funcional para blog"
+                acceptance_criteria="Template base com navbar e sistema de mensagens criado"
             ),
+            
+            # 5. Templates específicos (dependem do base)
             Task(
-                task_id=self._generate_next_id(),
-                description="Criar templates para blog",
+                task_id=index_template_id,
+                description="Criar página inicial do blog",
                 type=TaskType.CREATE_FILE,
                 details=TaskDetailsCreateFile(
                     file_path="templates/index.html",
-                    content_guideline="Templates HTML para blog: página inicial com lista de posts, página de post individual"
+                    content_guideline="""Criar página inicial que:
+                    - Estende base.html
+                    - Lista todos os posts com título, autor e data
+                    - Links para visualizar posts individuais
+                    - Botão para criar novo post (se logado)
+                    - Usar sintaxe Jinja2 para loop de posts"""
                 ),
                 status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Templates HTML para blog criados"
+                dependencies=[base_template_id],
+                acceptance_criteria="Página inicial listando posts criada"
+            ),
+            
+            Task(
+                task_id=post_template_id,
+                description="Criar página de visualização de post",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="templates/post.html",
+                    content_guideline="""Criar página de post individual com:
+                    - Título e conteúdo do post
+                    - Informações do autor e data
+                    - Lista de comentários
+                    - Formulário para adicionar comentário (se logado)
+                    - Estender base.html"""
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[base_template_id],
+                acceptance_criteria="Página de post individual com comentários criada"
+            ),
+            
+            Task(
+                task_id=create_template_id,
+                description="Criar página de criação de post",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="templates/create_post.html",
+                    content_guideline="""Criar formulário de criação de post:
+                    - Estender base.html
+                    - Formulário com título e conteúdo
+                    - Validação cliente e servidor
+                    - Usar WTForms rendering"""
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[base_template_id],
+                acceptance_criteria="Formulário de criação de post criado"
+            ),
+            
+            # 6. Scripts de inicialização
+            Task(
+                task_id=init_db_id,
+                description="Criar script de inicialização do banco",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="init_db.py",
+                    content_guideline="""Criar script para:
+                    - Importar app e models
+                    - Criar todas as tabelas
+                    - Adicionar dados de exemplo (usuário admin, posts exemplo)
+                    - Poder ser executado independentemente"""
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[models_task_id, app_task_id],
+                acceptance_criteria="Script de inicialização que cria DB e dados exemplo"
             )
         ]
 

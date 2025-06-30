@@ -110,6 +110,7 @@ class EnterpriseObservabilityService:
         self._alert_rules: List[AlertRule] = []
         self._alert_history: deque = deque(maxlen=100)
         self._last_alerts: Dict[str, datetime] = {}
+        self._lock = threading.Lock()  # Thread safety for metrics
         
         # Performance tracking
         self._task_metrics = {
@@ -714,3 +715,36 @@ class EnterpriseObservabilityService:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager cleanup"""
         self.stop_monitoring()
+    
+    # Task-specific tracking methods expected by Orchestrator
+    async def record_task_start(self, task_id: str, task_type: str):
+        """Registra início de execução de tarefa"""
+        self._task_metrics['total_tasks'] += 1
+        self.record_metric(f"task.started.{task_type}", 1, MetricType.COUNTER, {"task_id": task_id})
+        logger.debug("Task started", task_id=task_id, task_type=task_type)
+    
+    async def record_task_completion(
+        self, 
+        task_id: str, 
+        success: bool, 
+        duration_seconds: float, 
+        exit_code: int
+    ):
+        """Registra completação de execução de tarefa"""
+        if success:
+            self._task_metrics['completed_tasks'] += 1
+            self.record_metric("task.completed", 1, MetricType.COUNTER, {"task_id": task_id})
+        else:
+            self._task_metrics['failed_tasks'] += 1
+            self.record_metric("task.failed", 1, MetricType.COUNTER, {"task_id": task_id, "exit_code": str(exit_code)})
+        
+        # Registrar duração
+        duration_ms = duration_seconds * 1000
+        self._task_metrics['task_durations'].append(duration_ms)
+        self.record_metric("task.duration_ms", duration_ms, MetricType.TIMER, {"task_id": task_id})
+        
+        logger.debug("Task completed", 
+                    task_id=task_id, 
+                    success=success, 
+                    duration_ms=duration_ms, 
+                    exit_code=exit_code)

@@ -316,6 +316,19 @@ class SecurityGateway:
         self.command_whitelist.discard(command)
         logger.info("Command removed from whitelist", command=command)
     
+    async def is_command_safe(
+        self, 
+        command: str, 
+        working_directory: Optional[str] = None
+    ) -> bool:
+        """
+        Interface simplificada para verificar se um comando é seguro.
+        Usado pelo TaskExecutorAgent.
+        """
+        context = {'working_directory': working_directory} if working_directory else None
+        result = await self.validate_command(command, context)
+        return result.is_safe
+    
     def get_security_stats(self) -> Dict[str, Any]:
         """Retorna estatísticas de segurança"""
         block_rate = (self.blocked_count / self.validation_count * 100) if self.validation_count > 0 else 0

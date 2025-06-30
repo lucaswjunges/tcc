@@ -89,7 +89,7 @@ class LLMFactory:
                 LLMConfiguration(
                     provider=LLMProvider.GOOGLE,
                     api_key=google_key,
-                    model_name="gemini-1.5-flash",
+                    model_name="gemini-2.5-flash",
                     timeout=config.request_timeout,
                     max_retries=config.max_retries
                 )
@@ -110,7 +110,7 @@ class LLMFactory:
                 LLMConfiguration(
                     provider=LLMProvider.OPENROUTER,
                     api_key=openrouter_key,
-                    model_name=config_manager.get_global_setting("default_model_executor", "deepseek/deepseek-r1-0528-qwen3-8b:free"),
+                    model_name=config_manager.get_global_setting("default_model_executor", "gemini-2.5-flash"),
                     api_base_url="https://openrouter.ai/api/v1",
                     http_referer=config_manager.get_global_setting("http_referer"),
                     x_title=config_manager.get_global_setting("x_title", "Evolux Engine")
@@ -138,13 +138,13 @@ class LLMFactory:
                 LLMConfiguration(
                     provider=LLMProvider.GOOGLE,
                     api_key=google_key,
-                    model_name="gemini-1.5-flash"
+                    model_name="gemini-2.5-flash"
                 )
             )
     
     async def create_client(self, 
                            task_category: TaskCategory = TaskCategory.GENERIC,
-                           prefer_cost_optimization: bool = True,
+                           prefer_cost_optimization: bool = False,
                            required_tokens: int = 2000,
                            force_model: Optional[str] = None) -> Optional[LLMClient]:
         """
@@ -249,7 +249,7 @@ class LLMFactory:
     
     async def create_client_with_fallback(self, 
                                         task_category: TaskCategory = TaskCategory.GENERIC,
-                                        prefer_cost_optimization: bool = True,
+                                        prefer_cost_optimization: bool = False,
                                         max_fallbacks: int = 3) -> Optional[LLMClient]:
         """
         Cria cliente com fallback automático em caso de falha.
