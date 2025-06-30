@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict, Any, Union
 from pydantic import BaseModel, Field, validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from enum import Enum
 import uuid
 from datetime import datetime
@@ -381,9 +381,9 @@ class GlobalConfig(BaseSettings):
     max_concurrent_tasks: int = Field(default=1, env="EVOLUX_MAX_CONCURRENT_TASKS") # Começar com 1 para simplicidade
     logging_level: str = Field(default="INFO", env="EVOLUX_LOGGING_LEVEL")
 
-    class Config:
-        env_file = ".env"
-        # --- CORREÇÃO: Removido o underscore '_' no final da linha ---
-        env_file_encoding = "utf-8"
-        extra = "ignore" # Ignora variáveis de ambiente extras
-        case_sensitive = False # Nomes de variáveis de ambiente são insensíveis a maiúsculas/minúsculas
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=False
+    )

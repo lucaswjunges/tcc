@@ -29,10 +29,31 @@ class ConfigManager:
         2. Usa Pydantic BaseSettings para parsear essas variáveis no schema GlobalConfig.
         3. (Opcional) Poderia carregar um arquivo YAML e fazer merge.
         """
-        load_dotenv() # Carrega variáveis do arquivo .env para o ambiente
+        # Carrega explicitamente o .env do diretório atual
+        import os
+        env_path = os.path.join(os.getcwd(), '.env')
+        load_dotenv(env_path) # Carrega variáveis do arquivo .env para o ambiente
+        
+        # Debug: mostra se as variáveis foram carregadas
+        logger.debug(f"EVOLUX_OPENROUTER_API_KEY loaded: {os.getenv('EVOLUX_OPENROUTER_API_KEY') is not None}")
+        logger.debug(f"EVOLUX_OPENAI_API_KEY loaded: {os.getenv('EVOLUX_OPENAI_API_KEY') is not None}")
+        logger.debug(f"EVOLUX_GOOGLE_API_KEY loaded: {os.getenv('EVOLUX_GOOGLE_API_KEY') is not None}")
 
         try:
+            # Força a criação do GlobalConfig com valores manuais se o Pydantic falhar
             self.global_config = GlobalConfig()
+            
+            # Se as chaves ainda estão None, force manualmente
+            if not self.global_config.evolux_openrouter_api_key:
+                self.global_config.evolux_openrouter_api_key = os.getenv('EVOLUX_OPENROUTER_API_KEY')
+            if not self.global_config.evolux_openai_api_key:
+                self.global_config.evolux_openai_api_key = os.getenv('EVOLUX_OPENAI_API_KEY')
+            if not self.global_config.evolux_google_api_key:
+                self.global_config.evolux_google_api_key = os.getenv('EVOLUX_GOOGLE_API_KEY')
+                
+            logger.debug(f"Final OpenRouter API key: {self.global_config.evolux_openrouter_api_key[:10] + '...' if self.global_config.evolux_openrouter_api_key else None}")
+            logger.debug(f"Final OpenAI API key: {self.global_config.evolux_openai_api_key[:10] + '...' if self.global_config.evolux_openai_api_key else None}")
+            logger.debug(f"Final Google API key: {self.global_config.evolux_google_api_key[:10] + '...' if self.global_config.evolux_google_api_key else None}")
 
             if config_file_path and os.path.exists(config_file_path):
                 try:
