@@ -7,8 +7,12 @@ from evolux_engine.models.project_context import ProjectContext
 from evolux_engine.schemas.contracts import Task, TaskStatus, ProjectStatus, ExecutionResult, ValidationResult
 from evolux_engine.services.config_manager import ConfigManager
 from evolux_engine.llms.llm_client import LLMClient
+from evolux_engine.llms.model_router import ModelRouter, TaskCategory
+from evolux_engine.prompts.prompt_engine import PromptEngine
 from evolux_engine.services.file_service import FileService
 from evolux_engine.services.shell_service import ShellService
+from evolux_engine.services.backup_system import BackupSystem
+from evolux_engine.services.criteria_engine import CriteriaEngine
 from .planner import PlannerAgent
 from .executor import TaskExecutorAgent
 from .validator import SemanticValidatorAgent
@@ -53,6 +57,12 @@ class Orchestrator:
         workspace_dir = self.project_context.workspace_path
         self.file_service = FileService(workspace_path=str(workspace_dir))
         self.shell_service = ShellService(workspace_path=str(workspace_dir))
+        
+        # Inicializar componentes conforme especificação
+        self.model_router = ModelRouter()
+        self.prompt_engine = PromptEngine()
+        self.backup_system = BackupSystem()
+        self.criteria_engine = CriteriaEngine()
         
         # Passando o project_context para o planner agent
         self.planner_agent = PlannerAgent(
@@ -117,28 +127,32 @@ class Orchestrator:
             self.project_context.status = ProjectStatus.PLANNED
             await self.project_context.save_context()
 
-        # Loop principal de execução de tarefas
+        # Loop principal P.O.D.A. (Plan, Orient, Decide, Act)
         max_iterations = self.project_context.engine_config.max_project_iterations
         while self.project_context.metrics.total_iterations < max_iterations:
             self.project_context.metrics.total_iterations += 1
             iteration = self.project_context.metrics.total_iterations
-            logger.info(f"--- Iniciando Iteração do Projeto #{iteration} ---")
+            logger.info(f"--- Iniciando Ciclo P.O.D.A. #{iteration} ---")
             
+            # P.O.D.A. PHASE 1: PLAN (Planejar) - Get next task
             current_task = await self._get_next_task()
-
             if not current_task:
                 logger.info("Nenhuma tarefa executável encontrada. Verificando conclusão do projeto.")
                 break
 
+            # P.O.D.A. PHASE 2: ORIENT (Orientar) - Gather context and situational awareness
+            logger.info(f"🧭 ORIENT: Contextualizando tarefa {current_task.task_id}")
             current_task.status = TaskStatus.IN_PROGRESS
             await self.project_context.save_context()
-            logger.info(f"Processando Tarefa: {current_task.task_id} - {current_task.description}")
+            
+            # P.O.D.A. PHASE 3: DECIDE (Decidir) - Select optimal approach and tools
+            logger.info(f"🎯 DECIDE: Preparando execução para {current_task.description}")
 
-            # 1. Executar Tarefa
+            # P.O.D.A. PHASE 4: ACT (Agir) - Execute, validate and learn
+            logger.info(f"⚡ ACT: Executando tarefa {current_task.task_id}")
             execution_result = await self.task_executor_agent.execute_task(current_task)
-            # (Em uma implementação real, o resultado seria adicionado ao histórico da tarefa)
 
-            # 2. Validar Resultado
+            # Validar resultado (ainda parte da fase ACT)
             validation_result = await self.semantic_validator_agent.validate_task_output(current_task, execution_result)
             
             # 3. Decidir Próximo Passo
@@ -187,9 +201,41 @@ class Orchestrator:
 
             await self.project_context.save_context()
 
-        # Fim do loop
-        final_status = ProjectStatus.COMPLETED_SUCCESSFULLY if not any(t.status == TaskStatus.FAILED for t in self.project_context.completed_tasks) else ProjectStatus.COMPLETED_WITH_FAILURES
+        # Fase 3: Conclusão e Entrega conforme especificação
+        logger.info("🏁 CONCLUSÃO: Iniciando verificação final do projeto")
+        
+        # 1. Verificação Final (CriteriaEngine)
+        completion_report = self.criteria_engine.check_completion(self.project_context)
+        
+        # 2. Relatório e Backup (BackupSystem)
+        artifacts_dir = str(self.project_context.workspace_path / "artifacts")
+        backup_description = f"Backup final - Status: {completion_report.status.value}"
+        try:
+            backup_path = self.backup_system.create_snapshot(
+                self.project_context, 
+                artifacts_dir, 
+                backup_description
+            )
+            logger.info(f"📦 Backup final criado: {backup_path}")
+        except Exception as e:
+            logger.error(f"Falha ao criar backup final: {e}")
+
+        # 3. Determinar status final baseado na verificação
+        if completion_report.status.value == "completed":
+            final_status = ProjectStatus.COMPLETED_SUCCESSFULLY
+        elif completion_report.status.value in ["partially_completed"]:
+            final_status = ProjectStatus.COMPLETED_WITH_FAILURES
+        else:
+            final_status = ProjectStatus.COMPLETED_WITH_FAILURES
+
+        # Log do relatório final
+        logger.info("📊 Relatório Final de Conclusão", 
+                   status=completion_report.status.value,
+                   score=completion_report.overall_score,
+                   summary=completion_report.summary,
+                   recommendations=completion_report.recommendations)
+
         self.project_context.status = final_status
         await self.project_context.save_context()
-        logger.info(f"Ciclo do projeto finalizado com status: {self.project_context.status.value}.")
+        logger.info(f"🎯 Ciclo do projeto finalizado com status: {self.project_context.status.value}")
         return self.project_context.status
