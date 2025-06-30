@@ -1,0 +1,105 @@
+body {
+    font-family: 'Lora', serif; /* Fonte elegante e serifada */
+    background-color: #f5f0e1; /* Cor de fundo creme suave */
+    color: #333; /* Cor do texto escura */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 960px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif; /* Fonte para títulos */
+    text-align: center;
+}
+
+h1 {
+    font-size: 3em;
+    color: #8b4513; /* Marrom escuro */
+}
+
+h2 {
+    font-size: 2em;
+    color: #a0522d; /* Marrom Siena */
+}
+
+h3 {
+    font-size: 1.5em;
+    color: #a0522d;
+}
+
+
+img {
+    display: block;
+    margin: 20px auto;
+    max-width: 50%;
+    height: auto;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+a {
+    color: #8b4513;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #a0522d;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #8b4513;
+}
+
+.tarot-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f8f8; /* Cor de fundo clara */
+  color: #666; /* Cor do texto escura */
+  font-size: 0.9em;
+  border-top: 1px solid #ddd; /* Linha superior fina */
+  margin-top: 30px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+
+    img {
+        max-width: 80%;
+    }
+}

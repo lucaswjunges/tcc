@@ -1,0 +1,59 @@
+# Arquivos de banco de dados
+*.db
+*.sqlite3
+*.sqlite
+*.db-journal
+*.db.bak
+
+# Arquivos Python compilados
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*~
+.*.swp
+
+# Dependências
+venv/
+.venv/
+env/
+.env/
+node_modules/
+
+# Configurações locais
+.vscode/
+.idea/
+pycharm.ini
+
+# Arquivos de desenvolvimento específicos
+run.ini  # Se usar um arquivo de configuração para run.py
+secrets.py # Se usar um arquivo com chaves e senhas.
+local_settings.py # Configurações sensíveis e específicas do ambiente
+
+# Dados de teste, se aplicável
+test_data/
+test_*.db # Bancos de dados de teste
+
+# Pastas de build
+build/
+dist/
+
+# Arquivos específicos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Pastas para upload de imagens (se aplicável)
+uploads/ # Ou o nome da pasta usada para uploads
+
+# Se usar um servidor web embutido (ex: Flask, Django)
+*.pid
+*.sock
+
+# Arquivos gerados pelo seu servidor web
+staticfiles/ # Se aplicável (Django)

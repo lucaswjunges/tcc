@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - Tarot Mystique</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">Sobre</a></li>
+                <li><a href="/services">Serviços</a></li>
+                <li><a href="/contact">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="contact-section">
+            <h2>Entre em Contato</h2>
+            <p>Tem alguma dúvida? Quer saber mais sobre nossos serviços? Entre em contato conosco!</p>
+
+            <form action="/submit_contact" method="post">
+                <label for="name">Nome:</label><br>
+                <input type="text" id="name" name="name" required><br><br>
+
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required><br><br>
+
+                <label for="message">Mensagem:</label><br>
+                <textarea id="message" name="message" rows="4" required></textarea><br><br>
+
+                <input type="submit" value="Enviar">
+            </form>
+
+            <div class="contact-info">
+                <h3>Outras formas de contato:</h3>
+                <p>Email: tarotmystique@example.com</p>
+                <p>Telefone: (11) 9999-9999</p>
+                <p>Redes Sociais:</p>
+                <ul class="social-links">
+                    <li><a href="#" target="_blank">Facebook</a></li>
+                    <li><a href="#" target="_blank">Instagram</a></li>
+                    <li><a href="#" target="_blank">Twitter</a></li>
+                </ul>
+            </div>
+
+        </section>
+    </main>
+
+
+    <footer>
+        <p>&copy; 2023 Tarot Mystique. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>

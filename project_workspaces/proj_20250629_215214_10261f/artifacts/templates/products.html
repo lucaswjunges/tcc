@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos - VapeShop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-4 fw-bold text-center">Nossos Produtos</h1>
+            <p class="lead text-center text-muted">Explore nossa coleção completa de pods e vapes</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-0">Filtrar Produtos</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-end">
+                                <select class="form-select me-2" id="categoryFilter">
+                                    <option value="all">Todas as Categorias</option>
+                                    {% for key, value in categories.items() %}
+                                        {% if key != 'all' %}
+                                        <option value="{{ key }}">{{ value }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <select class="form-select" id="sortFilter">
+                                    <option value="name">Nome A-Z</option>
+                                    <option value="price_low">Menor Preço</option>
+                                    <option value="price_high">Maior Preço</option>
+                                    <option value="newest">Mais Recentes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row" id="productsGrid">
+        {% if products %}
+            {% for product in products %}
+            <div class="col-lg-3 col-md-6 mb-4 product-item" 
+                 data-category="{{ product.category.lower() }}" 
+                 data-price="{{ product.price }}"
+                 data-name="{{ product.name.lower() }}">
+                <div class="card h-100 shadow-sm product-card">
+                    <div class="position-relative">
+                        <img src="https://via.placeholder.com/300x250/666/fff?text={{ product.name }}" 
+                             class="card-img-top" alt="{{ product.name }}">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-primary">{{ product.category }}</span>
+                        </div>
+                        {% if product.stock <= 5 %}
+                        <div class="position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-warning text-dark">Últimas unidades!</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted">
+                            {{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}
+                        </p>
+                        
+                        <!-- Product Rating (simulated) -->
+                        <div class="mb-2">
+                            <small class="text-muted">
+                                {% set rating = (range(1, 6) | random) %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= rating %}
+                                        <i class="fas fa-star text-warning"></i>
+                                    {% else %}
+                                        <i class="far fa-star text-warning"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                ({{ range(10, 100) | random }} avaliações)
+                            </small>
+                        </div>
+                        
+                        <!-- Stock Info -->
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="fas fa-box"></i> 
+                                {% if product.stock > 10 %}
+                                    Em estoque
+                                {% elif product.stock > 0 %}
+                                    Últimas {{ product.stock }} unidades
+                                {% else %}
+                                    Fora de estoque
+                                {% endif %}
+                            </small>
+                        </p>
+                        
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="text-primary mb-0">R$ {{ "%.2f"|format(product.price) }}</h4>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if product.stock > 0 %}
+                                    <button class="btn btn-primary btn-sm add-to-cart" 
+                                            data-product-id="{{ product.id }}">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                    {% else %}
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center">
+                <div class="py-5">
+                    <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                    <h3>Nenhum produto encontrado</h3>
+                    <p class="text-muted">Não há produtos disponíveis no momento.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Load More Button -->
+    {% if products|length >= 12 %}
+    <div class="row">
+        <div class="col-12 text-center">
+            <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">
+                <i class="fas fa-plus"></i> Carregar Mais Produtos
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add to Cart Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Produto Adicionado ao Carrinho</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle text-success fa-2x me-3"></i>
+                    <div>
+                        <h6 class="mb-1">Sucesso!</h6>
+                        <p class="mb-0">O produto foi adicionado ao seu carrinho.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continuar Comprando</button>
+                <a href="{{ url_for('cart') }}" class="btn btn-primary">Ver Carrinho</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Filter functionality
+document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+document.getElementById('sortFilter').addEventListener('change', sortProducts);
+
+function filterProducts() {
+    const selectedCategory = document.getElementById('categoryFilter').value;
+    const products = document.querySelectorAll('.product-item');
+    
+    products.forEach(product => {
+        const productCategory = product.dataset.category;
+        if (selectedCategory === 'all' || productCategory === selectedCategory) {
+            product.style.display = 'block';
+        } else {
+            product.style.display = 'none';
+        }
+    });
+}
+
+function sortProducts() {
+    const sortBy = document.getElementById('sortFilter').value;
+    const grid = document.getElementById('productsGrid');
+    const products = Array.from(document.querySelectorAll('.product-item'));
+    
+    products.sort((a, b) => {
+        switch(sortBy) {
+            case 'name':
+                return a.dataset.name.localeCompare(b.dataset.name);
+            case 'price_low':
+                return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+            case 'price_high':
+                return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+            default:
+                return 0;
+        }
+    });
+    
+    products.forEach(product => grid.appendChild(product));
+}
+
+// Add to cart functionality
+document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        
+        // Here you would typically make an AJAX request to add the item to cart
+        // For demo purposes, we'll just show the modal
+        
+        const modal = new bootstrap.Modal(document.getElementById('addToCartModal'));
+        modal.show();
+        
+        // Animate the button
+        this.innerHTML = '<i class="fas fa-check"></i>';
+        this.classList.remove('btn-primary');
+        this.classList.add('btn-success');
+        
+        setTimeout(() => {
+            this.innerHTML = '<i class="fas fa-cart-plus"></i>';
+            this.classList.remove('btn-success');
+            this.classList.add('btn-primary');
+        }, 2000);
+    });
+});
+
+// Product card hover effects
+document.querySelectorAll('.product-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px)';
+        this.style.transition = 'transform 0.3s ease';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+    });
+});
+
+// Load more functionality (simulated)
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando...';
+        
+        // Simulate loading delay
+        setTimeout(() => {
+            this.innerHTML = '<i class="fas fa-plus"></i> Carregar Mais Produtos';
+            // Here you would load more products via AJAX
+        }, 1500);
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VapeStore - Vapes e Atomizadores Premium</title>
+    <style>
+        /* Reset e Estilos Gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header e Navegação */
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: var(--light-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--accent-color);
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-icon i {
+            font-size: 24px;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* Banner Principal */
+        .banner {
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), url('https://via.placeholder.com/1920x600') center/cover no-repeat;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .banner-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .banner-content p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Seções de Produtos */
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+
+        .products {
+            padding: 40px 0;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-image {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .product-description {
+            color: #777;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .product-rating {
+            color: #f39c12;
+            margin-bottom: 15px;
+        }
+
+        /* Categorias */
+        .categories {
+            padding: 40px 0;
+            background-color: var(--light-color);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-icon {
+            height: 120px;
+            width: 100%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+
+        .category-name {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        /* Depoimentos */
+        .testimonials {
+            padding: 40px 0;
+        }
+
+        .testimonials-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 30px;
+            padding: 20px 0;
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .testimonials-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Edge */
+        }
+
+        .testimonial-card {
+            scroll-snap-align: start;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .testimonial-text::before {
+            content: '"';
+            font-size: 60px;
+            color: var(--secondary-color);
+            opacity: 0.3;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .author-name {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .author-title {
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* Newsletter */
+        .newsletter {
+            background-color: var(--secondary-color);
+            padding: 60px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .newsletter h2 {
+            margin-bottom: 20px;
+        }
+
+        .newsletter p {
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 30px 0 0 30px;
+            font-size: 16px;
+        }
+
+        .newsletter-form button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .newsletter-form button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            padding: 60px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+            }
+
+            .banner {
+                height: 400px;
+            }
+
+            .banner-content h1 {
+                font-size: 36px;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-form input {
+                border-radius: 30px;
+                margin-bottom: 10px;
+            }
+
+            .newsletter-form button {
+                border-radius: 30px;
+                width: 100%;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .banner {
+                height: 300px;
+            }
+
+            .banner-content h1 {
+                font-size: 28px;
+            }
+
+            .banner-content p {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-vapor-wave"></i>
+                VapeStore
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Produtos</a></li>
+                    <li><a href="#">Categorias</a></li>
+                    <li><a href="#">Promoções</a></li>
+                    <li><a href="#">Sobre Nós</a></li>
+                    <li><a href="#">Contato</a></li>
+                    <li class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">3</span>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Banner Principal -->
+    <section class="banner">
+        <div class="banner-content">
+            <h1>Explore nossa coleção premium de vapes e atomizadores</h1>
+            <p>Descubra sabores irresistíveis e qualidade excepcional em nossos produtos de vape de última geração.</p>
+            <a href="#" class="btn">Comprar Agora</a>
+        </div>
+    </section>
+
+    <!-- Produtos em Destaque -->
+    <section class="products">
+        <div class="container">
+            <h2 class="section-title">Produtos em Destaque</h2>
+            <div class="products-grid">
+                <!-- Produto 1 -->
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/300x200" alt="Vape Premium X300" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Vape Premium X300</h3>
+                        <p class="product-description">Dispositivo de vape com resistência de última geração e bateria de 10000mAh.</p>
+                        <p class="product-price">R$ 299,90</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <a href="#" class="btn">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+
+                <!-- Produto 2 -->
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/300x200" alt="Atomizador V2 Pro" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Atomizador V2 Pro</h3>
+                        <p class="product-description">Atomizador de óleo canábico com tecnologia Mesh e resistência de 810Ω.</p>
+                        <p class="product-price">R$ 129,90</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                        <a href="#" class="btn">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+
+                <!-- Produto 3 -->
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/300x200" alt="Vape Box Mod Elite" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Vape Box Mod Elite</h3>
+                        <p class="product-description">Vape Box Mod com display OLED, 3 sistemas de segurança e 100W de potência.</p>
+                        <p class="product-price">R$ 499,90</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <a href="#" class="btn">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+
+                <!-- Produto 4 -->
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/300x200" alt="Kit Vaping Pro" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-name">Kit Vaping Pro</h3>
+                        <p class="product-description">Kit completo com vaporizador, bateria e cartuchos de óleo canábico.</p>
+                        <p class="product-price">R$ 199,90</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <a href="#" class="btn">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categorias -->
+    <section class="categories">
+        <div class="container">
+            <h2 class="section-title">Nossas Categorias</h2>
+            <div class="categories-grid">
+                <!-- Categoria 1 -->
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-fire"></i>
+                    </<div>
+                    <div class="category-name">Vapes</div>
+                </div>
+
+                <!-- Categoria 2 -->
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-battery-full"></i>
+                    </div>
+                    <div class="category-name">Atomizadores</div>
+                </div>
+
+                <!-- Categoria 3 -->
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <div class="category-name">Óleos & Acessórios</div>
+                </div>
+
+                <!-- Categoria 4 -->
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="category-name">Carrinhos</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Depoimentos -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">O Que Nossos Clientes Dizem</h2>
+            <div class="testimonials-container">
+                <!-- Depoimento 1 -->
+                <div class="testimonial-card">
+                    <p class="testimonial-text">Ótimo atendimento e produtos de qualidade. Chegou antes do prazo estimado e o vapor é incrível!</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MR</div>
+                        <div>
+                            <div class="author-name">Marcos Reis</div>
+                            <div class="author-title">Cliente há 3 meses</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Depoimento 2 -->
+                <div class="testimonial-card">
+                    <p class="testimonial-text">Já comprei em várias lojas, mas esta é a melhor experiência. Os produtos são genuínos e o site é muito fácil de navegar.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">CS</div>
+                        <div>
+                            <div class="author-name">Carolina Silva</div>
+                            <div class="author-title">Cliente há 1 ano</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Depoimento 3 -->
+                <div class="testimonial-card">
+                    <p class="testimonial-text">Entrega rápida e embalagem discreta. O sabor do óleo é muito bom e a resistência dura muito mais tempo.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RP</div>
+                        <div>
+                            <div class="author-name">Rafael Pereira</div>
+                            <div class="author-title">Novo cliente</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="container">
+            <h2>Fique por Dentro das Novidades</h2>
+            <p>Inscreva-se em nossa newsletter para receber promoções exclusivas, novidades e dicas de uso.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Seu melhor e-mail" required>
+                <button type="submit">Inscrever</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <!-- Coluna 1 -->
+                <div class="footer-column">
+                    <h3>VapeStore</h3>
+                    <p>A sua loja especializada em vapes e atomizadores de óleo canábico de alta qualidade.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Coluna 2 -->
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Produtos</a></li>
+                        <li><a href="#">Promoções</a></li>
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 3 -->
+                <div class="footer-column">
+                    <h3>Categorias</h3>
+                    <ul>
+                        <li><a href="#">Vapes</a></li>
+                        <li><a href="#">Atomizadores</a></li>
+                        <li><a href="#">Óleos & Acessórios</a></li>
+                        <li><a href="#">Carrinhos</a></li>
+                        <li><a href="#">Acessórios</a></li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 4 -->
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Av. Paulista, 1000 - São Paulo</li>
+                        <li><i class="fas fa-phone"></i> (11) 9999-8888</li>
+                        <li><i class="fas fa-envelope"></i> contato@vapystore.com.br</li>
+                        <li><i class="fas fa-clock"></i> Seg-Sex: 9h às 18h | Sáb: 10h às 14h</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 VapeStore. Todos os direitos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Font Awesome para ícones -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

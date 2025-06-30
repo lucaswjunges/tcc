@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows}
+
+\begin{document}
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[node distance=1.5cm, auto]
+    % Define node styles
+    \tikzstyle{block} = [rectangle, draw, fill=white, text width=6em, text centered, rounded corners, minimum height=3em]
+    \tikzstyle{line} = [draw, -latex']
+
+    % Create nodes
+    \node[block] (camera) {Câmera Industrial};
+    \node[block] (preprocess) [below of=camera, yshift=-2cm] {Pre-processamento};
+    \node[block] (cnn) [below of=preprocess, yshift=-2cm] {CNN};
+    \node[block] (classification) [below of=cnn, yshift=-2cm] {Classificação};
+    \node[block] (alert) [below of=classification, yshift=-2cm] {Alerta};
+
+    % Draw the connections
+    \draw [line] (camera) -- node[anchor=center] {Imagens} (preprocess);
+    \draw [line] (preprocess) -- node[anchor=center] {Dados Pré-processados} (cnn);
+    \draw [line] (cnn) -- node[anchor=center] {Características} (classification);
+    \draw [line] (classification) -- node[anchor=center] {Falha Detectada} (alert);
+
+    % Add labels to the figure
+    \node [left, xshift=-1.5cm, yshift=0cm] at (camera) {Fonte de Dados};
+    \node [left, xshift=-1.5cm, yshift=-2cm] at (preprocess) {Limpeza e Normalização};
+    \node [left, xshift=-1.5cm, yshift=-4cm] at (cnn) {Extracção de Características};
+    \node [left, xshift=-1.5cm, yshift=-6cm] at (classification) {Classificação (ML)};
+    \node [left, xshift=-1.5cm, yshift=-8cm] at (alert) {Sistema de Alerta};
+
+\end{tikzpicture}
+\caption{Arquitetura do Sistema de Detecção de Falhas em Motores}
+\label{fig:system_architecture}
+\end{figure}
+
+\end{document}

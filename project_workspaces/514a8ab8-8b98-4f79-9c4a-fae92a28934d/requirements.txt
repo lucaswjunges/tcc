@@ -1,0 +1,31 @@
+Flask==2.3.2
+Flask-SQLAlchemy==3.0.3
+Flask-Migrate==4.0.1
+Flask-WTF==1.1.1
+Flask-Login==0.6.2
+WTForms==3.0.1
+SQLAlchemy==2.0.0
+psycopg2-binary==2.9.5  # or your preferred database driver
+email_validator==2.1.0
+bcrypt==4.0.1
+bleach==6.0.0  # for text sanitization
+markdown==3.4.3  # if you're using markdown for content
+stripe==5.15.0  # or another payment gateway library
+python-dotenv==1.0.0
+gunicorn==20.1.0
+
+# For development:
+Werkzeug==2.3.6 # For debugger
+
+# For styling (choose your preferred options):
+# Bootstrap
+Flask-Bootstrap==5.0.0
+
+# or Materialize
+Flask-Materialize==1.0.0
+
+# or TailwindCSS
+# No specific Flask package, install directly: npm install -D tailwindcss postcss autoprefixer
+
+# Other styling options (consider):
+# Bulma, UIkit, Foundation, etc.

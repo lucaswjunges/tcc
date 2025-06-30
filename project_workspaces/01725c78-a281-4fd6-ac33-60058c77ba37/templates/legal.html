@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termos Legais e Política de Privacidade</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a href="{{ url_for('index') }}">Página Inicial</a>
+            <a href="{{ url_for('about') }}">Sobre</a>
+            <a href="{{ url_for('legal') }}">Termos Legais</a>
+            <a href="{{ url_for('contact') }}">Contato</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Termos Legais e Política de Privacidade</h1>
+
+        <h2>Termos de Uso</h2>
+        <p>
+            Este site oferece leituras de tarô para fins de entretenimento e autoconhecimento. 
+            As informações fornecidas não devem ser consideradas como aconselhamento médico, legal ou financeiro. 
+            A utilização deste site implica na aceitação destes termos e na isenção de responsabilidade por parte dos proprietários e operadores do site.
+        </p>
+
+        <h2>Política de Privacidade</h2>
+        <p>
+            Respeitamos a sua privacidade e estamos comprometidos em proteger as suas informações pessoais. 
+            Não coletamos, armazenamos ou compartilhamos informações pessoais sem o seu consentimento explícito, exceto quando exigido por lei.
+            Quaisquer dados coletados, como nome e endereço de e-mail para contato, serão utilizados exclusivamente para os fins declarados e não serão compartilhados com terceiros.
+        </p>
+
+        <h2>Isenção de Responsabilidade</h2>
+        <p>
+            As leituras de tarô fornecidas neste site são para fins de entretenimento.
+            Não garantimos a precisão ou validade das interpretações e não nos responsabilizamos por quaisquer decisões ou ações tomadas com base nessas interpretações.
+            A responsabilidade pela utilização das informações fornecidas é exclusivamente do usuário.
+        </p>
+
+        <h2>Direitos Autorais</h2>
+        <p>
+            Todo o conteúdo deste site, incluindo textos, imagens e código-fonte, é protegido por direitos autorais e não pode ser reproduzido ou distribuído sem a permissão expressa dos proprietários.
+        </p>
+
+        <h2>Contato</h2>
+        <p>Se você tiver alguma dúvida ou preocupação sobre estes termos, entre em contato conosco através da página de <a href="{{ url_for('contact') }}">contato</a>.</p>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2023 - Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>

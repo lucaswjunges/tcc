@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitura de Tarô Online</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Descubra seu Destino com as Cartas do Tarô</h1>
+    </header>
+
+    <main>
+        <section class="intro">
+            <p>Bem-vindo(a) ao nosso espaço de leitura de tarô online. Oferecemos insights profundos e orientações para ajudá-lo(a) a navegar pelos desafios e oportunidades da vida. Nossas leituras são conduzidas com respeito, intuição e um profundo conhecimento do significado das cartas.</p>
+            <p>Escolha uma das opções de leitura abaixo e embarque em uma jornada de autodescoberta.</p>
+        </section>
+
+        <section class="readings">
+            <h2>Tipos de Leitura</h2>
+            <div class="reading-options">
+                <div class="reading">
+                    <h3>Tiragem da Cruz Celta</h3>
+                    <p>Uma leitura completa que explora seu passado, presente e futuro, revelando influências e potenciais.</p>
+                    <a href="/cruz_celta" class="button">Saiba Mais</a>
+                </div>
+                <div class="reading">
+                    <h3>Tiragem do Amor</h3>
+                    <p>Descubra insights sobre seus relacionamentos, desafios amorosos e o caminho para encontrar o amor verdadeiro.</p>
+                    <a href="/amor" class="button">Saiba Mais</a>
+                </div>
+                <div class="reading">
+                    <h3>Tiragem da Carreira</h3>
+                    <p>Explore suas perspectivas profissionais, desafios e oportunidades para alcançar seus objetivos de carreira.</p>
+                    <a href="/carreira" class="button">Saiba Mais</a>
+                </div>
+            </div>
+
+            <p class="disclaimer">As leituras de tarô são para fins de entretenimento e auto-reflexão. Não substituem aconselhamento profissional.</p>
+        </section>
+    </main>
+
+
+    <footer>
+        <p>&copy; 2023 - Tarô Online</p>
+    </footer>
+</body>
+</html>

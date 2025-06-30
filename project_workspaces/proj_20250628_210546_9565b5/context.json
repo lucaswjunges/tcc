@@ -1,0 +1,381 @@
+{
+  "project_id": "proj_20250628_210546_9565b5",
+  "project_name": "Projeto criar um sistema de blog simples com Python Flask...",
+  "project_goal": "criar um sistema de blog simples com Python Flask",
+  "project_type": "general",
+  "status": "planned",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250628_210546_9565b5",
+  "task_queue": [
+    {
+      "task_id": "64231bd7-02ec-4b37-8633-d66da06e8c25",
+      "description": "Criar página inicial do frontend",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "frontend/index.html",
+        "content_guideline": "Página inicial responsiva com hero section, produtos em destaque, navegação",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "in_progress",
+      "acceptance_criteria": "Página inicial atrativa e funcional criada",
+      "created_at": "2025-06-29T00:05:46.484015",
+      "updated_at": "2025-06-29T00:05:46.484017",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "b2f28496-0d62-4530-aa6c-2f574dd1b5ea",
+      "description": "Criar estilos CSS",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "frontend/css/styles.css",
+        "content_guideline": "CSS moderno e responsivo com grid, flexbox, animações, tema consistente",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Stylesheet completo e responsivo criado",
+      "created_at": "2025-06-29T00:05:46.484027",
+      "updated_at": "2025-06-29T00:05:46.484028",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "28eb0fb4-36ea-4eb1-bc33-98b80e762b02",
+      "description": "Implementar funcionalidades JavaScript",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "frontend/js/app.js",
+        "content_guideline": "JavaScript para carrinho, filtros, busca, interações, chamadas à API",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "JavaScript funcional com todas as interações necessárias",
+      "created_at": "2025-06-29T00:05:46.484037",
+      "updated_at": "2025-06-29T00:05:46.484039",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "4b80696b-622d-4521-a645-11fad85c90bb",
+      "description": "Criar página de produtos",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "frontend/products.html",
+        "content_guideline": "Página de catálogo com filtros, busca, paginação, cards de produto",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Página de produtos completa com funcionalidades de e-commerce",
+      "created_at": "2025-06-29T00:05:46.484047",
+      "updated_at": "2025-06-29T00:05:46.484049",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "8bfb2e80-e0c9-470e-a2d3-623a0a0036cf",
+      "description": "Criar página do carrinho",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "frontend/cart.html",
+        "content_guideline": "Página do carrinho com adição/remoção de itens, cálculo de total, checkout",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Carrinho de compras funcional implementado",
+      "created_at": "2025-06-29T00:05:46.484058",
+      "updated_at": "2025-06-29T00:05:46.484060",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "fd541492-ff1b-464d-9540-a63b6c672576",
+      "description": "Configurar banco de dados",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/database.py",
+        "content_guideline": "Configuração SQLAlchemy, conexão, inicialização, migrations",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Sistema de banco de dados configurado e funcional",
+      "created_at": "2025-06-29T00:05:46.484069",
+      "updated_at": "2025-06-29T00:05:46.484071",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "c3f70cfc-b08c-4135-be7f-e8aefc2a3640",
+      "description": "Criar script de inicialização",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "run.py",
+        "content_guideline": "Script principal para executar a aplicação com configurações de produção/desenvolvimento",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Script de inicialização funcional criado",
+      "created_at": "2025-06-29T00:05:46.484079",
+      "updated_at": "2025-06-29T00:05:46.484081",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "d4525c59-5de0-4acf-ab78-330ef5d5cd22",
+      "description": "Criar testes unitários",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "tests/test_app.py",
+        "content_guideline": "Testes unitários para API, modelos, autenticação, cobertura mínima 70%",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Suite de testes completa implementada",
+      "created_at": "2025-06-29T00:05:46.484090",
+      "updated_at": "2025-06-29T00:05:46.484092",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "75c4a7d1-af11-4170-949e-35ca2eb4a5d4",
+      "description": "Criar configuração Docker",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "Dockerfile",
+        "content_guideline": "Dockerfile otimizado para produção com multi-stage build",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Containerização Docker configurada",
+      "created_at": "2025-06-29T00:05:46.484101",
+      "updated_at": "2025-06-29T00:05:46.484103",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "completed_tasks": [
+    {
+      "task_id": "3e9b884b-df7d-4ee4-a29c-1057923206fb",
+      "description": "Criar documentação completa do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação completa com instalação, uso, API docs, e estrutura do projeto",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "README.md abrangente com todas as seções necessárias",
+      "created_at": "2025-06-29T00:05:46.483901",
+      "updated_at": "2025-06-29T00:05:46.483921",
+      "retries": 1,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "d05aac18-b529-4d53-ac63-fde11ff71aa8",
+      "description": "Criar arquivo de dependências",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "requirements.txt",
+        "content_guideline": "Listar todas as dependências Python necessárias para o projeto",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "requirements.txt criado com dependências completas",
+      "created_at": "2025-06-29T00:05:46.483944",
+      "updated_at": "2025-06-29T00:05:46.483947",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "5fb0e0d8-a3d8-493a-956a-fb31d9317319",
+      "description": "Criar arquivo de configuração",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "config.py",
+        "content_guideline": "Configurações do projeto, banco de dados, variáveis de ambiente",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "config.py criado com configurações estruturadas",
+      "created_at": "2025-06-29T00:05:46.483961",
+      "updated_at": "2025-06-29T00:05:46.483963",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "8390d4f4-393d-45c4-9bae-99a5299770f7",
+      "description": "Criar modelos do banco de dados",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/models.py",
+        "content_guideline": "Definir modelos completos: User, Product, Order, Cart, Category, Review",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Modelos de dados completos com relacionamentos",
+      "created_at": "2025-06-29T00:05:46.483975",
+      "updated_at": "2025-06-29T00:05:46.483977",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "7f259a7a-daf9-4b1f-86b4-0f6b7ec63d6d",
+      "description": "Criar API backend principal",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/app.py",
+        "content_guideline": "API completa com rotas para produtos, usuários, carrinho, pedidos, autenticação",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "API backend funcional com todos os endpoints necessários",
+      "created_at": "2025-06-29T00:05:46.483993",
+      "updated_at": "2025-06-29T00:05:46.483995",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "93b98d4f-22fb-439f-8566-09febb3a7364",
+      "description": "Implementar sistema de autenticação",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/auth.py",
+        "content_guideline": "Sistema completo de login, registro, JWT tokens, proteção de rotas",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Sistema de autenticação seguro implementado",
+      "created_at": "2025-06-29T00:05:46.484004",
+      "updated_at": "2025-06-29T00:05:46.484006",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "artifacts_state": {
+    "README.md": {
+      "path": "README.md",
+      "hash": "497d283fa87fcf8b92f3e411cfdaf277c3b387826996078c63a0d749b86cfb56",
+      "summary": "Arquivo criado/sobrescrito: README.md",
+      "last_modified": null
+    },
+    "requirements.txt": {
+      "path": "requirements.txt",
+      "hash": "c0862201e27e10f591cc0e3fb8d1dd4f6a4af2559d04a71fb0cb142d59b2f6b7",
+      "summary": "Arquivo criado/sobrescrito: requirements.txt",
+      "last_modified": null
+    },
+    "config.py": {
+      "path": "config.py",
+      "hash": "b1e6822701ca2efd6a3028643405d24f4c4ba3dfce711ffc7b25e2ec7b240a9b",
+      "summary": "Arquivo criado/sobrescrito: config.py",
+      "last_modified": null
+    },
+    "backend/models.py": {
+      "path": "backend/models.py",
+      "hash": "3bfa076f42ca07e1bb869453fb98b2b854b634eeb6be6006014b51a3d42d0f8a",
+      "summary": "Arquivo criado/sobrescrito: backend/models.py",
+      "last_modified": null
+    },
+    "backend/app.py": {
+      "path": "backend/app.py",
+      "hash": "b0db43c2ee6590886ebcd4a961ebf22e9ff3efa4be555b5454bba8ba574e80ad",
+      "summary": "Arquivo criado/sobrescrito: backend/app.py",
+      "last_modified": null
+    },
+    "backend/auth.py": {
+      "path": "backend/auth.py",
+      "hash": "39ef5c7bb6d80879bb5508cdf79bb522b88d962af968422bd112eb2a6996cd32",
+      "summary": "Arquivo criado/sobrescrito: backend/auth.py",
+      "last_modified": null
+    }
+  },
+  "metrics": {
+    "total_iterations": 8,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

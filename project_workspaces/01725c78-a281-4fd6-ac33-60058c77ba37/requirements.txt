@@ -1,0 +1,12 @@
+Flask==2.3.2
+SQLAlchemy==2.0.19
+Flask-SQLAlchemy==3.0.3
+Flask-Migrate==4.0.2
+psycopg2-binary==2.9.6  # or appropriate DB driver
+python-dotenv==1.0.0
+stripe==6.168.0
+Flask-Login==0.6.2
+Werkzeug==2.3.6 # for secure password hashing
+itsdangerous==2.1.2 # For token generation (email confirmations, etc.)
+bleach==6.0.0 # For HTML sanitization if user input is allowed
+Markdown==3.4.4 # If rich text formatting is needed

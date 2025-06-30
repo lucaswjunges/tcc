@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VapeStore - Sua loja especializada em vapes e atomizadores</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Variáveis de cores */
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #ff006e;
+            --accent-color: #8338ec;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #38b000;
+        }
+
+        /* Container principal */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        /* Banner principal */
+        .hero-banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://via.placeholder.com/1200x400');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero-banner h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero-banner p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2a75e6;
+        }
+
+        /* Produtos */
+        .products-section {
+            padding: 40px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 32px;
+            color: var(--dark-color);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            height: 200px;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background-color: #7029d8;
+        }
+
+        /* Categorias */
+        .categories-section {
+            padding: 40px 0;
+            background-color: #f9f9f9;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .category-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Depoimentos */
+        .testimonials-section {
+            padding: 40px 0;
+            background-color: white;
+        }
+
+        .testimonials-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .testimonial-card {
+            min-width: 300px;
+            scroll-snap-align: start;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+        }
+
+        /* Newsletter */
+        .newsletter-section {
+            padding: 40px 0;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+        }
+
+        .newsletter-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .newsletter-title {
+            margin-bottom: 20px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 40px 0;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-icon {
+            color: white;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .social-icon:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                padding: 15px 0;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 5px 10px;
+            }
+            
+            .hero-banner h1 {
+                font-size: 36px;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">Vape<span>Store</span></div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Produtos</a></li>
+                    <li><a href="#">Categorias</a></li>
+                    <li><a href="#">Promoções</a></li>
+                    <li><a href="#">Sobre</a></li>
+                    <li><a href="#">Contato</a></li>
+                    <li class="cart-icon">
+                        <a href="#">🛒</a>
+                        <span class="cart-count">0</span>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-banner">
+        <div class="container">
+            <h1>Explore nossa coleção exclusiva</h1>
+            <p>Descubra os melhores produtos de vape e atomizadores de óleo canábico com qualidade superior e preços acessíveis.</p>
+            <a href="#" class="btn">Comprar Agora</a>
+        </div>
+    </section>
+
+    <section class="products-section">
+        <div class="container">
+            <h2 class="section-title">Produtos em Destaque</h2>
+            <div class="products-grid">
+                <!-- Produto 1 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200" alt="Vape XYZ">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Vape XYZ Pro</h3>
+                        <p class="product-price">R$ 299,90</p>
+                        <p class="product-description">Dispositivo vape de última geração com bateria de longa duração e sistema de arrefecimento avançado.</p>
+                        <button class="add-to-cart">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+                
+                <!-- Produto 2 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200" alt="Atomizador VMAX">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Atomizador VMAX</h3>
+                        <p class="product-price">R$ 89,90</p>
+                        <p class="product-description">Atomizador de óleo canábico com resistência de cerâmica de alta qualidade e fluxo de vapor otimizado.</p>
+                        <button class="add-to-cart">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+                
+                <!-- Produto 3 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200" alt="Óleo CBD Premium">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Óleo CBD Premium</h3>
+                        <p class="product-price">R$ 149,90</p>
+                        <p class="product-description">Óleo essencial de CBD com concentração de 18% e sabor a frutas, ideal para vaporização.</p>
+                        <button class="add-to-cart">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+                
+                <!-- Produto 4 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/250x200" alt="Baterias Vape">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Kit de Baterias</h3>
+                        <p class="product-price">R$ 129,90</p>
+                        <p class="product-description">Conjunto de duas baterias 18650 com carregador rápido e proteção contra curto-circuito.</p>
+                        <button class="add-to-cart">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="categories-section">
+        <div class="container">
+            <h2 class="section-title">Nossas Categorias</h2>
+            <div class="categories-grid">
+                <!-- Categoria 1 -->
+                <div class="category-card">
+                    <div class="category-icon">📱</div>
+                    <h3 class="category-name">Vapes</h3>
+                    <p>Dispositivos de vaporização</p>
+                </div>
+                
+                <!-- Categoria 2 -->
+                <div class="category-card">
+                    <div class="category-icon">💨</div>
+                    <h3 class="category-name">Atomizadores</h3>
+                    <p>Resistências e atomizadores</p>
+                </div>
+                
+                <!-- Categoria 3 -->
+                <div class="category-card">
+                    <div class="category-icon">🌿</div>
+                    <h3 class="category-name">Óleos</h3>
+                    <p>Óleos CBD e THC</p>
+                </div>
+                
+                <!-- Categoria 4 -->
+                <div class="category-card">
+                    <div class="category-icon">🔋</div>
+                    <h3 class="category-name">Baterias</h3>
+                    <p>Baterias e carregadores</p>
+                </div>
+                
+                <!-- Categoria 5 -->
+                <div class="category-card">
+                    <div class="category-icon">🛠️</div>
+                    <h3 class="category-name">Acessórios</h3>
+                    <p>Complementos para seu setup</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title">O que dizem nossos clientes</h2>
+            <div class="testimonials-container">
+                <!-- Depoimento 1 -->
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Ótima qualidade dos produtos e atendimento excelente! Chegou antes do prazo estimado. Recomendo!"</p>
+                    <p class="testimonial-author">— Carlos S.</p>
+                </div>
+                
+                <!-- Depoimento 2 -->
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Amei o meu novo vaporizador! Muito potente e saboroso. O site é fácil de navegar e os preços são justos."</p>
+                    <p class="testimonial-author">— Ana P.</p>
+                </div>
+                
+                <!-- Depoimento 3 -->
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Comprei o kit de baterias e estou muito satisfeito. A entrega foi rápida e o produto veio completo."</p>
+                    <p class="testimonial-author">— Roberto M.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-container">
+                <h2 class="newsletter-title">Inscreva-se em nossa newsletter</h2>
+                <p>Receba promoções exclusivas e novidades primeiro!</p>
+                <form class="newsletter-form">
+                    <input type="email" class="newsletter-input" placeholder="Seu e-mail">
+                    <button type="submit" class="btn">Inscrever</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <!-- Coluna 1 -->
+                <div class="footer-column">
+                    <h3>VapeStore</h3>
+                    <p>A sua loja especializada em produtos de vape e atomizadores de óleo canábico de alta qualidade.</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">📘</a>
+                        <a href="#" class="social-icon">📱</a>
+                        <a href="#" class="social-icon">📸</a>
+                        <a href="#" class="social-icon">🐦</a>
+                    </div>
+                </div>
+                
+                <!-- Coluna 2 -->
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Produtos</a></li>
+                        <li><a href="#">Promoções</a></li>
+                        <li><a href="#">Novidades</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Coluna 3 -->
+                <div class="footer-column">
+                    <h3>Categorias</h3>
+                    <ul>
+                        <li><a href="#">Vapes</a></li>
+                        <li><a href="#">Atomizadores</a></li>
+                        <li><a href="#">Óleos CBD</a></li>
+                        <li><a href="#">Baterias</a></li>
+                        <li><a href="#">Acessórios</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Coluna 4 -->
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li>📞 (11) 9999-8888</li>
+                        <li>✉️ contato@vapestore.com.br</li>
+                        <li>📍 Av. Paulista, 1000 - São Paulo/SP</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 VapeStore. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script para adicionar produtos ao carrinho
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const productCard = this.closest('.product-card');
+                const productName = productCard.querySelector('.product-name').textContent;
+                const productPrice = productCard.querySelector('.product-price').textContent;
+                
+                // Atualizar contador do carrinho
+                const cartCount = document.querySelector('.cart-count');
+                let count = parseInt(cartCount.textContent);
+                cartCount.textContent = count + 1;
+                
+                // Exibir mensagem de sucesso (em uma versão real, isso poderia ser um modal)
+                alert(`Produto "${productName}" adicionado ao carrinho!`);
+            });
+        });
+
+        // Script para o carrinho de compras
+        document.querySelector('.cart-icon').addEventListener('click', function() {
+            alert('Carrinho de compras vazio no momento!');
+        });
+    </script>
+</body>
+</html>

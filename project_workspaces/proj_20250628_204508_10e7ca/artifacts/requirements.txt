@@ -1,0 +1,3 @@
+O arquivo requirements.txt não é necessário para um projeto de página web simples construído com HTML, CSS e JavaScript. Portanto, este arquivo permanece vazio.
+
+# Se o projeto se tornar mais complexo e usar Python (por exemplo, com Flask, Django, etc.), adicione as dependências Python aqui.

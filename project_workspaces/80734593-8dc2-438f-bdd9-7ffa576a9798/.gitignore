@@ -1,0 +1,70 @@
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.dev
+.env.test
+
+# Browser caches
+**/chrome/*
+**/firefox/*
+**/safari/*
+**/opera/*
+
+# Build directories
+dist/
+build/
+out/
+
+# Screenshots
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Database files
+*.sqlite
+*.db
+
+# Logs
+*.log
+
+# Tarot-specific files (optional)
+*.tarot
+*.tarot_results
+
+# Dependencies lock files
+*.lock
+
+# Project secrets
+*.secret
+
+# OS X
+ehthumbs.db
+Icon\r
+
+# Docker
+.Dockerignore
+Dockerfile

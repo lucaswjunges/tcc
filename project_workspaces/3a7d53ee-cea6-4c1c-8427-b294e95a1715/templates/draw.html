@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira de Tarô - Adivinhações Profissionais</title>
+    <meta name="description" content="Carteira de Tarô oferece consultas de tarot online com profissionais credíveis. Receba respostas precisas mantendo ética e justiça.">
+    <style>
+        :root {
+            --primary-color: #8a63d2;
+            --secondary-color: #f8f4ff;
+            --accent-color: #d4a5ff;
+            --text-color: #333;
+            --light-text: #f8f4ff;
+            --background-light: #f9f5ff;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-light);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--light-text);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background-color: white;
+            padding: 0.5rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .hero {
+            padding: 4rem 1rem;
+            text-align: center;
+            background-color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .hero p {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: var(--shadow);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .section {
+            padding: 3rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+        
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .service-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .service-img {
+            height: 200px;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .service-content {
+            padding: 1.5rem;
+        }
+        
+        .service-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .how-it-works {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .testimonials {
+            background-color: var(--secondary-color);
+            padding: 3rem 1rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .pricing {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .price-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .price-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .price-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .price-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-price {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .price-duration {
+            opacity: 0.8;
+        }
+        
+        .price-features {
+            padding: 1.5rem;
+            list-style: none;
+        }
+        
+        .price-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .price-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .price-button {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1rem;
+            border-radius: 0 0 10px 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .price-button:hover {
+            background-color: #704cb6;
+        }
+        
+        footer {
+            background-color: #333;
+            color: var(--light-text);
+            padding: 3rem 1rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-column a {
+            color: var(--light-text);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: var(--accent-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .hero h2 {
+                font-size: 1.5rem;
+            }
+            
+            .section {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Carteira de Tarô</h1>
+            <p class="tagline">Consultas de tarot online com profissionais credíveis</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Carteira de Tarô</div>
+            <div class="nav-links">
+                <a href="#home">Início</a>
+                <a href="#services">Serviços</a>
+                <a href="#how-it-works">Como Funciona</a>
+                <a href="#testimonials">Depoimentos</a>
+                <a href="#pricing">Preços</a>
+                <a href="#contact">Contato</a>
+            </div>
+        </div>
+    </nav>
+    
+    <section id="home" class="hero">
+        <h2>Descubra o futuro com a sabedoria do Tarô</h2>
+        <p>Oferecemos consultas de tarot online com profissionais altamente qualificados, mantendo ética e justiça em nossos serviços. Sua consulta é privada e cada leitura é personalizada.</p>
+        <a href="#services" class="cta-button">Conheça Nossos Serviços</a>
+    </section>
+    
+    <section id="services" class="section">
+        <h2 class="section-title">Nossos Serviços</h2>
+        <div class="services">
+            <div class="service-card">
+                <div class="service-img">🃏</div>
+                <div class="service-content">
+                    <h3>Leitura Básica de Tarô</h3>
+                    <p>Uma leitura simples e direta para responder suas principais dúvidas. Ideal para quem está começando a se interessar pelo tarot.</p>
+                </div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-img">🔮</div>
+                <div class="service-content">
+                    <h3>Leitura Especializada</h3>
+                    <p>Uma análise detalhada com múltiplas cartas e interpretações profundas sobre diferentes aspectos da sua vida.</p>
+                </div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-img">❤️</div>
+                <div class="service-content">
+                    <h3>Leitura de Amor</h3>
+                    <p>Especialmente para questões relacionadas ao amor, relacionamentos e harmonização afetiva.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="how-it-works" class="section">
+        <h2 class="section-title">Como Funciona</h2>
+        <div class="how-it-works">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Escolha seu serviço</h3>
+                <p>Selecione o tipo de leitura que melhor atende às suas necessidades.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Pagamento</h3>
+                <p>Pague via cartão, PayPal ou boleto para garantir sua consulta.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Resposta</h3>
+                <p>Receba sua leitura por e-mail com interpretações detalhadas.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Confirmação</h3>
+                <p>Confirme a qualidade do serviço e deixe sua avaliação.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="section">
+        <h2 class="section-title">Por que escolher a Carteira de Tarô?</h2>
+        <div class="services">
+            <div class="service-card">
+                <div class="service-content">
+                    <h3>Profissionais Credíveis</h3>
+                    <p>Nossos leituras são realizadas por cartomantes experientes com formação acadêmica e pratica constante.</p>
+                </div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-content">
+                    <h3>Ética e Justiça</h3>
+                    <p>Mantemos padrões éticos altos, sempre respeitando a liberdade de cada cliente e os resultados são justos.</p>
+                </div>
+            </div>
+            
+            <div class="service-card">
+                <div class="service-content">
+                    <h3>Confidencialidade</h3>
+                    <p>Suas informações e leituras são 100% confidenciais e mantidas em sigilo absoluto.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="testimonials" class="section">
+        <h2 class="section-title">Depoimentos</h2>
+        <div class="testimonials">
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"A leitura que fiz com a Carteira de Tarô foi incrível! As cartas mostraram claramente o caminho que estava diante de mim e me ajudaram a tomar decisões importantes."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AM</div>
+                        <div>
+                            <strong>Ana Martins</strong>
+                            <p>Cliente há 6 meses</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Sempre desconfiava desses serviços online, mas fui surpreendida pela qualidade e pela honestidade da leitura. Recomendo demais!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RM</div>
+                        <div>
+                            <strong>Ricardo Mendes</strong>
+                            <p>Cliente há 3 meses</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"O processo foi muito transparente e o preço justo. O valor cobrado reflete realmente na qualidade do serviço. Vale cada centavo!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">CS</div>
+                        <div>
+                            <strong>Carolina Silva</strong>
+                            <p>Cliente há 1 ano</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="pricing" class="section">
+        <h2 class="section-title">Nossos Preços</h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 2rem;">Oferecemos diferentes planos para atender suas necessidades, com valores justos e transparência total.</p>
+        
+        <div class="pricing">
+            <div class="price-card">
+                <div class="price-header">
+                    <div class="price-title">Leitura Básica</div>
+                    <div class="price-price">R$ 79,00</div>
+                    <div class="price-duration">única vez</div>
+                </div>
+                <ul class="price-features">
+                    <li>Leitura com 3 cartas</li>
+                    <li>Resposta via e-mail</li>
+                    <li>Interpretação direta</li>
+                    <li>Validade de 7 dias</li>
+                </ul>
+                <a href="#contact" class="price-button">Contratar Agora</a>
+            </div>
+            
+            <div class="price-card">
+                <div class="price-header">
+                    <div class="price-title">Leitura Especializada</div>
+                    <div class="price-price">R$ 149,00</div>
+                    <div class="price-duration">única vez</div>
+                </div>
+                <ul class="price-features">
+                    <li>Leitura com 10 cartas</li>
+                    <li>Resposta detalhada por e-mail</li>
+                    <li>Interpretação completa</li>
+                    <li>Validade de 15 dias</li>
+                    <li>Carta guia para baixar</li>
+                </ul>
+                <a href="#contact" class="price-button">Contratar Agora</a>
+            </div>
+            
+            <div class="price-card">
+                <div class="price-header">
+                    <div class="price-title">Leitura Premium</div>
+                    <div class="price-price">R$ 249,00</div>
+                    <div class="price-duration">única vez</div>
+                </div>
+                <ul class="price-features">
+                    <li>Leitura com 22 cartas</li>
+                    <li>Resposta completa por e-mail</li>
+                    <li>Interpretação profunda</li>
+                    <li>Validade de 30 dias</li>
+                    <li>Carta guia detalhada</li>
+                    <li>Consulta de 30 minutos por WhatsApp</li>
+                </ul>
+                <a href="#contact" class="price-button">Contratar Agora</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact" class="section">
+        <h2 class="section-title">Entre em Contato</h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 2rem;">Tenha dúvidas sobre nossos serviços? Entre em contato conosco que respondemos com prazer!</p>
+        
+        <form style="max-width: 600px; margin: 0 auto; background-color: white; padding: 2rem; border-radius: 10px; box-shadow: var(--shadow);">
+            <div style="margin-bottom: 1.5rem;">
+                <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Nome Completo</label>
+                <input type="text" id="name" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">E-mail</label>
+                <input type="email" id="email" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label for="service" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Serviço Desejado</label>
+                <select id="service" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="">Selecione um serviço</option>
+                    <option value="basica">Leitura Básica (R$ 79,00)</option>
+                    <option value="especializada">Leitura Especializada (R$ 149,00)</option>
+                    <option value="premium">Leitura Premium (R$ 249,00)</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Mensagem</label>
+                <textarea id="message" rows="5" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+            </div>
+            
+            <button type="submit" style="background-color: var(--primary-color); color: white; border: none; padding: 0.8rem 2rem; border-radius: 30px; font-weight: bold; cursor: pointer; transition: background-color 0.3s; width: 100%;">Enviar Mensagem</button>
+        </form>
+    </section>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Carteira de Tarô</h3>
+                <p>Oferecendo consultas de tarot online com profissionais qualificados, mantendo ética e justiça em nossos serviços.</p>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#services">Serviços</a></li>
+                    <li><a href="#how-it-works">Como Funciona</a></li>
+                    <li><a href="#testimonials">Depoimentos</a></li>
+                    <li><a href="#pricing">Preços</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Serviços</h3>
+                <ul>
+                    <li><a href="#services">Leitura Básica</a></li>
+                    <li><a href="#services">Leitura Especializada</a></li>
+                    <li><a href="#services">Leitura de Amor</a></li>
+                    <li><a href="#services">Leituras Especiais</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contato</h3>
+                <ul>
+                    <li>Email: contato@carteirataro.com.br</li>
+                    <li>WhatsApp: (11) 9999-9999</li>
+                    <li>Instagram: @carteirataro</li>
+                    <li>Facebook: /carteirataro</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 Carteira de Tarô - Todos os direitos reservados</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Script para suavizar o roling e para o menu mobile (se necessário)
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Formulário de contato (simulado)
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado pelo seu contato! Em breve entraremos em contato para confirmar sua consulta.');
+            this.reset();
+        });
+        
+        // Verificação de formulário (simulado)
+        document.getElementById('service').addEventListener('change', function() {
+            if (this.value) {
+                document.querySelector('button').style.backgroundColor = '#4CAF50';
+            } else {
+                document.querySelector('button').style.backgroundColor = '';
+            }
+        });
+    </script>
+</body>
+</html>

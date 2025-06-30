@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarô Mystério | Adivinhações Espirituais</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-background: #1a1a2e;
+            --color-text: #f0f0f0;
+            --color-accent: #ff9d00;
+            --color-secondary: #f9ca24;
+            --color-card: #2a2a4a;
+            --color-hover: #3a3a6a;
+            --color-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(26, 26, 46, 0.95);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--color-shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 2rem;
+        }
+
+        nav ul li a {
+            color: var(--color-text);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--color-accent);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding-top: 60px;
+            background: linear-gradient(rgba(26, 26, 46, 0.8), rgba(26, 26, 46, 0.9)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a1a2e"/><path d="M0 0L100 100M100 0L0 100" stroke="%232a2a4a" stroke-width="1"/></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-text);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--color-secondary);
+            font-weight: 300;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background-color: var(--color-accent);
+            color: var(--color-background);
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: var(--color-secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(249, 202, 36, 0.4);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 0;
+            background-color: var(--color-background);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--color-card);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px var(--color-shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-image {
+            height: 200px;
+            background-color: var(--color-hover);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-image i {
+            font-size: 3rem;
+            color: var(--color-accent);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            margin-bottom: 1.5rem;
+            color: var(--color-secondary);
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 5rem 0;
+            background-color: var(--color-card);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 0 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-number {
+            background-color: var(--color-accent);
+            color: var(--color-background);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 5rem 0;
+            background-color: var(--color-background);
+        }
+
+        .testimonial-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .testimonial {
+            background-color: var(--color-card);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px var(--color-shadow);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .testimonial::before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--color-secondary);
+            opacity: 0.3;
+            position: absolute;
+            top: -20px;
+            left: 10px;
+        }
+
+        .testimonial p {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .testimonial-author img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            background-color: var(--color-hover);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0a0a1a;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-accent);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: var(--color-text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--color-accent);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: var(--color-card);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--color-accent);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--color-background);
+                flex-direction: column;
+                padding: 1rem 0;
+                box-shadow: 0 5px 10px var(--color-shadow);
+            }
+
+            nav ul.show {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 0;
+                padding: 0.8rem 2rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .steps {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo">Tarô Mystério</a>
+            <button class="mobile-menu-btn">☰</button>
+            <nav>
+                <ul>
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#services">Serviços</a></li>
+                    <li><a href="#how-it-works">Como Funciona</a></li>
+                    <li><a href="#testimonials">Depoimentos</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>A Verdadeira Sabedoria do Tarô</h1>
+            <p>Descubra o caminho que o universo preparou para você através das cartas do Tarô. Uma experiência espiritual guiada com credibilidade e justiça.</p>
+            <a href="#services" class="btn">Agendar Sessão</a>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title">Nossos Serviços</h2>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-image">
+                        <i>🃏</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Leitura Básica</h3>
+                        <p>Uma leitura introdutória para iniciantes, onde você aprenderá a interpretar as cartas e seus significados mais comuns.</p>
+                        <a href="#contact" class="btn">Agendar</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-image">
+                        <i>🔮</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Leitura Especial</h3>
+                        <p>Uma análise profunda sobre questões específicas da sua vida, com foco em orientação espiritual e pessoal.</p>
+                        <a href="#contact" class="btn">Agendar</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-image">
+                        <i>💫</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Consulta Premium</h3>
+                        <p>Uma experiência completa com consultoria personalizada, análise detalhada e direções claras para sua jornada.</p>
+                        <a href="#contact" class="btn">Agendar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Como Funciona</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Agende sua Sessão</h3>
+                    <p>Escolha o tipo de leitura e horário disponível para sua consulta.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Prepare sua Pergunta</h3>
+                    <p>Defina claramente o que deseja descobrir ou orientação durante a leitura.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>A Leitura</h3>
+                    <p>Receba as cartas e interpretações em um ambiente tranquilo e seguro.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Receba sua Mensagem</h3>
+                    <p>Obtenha insights espirituais e direções claras para sua vida.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2 class="section-title">O Que Nossos Clientes Dizem</h2>
+            <div class="testimonial-container">
+                <div class="testimonial">
+                    <p>"A leitura que fiz com o Tarô Mystério foi uma experiência transformadora. As cartas trouxeram respostas que eu precisava ouvir, e a interpretação foi clara e compassiva."</p>
+                    <div class="testimonial-author">
+                        <div style="width:50px;height:50px;background-color:#3a3a6a;border-radius:50%;"></div>
+                        <div>
+                            <strong>Carolina Silva</strong>
+                            <p>Leitura Especial</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <p>"Finalmente entendi o significado do meu sonho após a leitura do Tarô. A consultora foi extremamente atenciosa e suas palavras me ajudaram a superar um momento difícil."</p>
+                    <div class="testimonial-author">
+                        <div style="width:50px;height:50px;background-color:#3a3a6a;border-radius:50%;"></div>
+                        <div>
+                            <strong>Roberto Oliveira</strong>
+                            <p>Consulta Premium</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Tarô Mystério</h3>
+                    <p>Descubra o poder das cartas do Tarô em uma experiência espiritual única, guiada com credibilidade e justiça.</p>
+                    <div class="social-links">
+                        <a href="#"><i>📱</i></a>
+                        <a href="#"><i>📘</i></a>
+                        <a href="#"><i>📷</i></a>
+                        <a href="#"><i>🐦</i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#home">Início</a></li>
+                        <li><a href="#services">Serviços</a></li>
+                        <li><a href="#how-it-works">Como Funciona</a></li>
+                        <li><a href="#testimonials">Depoimentos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li><i>📧</i> contato@taromisterio.com.br</li>
+                        <li><i>📱</i> (11) 9999-9999</li>
+                        <li><i>📍</i> São Paulo, Brasil</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Tarô Mystério. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navMenu = document.querySelector('nav ul');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('show');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu if open
+                if (navMenu.classList.contains('show')) {
+                    navMenu.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

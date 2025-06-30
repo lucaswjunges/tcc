@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira do Tarô - Leitura Profissional</title>
+    <style>
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f5f0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Cabeçalho */
+        header {
+            background: linear-gradient(135deg, #8b5a2b 0%, #6d4725 100%);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-style: italic;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #f0e6d2;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Seções */
+        section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3 {
+            color: #6d4725;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Botões */
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #8b5a2b 0%, #6d4725 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Formulário de leitura */
+        .leitura-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Área de resultados */
+        .resultado {
+            display: none;
+            background-color: #f9f5f0;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            border-left: 5px solid #8b5a2b;
+        }
+
+        .cartas-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .carta {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .carta:hover {
+            transform: translateY(-5px);
+        }
+
+        .carta img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .carta-info {
+            padding: 1rem;
+        }
+
+        .carta-significado {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Tarifas */
+        .tarifas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .tarifa-card {
+            background-color: #f9f5f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .tarifa-card:hover {
+            border-color: #8b5a2b;
+        }
+
+        .tarifa-card.popular {
+            border-color: #8b5a2b;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tarifa-card.popular::before {
+            content: "MAIS POPULAR";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #8b5a2b;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .tarifa-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tarifa-card .preco {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6d4725;
+            margin-bottom: 1rem;
+        }
+
+        /* Depoimentos */
+        .depoimentos {
+            background-color: #f9f5f0;
+            padding: 3rem 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .depoimento-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .depoimento-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #8b5a2b;
+        }
+
+        .depoimento-texto {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .depoimento-autor {
+            font-weight: bold;
+            color: #6d4725;
+        }
+
+        /* FAQ */
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1.5rem;
+        }
+
+        .faq-pergunta {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-resposta {
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .faq-resposta.show {
+            display: block;
+        }
+
+        /* Rodapé */
+        footer {
+            background: linear-gradient(135deg, #6d4725 0%, #8b5a2b 100%);
+            color: white;
+            padding: 3rem 1rem;
+            margin-top: 3rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section ul li a {
+            color: #f0e6d2;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .leitura-form {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+            }
+
+            nav ul li {
+                margin-left: 0;
+                margin-right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div>
+                <div class="logo">Carteira do Tarô</div>
+                <div class="tagline">Visões Clarividentes e Leituras Precisas</div>
+            </div>
+            <ul>
+                <li><a href="#inicio">Início</a></li>
+                <li><a href="#como-funciona">Como Funciona</a></li>
+                <li><a href="#depoimentos">Depoimentos</a></li>
+                <li><a href="#faq">Perguntas Frequentes</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section id="inicio">
+            <h1>Bem-vindo ao Carteira do Tarô</h1>
+            <p>Descubra o poder do tarot com leituras precisas e profissionais. Nossa equipe de cartomantes experientes está pronta para guiá-lo em uma jornada de autoconhecimento e orientação espiritual.</p>
+            <p>Oferecemos leituras online com tarifas justas e transparentes, mantendo sempre a ética e a credibilidade em nossas práticas.</p>
+            <a href="#leitura" class="btn">Agendar uma Leitura</a>
+        </section>
+
+        <section id="leitura">
+            <h2>Agende sua Leitura de Tarô</h2>
+            <p>Informe seus dados e o propósito da sua leitura para receber um oráculo personalizado.</p>
+
+            <form id="leitura-form" class="leitura-form">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipo-leitura">Tipo de Leitura</label>
+                    <select id="tipo-leitura" name="tipo-leitura" required>
+                        <option value="">Selecione o tipo de leitura</option>
+                        <option value="relacionamentos">Relacionamentos</option>
+                        <option value="carreira">Carreira e Profissão</option>
+                        <option value="amor">Amor e Paixão</option>
+                        <option value="futuro">Perspectiva do Futuro</option>
+                        <option value="espiritual">Desenvolvimento Espiritual</option>
+                        <option value="geral">Leitura Geral</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="urgencia">Urgência (opcional)</label>
+                    <select id="urgencia" name="urgencia">
+                        <option value="">Sem urgência</option>
+                        <option value="24h">Até 24 horas</option>
+                        <option value="48h">Até 48 horas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mensagem">Sua Mensagem/Orgulho</label>
+                    <textarea id="mensagem" name="mensagem" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Escolha o Plano:</label>
+                    <div class="tarifas">
+                        <div class="tarifa-card">
+                            <h3>Básico</h3>
+                            <div class="preco">R$ 49</div>
+                            <p>Leitura simples com 3 cartas</p>
+                            <ul>
+                                <li>Visão geral</li>
+                                <li>Cartas únicas</li>
+                                <li>Resposta rápida</li>
+                            </ul>
+                            <button type="button" class="btn" onclick="selecionarPlano('basico')">Selecionar</button>
+                        </div>
+                        <div class="tarifa-card popular">
+                            <h3>Premium</h3>
+                            <div class="preco">R$ 99</div>
+                            <p>Leitura completa com 7 cartas</p>
+                            <ul>
+                                <li>Visão detalhada</li>
+                                <li>Cartas invertidas</li>
+                                <li>Interpretação profunda</li>
+                                <li>Cartão presente</li>
+                            </ul>
+                            <button type="button" class="btn" onclick="selecionarPlano('premium')">Selecionar</button>
+                        </div>
+                        <div class="tarifa-card">
+                            <h3>Especialista</h3>
+                            <div class="preco">R$ 199</div>
+                            <p>Leitura extensa com 15 cartas</p>
+                            <ul>
+                                <li>Visão profética</li>
+                                <li>Cartas invertidas</li>
+                                <li>Interpretação detalhada</li>
+                                <li>Consultoria adicional</li>
+                                <li>Cartão presente</li>
+                            </ul>
+                            <button type="button" class="btn" onclick="selecionarPlano('especialista')">Selecionar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn">Enviar Solicitação</button>
+                </div>
+            </form>
+
+            <div id="resultado" class="resultado">
+                <h2>Confirmação de Leitura</h2>
+                <p>Obrigado pela sua solicitação! Em breve um cartomante entrará em contato para confirmar sua leitura de tarô.</p>
+                <p>Um e-mail com todos os detalhes foi enviado para sua caixa postal.</p>
+            </div>
+        </section>
+
+        <section id="como-funciona">
+            <h2>Como Funcionamos</h2>
+            <p>Processo simples e seguro para garantir uma experiência de leitura de tarô excepcional:</p>
+            <ol>
+                <li><strong>Agende sua leitura</strong> - Escolha o plano que melhor se adapta às suas necessidades</li>
+                <li><strong>Confirmação</strong> - Um cartomante entrará em contato para confirmar a leitura</li>
+                <li><strong>Realização da leitura</strong> - A leitura acontece via videoconferência ou por e-mail</li>
+                <li><strong>Receba seus insights</strong> - Obtenha respostas claras e orientações</li>
+            </ol>
+            <p>Todo o processo é transparente e respeita sua privacidade. Nossos cartomantes são profissionais qualificados e seguem uma ética de trabalho que prioriza sua tranquilidade e bem-estar.</p>
+        </section>
+
+        <section id="depoimentos">
+            <h2>O que Nossos Clientes Dizem</h2>
+            <div class="depoimento-container">
+                <div class="depoimento-card">
+                    <p class="depoimento-texto">"A leitura que fiz com a Carteira do Tarô foi incrível! A interpretação das cartas foi clara e me ajudou a tomar decisões importantes sobre minha carreira."</p>
+                    <p class="depoimento-autor">- Maria S., São Paulo</p>
+                </div>
+                <div class="depoimento-card">
+                    <p class="depoimento-texto">"Sempre tive dúvidas sobre relacionamentos, mas a leitura do tarô me trouxe uma visão tão nítida que me ajudou a entender melhor minha situação."</p>
+                    <p class="depoimento-autor">- Carlos F., Rio de Janeiro</p>
+                </div>
+                <div class="depoimento-card">
+                    <p class="depoimento-texto">"O processo foi muito rápido e fácil. O cartomante foi muito atencioso e suas palavras acertaram em cheio. Recomendo fortemente!"</p>
+                    <p class="depoimento-autor">- Ana L., Belo Horizonte</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2>Perguntas Frequentes</h2>
+            <div class="faq-item">
+                <div class="faq-pergunta">
+                    Como funciona a leitura de tarô? <span>+</span>
+                </div>
+                <div class="faq-resposta">
+                    <p>Nossa leitura de tarô utiliza um arcano específico para cada consulta, baseado no propósito que você deseja esclarecer. O cartomante interpreta os sinais que as cartas trazem, considerando sua posição, orientação e combinação entre si.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-pergunta">
+                    Quanto tempo dura uma leitura? <span>+</span>
+                </div>
+                <div class="faq-resposta">
+                    <p>O tempo de leitura varia conforme o plano escolhido: o plano básico dura cerca de 15 minutos, o premium entre 30 e 45 minutos e o especialista pode durar até 60 minutos, dependendo da complexidade.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-pergunta">
+                    As leituras são confidenciais? <span>+</span>
+                </div>
+                <div class="faq-resposta">
+                    <p>Sim, todas as suas informações são tratadas com extrema confidencialidade. Nossos cartomantes respeitam o sigilo e as informações são armazenadas apenas para a realização da leitura.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-pergunta">
+                    Como posso pagar a leitura? <span>+</span>
+                </div>
+                <div class="faq-resposta">
+                    <p>Apagamento pode ser feito via cartão de crédito, PayPal ou transferência bancária. Todas as transações são seguras e comprovadas.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-pergunta">
+                    Posso pedir uma leitura anônima? <span>+</span>
+                </div>
+                <div class="faq-resposta">
+                    <p>Sim, é possível solicitar uma leitura anônima. Nesse caso, não compartilhamos seus dados pessoais com o cartomante, mas é importante saber que a precisão da leitura pode ser afetada.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Carteira do Tarô</h3>
+                <p>Leituras de tarô profissionais para orientação e autoconhecimento.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="#inicio">Início</a></li>
+                    <li><a href="#leitura">Agendar Leitura</a></li>
+                    <li><a href="#como-funciona">Como Funciona</a></li>
+                    <li><a href="#depoimentos">Depoimentos</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contato</h3>
+                <ul>
+                    <li>Email: contato@carteiradotaro.com.br</li>
+                    <li>WhatsApp: (11) 9999-9999</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 Carteira do Tarô - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        // Função para mostrar/ocultar respostas FAQ
+        document.querySelectorAll('.faq-pergunta').forEach(question => {
+            question.addEventListener('click', () => {
+                const resposta = question.nextElementSibling;
+                resposta.classList.toggle('show');
+                question.querySelector('span').textContent = resposta.classList.contains('show') ? '-' : '+';
+            });
+        });
+
+        // Função para selecionar plano
+        function selecionarPlano(plano) {
+            const form = document.getElementById('leitura-form');
+            const tipoLeitura = document.getElementById('tipo-leitura').value;
+            
+            if (!tipoLeitura) {
+                alert('Por favor, selecione o tipo de leitura primeiro.');
+                return;
+            }
+            
+            // Aqui normalmente você enviaria os dados para o servidor
+            // Para este exemplo, vamos apenas mostrar o resultado
+            document.getElementById('resultado').style.display = 'block';
+            form.style.display = 'none';
+            
+            // Scroll para o resultado
+            document.getElementById('resultado').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Tratamento do formulário
+        document.getElementById('leitura-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Coletar dados do formulário
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const tipoLeitura = document.getElementById('tipo-leitura').value;
+            const mensagem = document.getElementById('mensagem').value;
+            
+            // Aqui normalmente você enviaria os dados para o servidor
+            // Para este exemplo, vamos apenas mostrar o resultado
+            document.getElementById('resultado').style.display = 'block';
+            this.style.display = 'none';
+            
+            // Scroll para o resultado
+            document.getElementById('resultado').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

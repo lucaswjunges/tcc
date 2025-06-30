@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitura de Tarô</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/about">Sobre</a>
+            <a href="/tarot_reading">Leitura de Tarô</a>
+            <a href="/contact">Contato</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="tarot-reading">
+            <h1>Leitura de Tarô</h1>
+
+            <p>Escolha uma das opções abaixo para iniciar sua leitura:</p>
+
+            <div class="options">
+                <a href="/three_card_spread" class="reading-option">Jogo de 3 Cartas</a>
+                <a href="/celtic_cross_spread" class="reading-option">Cruz Celta</a>
+                <!-- Outras opções de leitura podem ser adicionadas aqui -->
+            </div>
+
+
+            <section id="three-card-spread-section" style="display: none;">
+                <h2>Jogo de 3 Cartas</h2>
+                <p>Passado, Presente, Futuro</p>
+
+                <div id="three-card-display">
+                    <!--  As cartas serão exibidas aqui -->
+                </div>
+
+                <button id="draw-three-cards">Tirar as Cartas</button>
+                <div id="three-card-interpretations">
+                    <!--  As interpretações das cartas serão exibidas aqui -->
+                </div>
+
+            </section>
+                
+            <section id="celtic-cross-spread-section" style="display: none;">
+                <h2>Cruz Celta</h2>
+                <p>Uma leitura mais aprofundada.</p>
+
+                <div id="celtic-cross-display">
+                    <!--  As cartas serão exibidas aqui -->
+                </div>
+                <button id="draw-celtic-cross">Tirar as Cartas</button>
+                <div id="celtic-cross-interpretations">
+                    <!-- As interpretações das cartas serão exibidas aqui -->
+                </div>
+            </section>
+
+
+
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2023 - Seu Nome ou Nome da Empresa</p>
+    </footer>
+
+    <script src="../static/scripts.js"></script>
+</body>
+</html>

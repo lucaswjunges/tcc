@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidade - Tarô Online</title>
+    <style>
+        /* Reset e estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Cabeçalho */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #f1c40f;
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb {
+            padding: 15px 0;
+            font-size: 14px;
+        }
+        
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Conteúdo principal */
+        .main-content {
+            padding: 40px 0;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: #f1c40f;
+        }
+        
+        /* Seções de política */
+        .privacy-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .privacy-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border-bottom: 2px solid #f1c40f;
+            padding-bottom: 10px;
+        }
+        
+        .privacy-section h3 {
+            color: #3498db;
+            margin: 25px 0 15px;
+            font-size: 20px;
+        }
+        
+        .privacy-section p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+        
+        .privacy-section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .privacy-section li {
+            margin-bottom: 8px;
+        }
+        
+        /* Rodapé */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 0 20px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 20px;
+            padding-right: 20px;
+        }
+        
+        .footer-column h3 {
+            color: #f1c40f;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: #f1c40f;
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #34495e;
+            font-size: 14px;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">Tarô Online</div>
+            <nav>
+                <ul>
+                    <li><a href="/">Início</a></li>
+                    <li><a href="/leituras">Leituras</a></li>
+                    <li><a href="/tarot">Sobre o Tarô</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/contato">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/">Home</a> > <a href="/pages">Páginas</a> > Política de Privacidade
+        </div>
+        
+        <div class="main-content">
+            <h1 class="page-title">Política de Privacidade</h1>
+            
+            <div class="privacy-section">
+                <h2>Introdução</h2>
+                <p>Valorizamos sua privacidade e estamos comprometidos em proteger suas informações pessoais. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos seus dados quando você utiliza nosso site.</p>
+            </div>
+            
+            <div class="privacy-section">
+                <h2>Informações que coletamos</h2>
+                <p>Quando você visita nosso site, coletamos automaticamente certas informações do seu dispositivo e do navegador, incluindo:</p>
+                <ul>
+                    <li>Endereços IP</li>
+                    <li>Tipo de navegador</li>
+                    <li>Tipo de dispositivo</li>
+                    <li>Informações de acesso</li>
+                    <li>Dados de uso</li>
+                </ul>
+                <p>Além disso, quando você realiza ações em nosso site, podemos coletar informações específicas:</p>
+                <ul>
+                    <li>Dados fornecidos em formulários</li>
+                    <li>Histórico de leituras realizadas</li>
+                    <li>Preferências de usuário</li>
+                    <li>Comentários e feedbacks</li>
+                </ul>
+            </div>
+            
+            <div class="privacy-section">
+                <h2>Como usamos suas informações</h2>
+                <p>Usamos as informações coletadas para:</p>
+                <ul>
+                    <li>Fornecer e manter nosso serviço</li>
+                    <li>Desenvolver novos produtos, serviços, funcionalidades e opções de marketing</li>
+                    <li>Analisar e melhorar nossos serviços, produtos, operações e materiais promocionais</li>
+                    <li>Entender e analisar tendências de uso, para avaliar a eficácia de nossas campanhas e para desenvolver produtos e serviços</li>
+                    <li>Prevenir e resolver problemas, incluindo a investigação de fraude ou outros atividades ilegais</li>
+                </ul>
+            </div>
+            
+            <div class="privacy-section">
+                <h2>Compartilhamento de informações</h2>
+                <p>Não compartilhamos suas informações pessoais com terceiros, exceto quando necessário para:</p>
+                <ul>
+                    <li>Fornecer nosso serviço</li>
+                    <li>Cumprir obrigações legais</li>
+                    <li>Proteger nossos direitos e interesses</li>
+                    <li>Prevenir ou identificar fraudes ou irregularidades</li>
+                </ul>
+                <p>Podemos compartilhar agregação estatística não identificável com parceiros para melhorar nossos serviços.</p>
+            </div>
+            
+            <div class="privacy-section">
+                <h2>Cookies</h2>
+                <p>Nosso site utiliza cookies para melhorar sua experiência de usuário. Os cookies são arquivos de texto que são armazenados em seu dispositivo quando você visita um site.</p>
+                <p>Temos duas categorias de cookies:</p>
+                <ul>
+                    <li>Cookies essenciais: necessários para o funcionamento básico do site</li>
+                    <li>Cookies de desempenho/análise: ajudam a entender como os visitantes interagem com nosso site</li>
+                    <li>Cookies de funcionalidade: lembram escolhas feitas e características do dispositivo</li>
+                    <li>Cookies de publicidade: usados para fornecer anúncios relevantes</li>
+                </ul>
+                <p>Você pode configurar seu navegador para recusar todos ou alguns cookies, ou para receber notificações quando cookies são enviados.</p>
+            </div>
+            
+            <div class="privacy-section">
+                <h2>Segurança</h2>
+                <p>Protegemos suas informações pessoais contra perda, uso indevido, acesso não autorizado, divulgação, alteração ou destruição.</p>
+                <p>Implementamos medidas de segurança técnicas e organizacionais adequadas para garantir a proteção adequada de suas informações pessoais.</p>
+            </div>
+            
+            <div class="privacy-section">
+                <h2>Direitos do usuário</h2>
+                <p>Você tem o direito de:</p>
+                <ul>
+                    <li>Acessar suas informações pessoais</li>
+                    <li>Solicitar a correção ou exclusão de suas informações</li>
+                    <li>Solicitar a limitação do processamento de suas informações</li>
+                    <li>Solicitar a portabilidade de suas informações</li>
+                    <li>Opor-se ao processamento de suas informações</li>
+                    <li>Não receber comunicações comerciais indesejadas</li>
+                </ul>
+                <p>Para exercer quaisquer desses direitos, entre em contato conosco usando as informações de contato fornecidas.</p>
+            </div>
+            
+            <div class="privacy-section">
+                <h2>Alterações nesta política</h2>
+                <p>Podemos atualizar esta Política de Privacidade periodicamente. As alterações entram em vigor assim que são publicadas na versão atualizada desta política.</p>
+                <p>Recomendamos que você revise esta página regularmente para estar ciente de quaisquer alterações.</p>
+            </div>
+            
+            <div class="privacy-section">
+                <h2>Contato</h2>
+                <p>Se você tiver qualquer dúvida sobre esta Política de Privacidade, ou sobre como lidamos com seus dados pessoais, entre em contato conosco:</p>
+                <p>
+                    <strong>Endereço:</strong><br>
+                    Rua Exemplo, 123<br>
+                    Cidade, Estado - CEP 12345-678<br>
+                    <br>
+                    <strong>Email:</strong><br>
+                    privacidade@taroonline.com.br<br>
+                    <br>
+                    <strong>Telefone:</strong><br>
+                    (00) 00000-0000
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Tarô Online</h3>
+                    <p>Seu portal de adivinhações espirituais e tarot online.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/leituras">Leituras</a></li>
+                        <li><a href="/tarot">Sobre o Tarô</a></li>
+                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/contato">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="/privacy">Política de Privacidade</a></li>
+                        <li><a href="/terms">Termos de Serviço</a></li>
+                        <li><a href="/cookies">Política de Cookies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li>Email: contato@taroonline.com.br</li>
+                        <li>Telefone: (00) 00000-0000</li>
+                        <li>Horário de Atendimento: Seg-Sex, 9h-18h</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Tarô Online. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

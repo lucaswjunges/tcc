@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarot Reading - Payment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/readings">Readings</a>
+            <a href="/contact">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="payment-container">
+            <h1>Payment</h1>
+
+            {% if reading_type %}
+                <h2>Reading Type: {{ reading_type }}</h2>
+                <h2>Price: ${{ price }}</h2>
+
+
+                <form action="/process_payment" method="POST">
+                    <label for="card_number">Card Number:</label><br>
+                    <input type="text" id="card_number" name="card_number" required><br><br>
+
+                    <label for="expiry_date">Expiry Date (MM/YY):</label><br>
+                    <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" required><br><br>
+
+                    <label for="cvv">CVV:</label><br>
+                    <input type="text" id="cvv" name="cvv" required><br><br>
+
+                    <input type="hidden" name="reading_type" value="{{ reading_type }}">
+                    <input type="hidden" name="price" value="{{ price }}">
+
+                    <input type="submit" value="Pay Now">
+
+                 </form>
+
+            {% else %}
+            <p>Please select a reading type first.</p>
+            <a href="/readings">Go to Readings</a>
+            {% endif %}
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Tarot Readings</p>
+    </footer>
+</body>
+</html>

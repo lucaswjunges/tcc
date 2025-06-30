@@ -1,0 +1,10 @@
+modelo,dataset,acuracia,precisao,recall,f1-score,tempo_treinamento
+CNN,Dataset1,0.92,0.91,0.93,0.92,120
+CNN,Dataset2,0.95,0.94,0.96,0.95,150
+CNN,Dataset3,0.90,0.89,0.91,0.90,100
+SVM,Dataset1,0.88,0.87,0.89,0.88,90
+SVM,Dataset2,0.91,0.90,0.92,0.91,110
+SVM,Dataset3,0.85,0.84,0.86,0.85,80
+RandomForest,Dataset1,0.86,0.85,0.87,0.86,70
+RandomForest,Dataset2,0.89,0.88,0.90,0.89,95
+RandomForest,Dataset3,0.82,0.81,0.83,0.82,60

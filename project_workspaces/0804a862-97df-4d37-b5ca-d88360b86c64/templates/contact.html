@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - Tarô Místico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/about">Sobre</a></li>
+                <li><a href="/services">Serviços</a></li>
+                <li><a href="/contact">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="contact-section">
+            <h2>Entre em Contato</h2>
+            <p>Se você tiver alguma dúvida, sugestão ou quiser agendar uma consulta, entre em contato conosco através do formulário abaixo:</p>
+
+            <form action="/submit_contact" method="post">
+                <label for="name">Nome:</label>
+                <input type="text" id="name" name="name" required><br><br>
+
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required><br><br>
+
+                <label for="message">Mensagem:</label>
+                <textarea id="message" name="message" rows="4" required></textarea><br><br>
+
+                <button type="submit">Enviar Mensagem</button>
+            </form>
+
+            <div class="contact-info">
+                <h3>Outras formas de contato:</h3>
+                <p>Email: tarotmistico@example.com</p>
+                <p>Telefone: (11) 99999-9999</p>
+                <p>Redes Sociais: [Links para redes sociais]</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Tarô Místico - Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>

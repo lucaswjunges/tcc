@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarot Reading</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/reading">Reading</a>
+            <a href="/login">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Your Tarot Reading</h1>
+
+        {% if reading %}
+            <div class="reading-container">
+                {% for card in reading %}
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='images/' + card.image) }}" alt="{{ card.name }}">
+                        <h2>{{ card.name }}</h2>
+                        <p>{{ card.meaning }}</p>
+                        {% if card.reversed %}
+                            <p class="reversed">Reversed</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <p class="overall-meaning">{{ overall_meaning }}</p>
+
+                 <form action="/feedback" method="post">
+                    <label for="feedback">Leave Feedback (Optional):</label><br>
+                    <textarea id="feedback" name="feedback" rows="4" cols="50"></textarea><br><br>
+                    <input type="hidden" name="reading_id" value="{{ reading_id }}">
+                    <input type="submit" value="Submit Feedback">
+                </form>
+            </div>
+
+
+        {% else %}
+            <p>No reading available. Please select a spread.</p>
+             <div class="spread-options">
+                <a href="/reading/one-card">One Card Spread</a>
+                <a href="/reading/three-card">Three Card Spread</a>
+                <!-- Add more spread options as needed -->
+            </div>
+        {% endif %}
+
+    </main>
+
+    <footer>
+        &copy; {{year}} Tarot Website
+    </footer>
+</body>
+</html>

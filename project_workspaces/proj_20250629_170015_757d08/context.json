@@ -1,0 +1,164 @@
+{
+  "project_id": "proj_20250629_170015_757d08",
+  "project_name": "Projeto Criar um artigo PDF de TCC de Engenharia sobre Sis...",
+  "project_goal": "Criar um artigo PDF de TCC de Engenharia sobre Sistema de prevenção de falhas em motores industriais usando CNN e Visão Computacional. O artigo deve ter qualidade publicável e estar pronto para ser publicado. Deve conter gráficos, imagens, tabelas. Use LaTex",
+  "project_type": "general",
+  "status": "completed_successfully",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250629_170015_757d08",
+  "task_queue": [],
+  "completed_tasks": [
+    {
+      "task_id": "4b9c1b93-0426-482b-b1b1-db04d3cc9bab",
+      "description": "Criar documentação do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação completa para: Criar um artigo PDF de TCC de Engenharia sobre Sistema de prevenção de falhas em motores industriais usando CNN e Visão Computacional. O artigo deve ter qualidade publicável e estar pronto para ser publicado. Deve conter gráficos, imagens, tabelas. Use LaTex. Incluir instalação, uso, estrutura e exemplos específicos para este tipo de projeto.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "README.md específico e completo para o projeto",
+      "created_at": "2025-06-29T20:00:15.245254",
+      "updated_at": "2025-06-29T20:00:15.245273",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "276a18a6-4fbd-476e-bf12-88a6632b6d2a",
+      "description": "Criar arquivo de dependências",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "requirements.txt",
+        "content_guideline": "Listar dependências Python necessárias para: Criar um artigo PDF de TCC de Engenharia sobre Sistema de prevenção de falhas em motores industriais usando CNN e Visão Computacional. O artigo deve ter qualidade publicável e estar pronto para ser publicado. Deve conter gráficos, imagens, tabelas. Use LaTex. Incluir frameworks e bibliotecas específicas.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "requirements.txt com dependências específicas do projeto",
+      "created_at": "2025-06-29T20:00:15.245297",
+      "updated_at": "2025-06-29T20:00:15.245300",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "e6b1b5f4-03fe-46e5-b2a7-5898649fb7f1",
+      "description": "Criar modelos para blog",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "models.py",
+        "content_guideline": "Modelos para blog: Post, Category, Tag, Comment, Author com relacionamentos",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Modelos de blog implementados",
+      "created_at": "2025-06-29T20:00:15.245320",
+      "updated_at": "2025-06-29T20:00:15.245323",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "fb998a94-bc3b-45b6-b379-5c0d9bd3fd97",
+      "description": "Criar aplicação Flask para blog",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "app.py",
+        "content_guideline": "Aplicação Flask com rotas para blog: listar posts, criar post, visualizar post, comentários",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Aplicação Flask funcional para blog",
+      "created_at": "2025-06-29T20:00:15.245341",
+      "updated_at": "2025-06-29T20:00:15.245343",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "9c73ea26-83a0-4db6-b01f-698da77a02fe",
+      "description": "Criar templates para blog",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "templates/index.html",
+        "content_guideline": "Templates HTML para blog: página inicial com lista de posts, página de post individual",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Templates HTML para blog criados",
+      "created_at": "2025-06-29T20:00:15.245354",
+      "updated_at": "2025-06-29T20:00:15.245356",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "artifacts_state": {
+    "README.md": {
+      "path": "README.md",
+      "hash": "ec214e2102d5dd77c159c5b437de3e88e213313e02a8c7fb4153e3b550719778",
+      "summary": "Arquivo criado/sobrescrito: README.md",
+      "last_modified": null
+    },
+    "requirements.txt": {
+      "path": "requirements.txt",
+      "hash": "308f05332f4cac0c3c6c9609e80903961dccca58bc16f09b5fd7fd0ff98bf2c1",
+      "summary": "Arquivo criado/sobrescrito: requirements.txt",
+      "last_modified": null
+    },
+    "models.py": {
+      "path": "models.py",
+      "hash": "afc4636c858a72561a870dd7d30d418e9d873abaf3454e6743af563dd81bfbdc",
+      "summary": "Arquivo criado/sobrescrito: models.py",
+      "last_modified": null
+    },
+    "app.py": {
+      "path": "app.py",
+      "hash": "dad8aafc3335aa7c5c235a2b4f9a95e4888b32131ae11866274bd35096ab64f8",
+      "summary": "Arquivo criado/sobrescrito: app.py",
+      "last_modified": null
+    },
+    "templates/index.html": {
+      "path": "templates/index.html",
+      "hash": "8b20ee1a60256db38ade4d56457dbd543797fcded6be1f9590f82343023bcdba",
+      "summary": "Arquivo criado/sobrescrito: templates/index.html",
+      "last_modified": null
+    }
+  },
+  "metrics": {
+    "total_iterations": 6,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

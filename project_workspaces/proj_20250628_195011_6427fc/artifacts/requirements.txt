@@ -1,0 +1,10 @@
+django
+Django All Auth
+django-crispy-forms
+django-filter
+psycopg2-binary
+whitenoise
+gunicorn
+stripe
+django-storages
+pytz

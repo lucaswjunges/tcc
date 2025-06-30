@@ -1,0 +1,120 @@
+{
+  "project_id": "proj_20250629_165843_73fde3",
+  "project_name": "Projeto Create a simple Flask web application with a hello...",
+  "project_goal": "Create a simple Flask web application with a hello world endpoint",
+  "project_type": "general",
+  "status": "planned",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250629_165843_73fde3",
+  "task_queue": [
+    {
+      "task_id": "5530c3c6-4b5e-4379-9f3f-655ca666e65f",
+      "description": "Criar arquivo de dependências",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "requirements.txt",
+        "content_guideline": "Listar dependências Python necessárias para: Create a simple Flask web application with a hello world endpoint. Incluir frameworks e bibliotecas específicas.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "in_progress",
+      "acceptance_criteria": "requirements.txt com dependências específicas do projeto",
+      "created_at": "2025-06-29T19:58:43.919179",
+      "updated_at": "2025-06-29T19:58:43.919186",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "3ac70794-ada6-42a1-a638-ccf778d4e755",
+      "description": "Criar aplicação principal",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "main.py",
+        "content_guideline": "Aplicação principal com estrutura básica e funcionalidades core",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Aplicação principal implementada",
+      "created_at": "2025-06-29T19:58:43.919250",
+      "updated_at": "2025-06-29T19:58:43.919255",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "26915dc7-e8eb-4d77-9f2b-c69adb9e0c97",
+      "description": "Criar configurações",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "config.py",
+        "content_guideline": "Configurações do projeto com variáveis de ambiente e settings",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Configurações implementadas",
+      "created_at": "2025-06-29T19:58:43.919283",
+      "updated_at": "2025-06-29T19:58:43.919287",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "completed_tasks": [
+    {
+      "task_id": "31c8a848-8ef0-4c7c-a084-81d5da0c272e",
+      "description": "Criar documentação do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação completa para: Create a simple Flask web application with a hello world endpoint. Incluir instalação, uso, estrutura e exemplos específicos para este tipo de projeto.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "README.md específico e completo para o projeto",
+      "created_at": "2025-06-29T19:58:43.919091",
+      "updated_at": "2025-06-29T19:58:43.919129",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "artifacts_state": {
+    "README.md": {
+      "path": "README.md",
+      "hash": "c9118476ee5fb893d99476aa450d57fc00b1ba4187ce4f66429b3e6072d5bc78",
+      "summary": "Arquivo criado/sobrescrito: README.md",
+      "last_modified": null
+    }
+  },
+  "metrics": {
+    "total_iterations": 2,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

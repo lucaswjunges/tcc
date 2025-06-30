@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado da Sua Consulta de Tarô</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f5f2;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Cabeçalho */
+        header {
+            background-color: #8b5a2b;
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #ffd700;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ffd700;
+        }
+
+        /* Seção de resultado */
+        .resultado-section {
+            padding: 40px 0;
+            background-color: white;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .resultado-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .cartas-container {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .interpretacao-container {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .carta {
+            background-color: #f8f5f2;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .carta:hover {
+            transform: translateY(-5px);
+        }
+
+        .carta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .carta-positicao {
+            font-weight: bold;
+            color: #8b5a2b;
+        }
+
+        .carta-img {
+            width: 100px;
+            height: 180px;
+            background-color: #e8d9c0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #8b5a2b;
+            margin-bottom: 10px;
+        }
+
+        .carta-titulo {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .carta-descricao {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .interpretacao-texto {
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .interpretacao-texto h3 {
+            color: #8b5a2b;
+            margin-bottom: 15px;
+        }
+
+        .interpretacao-texto p {
+            margin-bottom: 15px;
+        }
+
+        /* Botões */
+        .acoes-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #8b5a2b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #6d4624;
+        }
+
+        .btn-secondary {
+            background-color: #f8f5f2;
+            color: #8b5a2b;
+            border: 1px solid #8b5a2b;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e8d9c0;
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            margin-bottom: 10px;
+        }
+
+        .footer-content a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        .footer-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 15px;
+                justify-content: center;
+            }
+
+            nav ul li {
+                margin: 0 10px;
+            }
+
+            .resultado-container {
+                flex-direction: column;
+            }
+
+            .acoes-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Carteira<span>Tarô</span></div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Início</a></li>
+                        <li><a href="#">Sobre</a></li>
+                        <li><a href="#">Como Funciona</a></li>
+                        <li><a href="#">Consultas</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="resultado-section">
+            <div class="resultado-container">
+                <div class="cartas-container">
+                    <h2>Cartas Sorteadas</h2>
+                    <div class="carta">
+                        <div class="carta-header">
+                            <span class="carta-positicao">Carta 1: Posição Atual</span>
+                        </div>
+                        <div class="carta-img">♒</div>
+                        <h3 class="carta-titulo">O Áries</h3>
+                        <p class="carta-descricao">A carta do novo começo, da energia e da ação direta.</p>
+                    </div>
+                    <div class="carta">
+                        <div class="carta-header">
+                            <span class="carta-positicao">Carta 2: Posição do Passado</span>
+                        </div>
+                        <div class="carta-img">♉</div>
+                        <h3 class="carta-titulo">O Touro</h3>
+                        <p class="carta-descricao">A carta da estabilidade, do amor e da persistência.</p>
+                    </div>
+                    <div class="carta">
+                        <div class="carta-header">
+                            <span class="carta-positicao">Carta 3: Posição Futura</span>
+                        </div>
+                        <div class="carta-img">♊</div>
+                        <h3 class="carta-titulo">O Gêmeos</h3>
+                        <p class="carta-descricao">A carta da comunicação, da adaptação e da dualidade.</p>
+                    </div>
+                </div>
+                <div class="interpretacao-container">
+                    <h2>Interpretação da Sua Consulta</h2>
+                    <div class="interpretacao-texto">
+                        <p>Olá, agradeço pelo seu confiante pedido de consulta tarotica. Após o estudo das cartas, podemos observar que:</p>
+                        
+                        <h3>O Áries na posição atual</h3>
+                        <p>Você está vivendo um período de grande energia e oportunidades. Seja corajoso(a) para tomar as iniciativas e agir com determinação. Este é o momento de impulsionar seus objetivos e superar desafios.</p>
+                        
+                        <h3>O Touro na posição do passado</h3>
+                        <p>No passado recente, você encontrou estabilidade e harmonia em seus relacionamentos e no trabalho. Você desenvolveu uma forte conexão com pessoas importantes e construiu uma base sólida para o futuro.</p>
+                        
+                        <h3>O Gêmeos na posição futura</h3>
+                        <p>Os próximos meses trarão mudanças interessantes, especialmente no que diz respeito às comunicações e relacionamentos. Você precisará adaptar-se a novas situações e estar aberto(a) a diferentes perspectivas.</p>
+                        
+                        <h3>Interpretação Geral</h3>
+                        <p>Sua consulta mostra um caminho de transformação positiva. Você está deixando para trás certas estruturas para abrir espaço para novas possibilidades. A chave para aproveitar o futuro é manter sua energia direcionada e sua comunicação clara.</p>
+                        
+                        <p>Lembre-se que o tarô oferece orientações, mas o poder está sempre nas suas mãos. Estas cartas são um guia para suas decisões, não determinações absolutas.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="acoes-buttons">
+                <a href="#" class="btn btn-primary">Compartilhar Resultado</a>
+                <a href="#" class="btn btn-secondary">Agendar Próxima Consulta</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>CarteiraTarô - Adivinhações Profissionais e Éticas</p>
+                <p>© 2023 Todos os direitos reservados</p>
+                <p>CarteiraTarô utiliza métodos taroticos tradicionais com foco em orientação espiritual e psicológica.</p>
+                <p>Este serviço é para fins informativos e de entretenimento apenas.</p>
+                <p>Política de Privacidade | Termos de Serviço</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

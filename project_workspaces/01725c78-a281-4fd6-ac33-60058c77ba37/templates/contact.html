@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - Tarô Online</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">Tarô Online</a>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/about">Sobre</a></li>
+                <li><a href="/services">Serviços</a></li>
+                <li><a href="/contact" class="active">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="contact-section">
+            <h2>Entre em Contato</h2>
+            <p>Se você tiver alguma dúvida, sugestão ou precisar de suporte, entre em contato conosco preenchendo o formulário abaixo:</p>
+
+            <form action="/submit_contact" method="post">
+                <label for="name">Nome:</label><br>
+                <input type="text" id="name" name="name" required><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required><br>
+                <label for="message">Mensagem:</label><br>
+                <textarea id="message" name="message" rows="5" required></textarea><br>
+                <button type="submit">Enviar</button>
+            </form>
+        
+            <div class="contact-info">
+                <h3>Outras formas de contato:</h3>
+                <p>Email: <a href="mailto:contato@tarotonline.com">contato@tarotonline.com</a></p>
+                <!-- Adicione outras informações de contato, se necessário -->
+            </div>
+
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Tarô Online. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>

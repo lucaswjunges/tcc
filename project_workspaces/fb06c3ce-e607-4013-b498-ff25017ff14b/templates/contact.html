@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato - Tarô Místico</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Início</a>
+            <a href="/about">Sobre</a>
+            <a href="/services">Serviços</a>
+            <a href="/contact">Contato</a>
+        </nav>
+    </header>
+
+    <main class="contact-container">
+        <h2>Entre em Contato</h2>
+
+        <p>Para agendamentos, dúvidas ou mais informações, entre em contato conosco através dos meios abaixo:</p>
+
+        <div class="contact-methods">
+            <div class="contact-method">
+                <i class="fas fa-envelope"></i>
+                <p><a href="mailto:tarotmistico@example.com">tarotmistico@example.com</a></p>
+            </div>
+
+            <div class="contact-method">
+                <i class="fas fa-phone"></i>
+                <p><a href="tel:+5511999999999">+55 11 99999-9999</a></p>
+            </div>
+
+
+            <div class="contact-method">
+                <i class="fas fa-map-marker-alt"></i>
+                <p>Rua Exemplo, 123 - Cidade, Estado</p>
+            </div>
+
+        </div>
+
+         <form action="/submit_contact" method="post">
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Mensagem:</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+
+            <button type="submit">Enviar Mensagem</button>
+        </form>
+
+    </main>
+
+
+    <footer>
+        <p>&copy; 2023 Tarô Místico. Todos os direitos reservados.</p>
+    </footer>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+{
+  "project_id": "proj_20250628_192127_e47c3f",
+  "project_name": "Projeto Criar um website de venda de vapes e atomizadores ...",
+  "project_goal": "Criar um website de venda de vapes e atomizadores de óleo canábico altamente estiloso, customizado e funcional com python, html e css. Gere o banco de dados e deixe tudo pronto, inclusive os templates html das páginas",
+  "project_type": "general",
+  "status": "planned",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250628_192127_e47c3f",
+  "task_queue": [
+    {
+      "task_id": "077f39fc-ae56-4ff3-af1c-4d7563cf9eb8",
+      "description": "Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Criar estrutura básica do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação básica do projeto de website de venda de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "in_progress",
+      "acceptance_criteria": "Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: README.md criado com informações básicas do projeto",
+      "created_at": "2025-06-28T22:26:48.105917",
+      "updated_at": "2025-06-28T22:26:48.105926",
+      "retries": 1,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "6a04615a-a987-48ad-9187-3055c8cc04d5",
+      "description": "Criar estrutura do backend",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/app.py",
+        "content_guideline": "Criar API básica Flask/FastAPI para gerenciar produtos de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "API backend criada com endpoints básicos para produtos",
+      "created_at": "2025-06-28T22:21:27.148366",
+      "updated_at": "2025-06-28T22:21:27.148369",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "6cc1b1c3-c7b9-4e03-b9b8-bbc942947823",
+      "description": "Criar estrutura do frontend",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "frontend/index.html",
+        "content_guideline": "Criar página principal do website de venda de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Página HTML principal criada com layout básico",
+      "created_at": "2025-06-28T22:21:27.148385",
+      "updated_at": "2025-06-28T22:21:27.148387",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "5df52441-a2af-47d9-b58f-bf4e90c57a36",
+      "description": "Configurar banco de dados",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/database.py",
+        "content_guideline": "Configurar conexão e modelos do banco de dados para produtos e pedidos",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Modelos de banco de dados criados para produtos e pedidos",
+      "created_at": "2025-06-28T22:21:27.148398",
+      "updated_at": "2025-06-28T22:21:27.148400",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "completed_tasks": [],
+  "artifacts_state": {
+    "README.md": {
+      "path": "README.md",
+      "hash": "4a3d73e67a8d66780a7ddf15318e182a7e0c6ea73c3c9835b25492cd9853415d",
+      "summary": "Arquivo criado/sobrescrito: README.md",
+      "last_modified": null
+    }
+  },
+  "metrics": {
+    "total_iterations": 47,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

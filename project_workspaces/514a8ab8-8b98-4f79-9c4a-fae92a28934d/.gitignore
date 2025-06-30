@@ -1,0 +1,76 @@
+# Arquivos de bytecode Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Arquivos temporários do editor
+*~
+
+# Arquivos específicos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos do ambiente virtual
+.venv/
+venv/
+env/
+
+# Logs
+*.log
+
+# Arquivos de configuração sensíveis (usar .gitignore e configurar manualmente versões de exemplo)
+config.py
+# Exemplo:
+# config.py.example
+
+# Arquivo de banco de dados (depende do tipo de banco de dados)
+*.db
+*.sqlite3
+instance/
+*.sqlite
+*.db-journal
+*.db-wal
+
+# Arquivos de desenvolvimento
+.idea/
+.vscode/
+*.iml
+
+# Arquivos estáticos (geralmente gerenciados por pipeline de build ou CDN)
+static/build/*
+!static/build/index.html  # Se aplicável, descomentar para incluir o arquivo principal
+
+# Pastas de upload
+uploads/
+media/
+
+# Arquivos específicos de frameworks web (se aplicável)
+# Flask
+instance/*
+!instance/.gitignore
+.webassets-cache
+
+# Django
+*.pot
+*.mo
+local_settings.py
+db.sqlite3
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Git
+.gitattributes
+.gitmodules
+
+# Arquivos secretos
+.env

@@ -1,0 +1,619 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal do Tarô - Adivinhações com Credibilidade</title>
+    <style>
+        /* Estilos CSS para o layout */
+        :root {
+            --color-primary: #8B4513;
+            --color-secondary: #D2B48C;
+            --color-accent: #A52A2A;
+            --color-light: #F5F5DC;
+            --color-dark: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--color-light);
+            color: var(--color-dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--color-primary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--color-accent);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--color-accent);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #800000;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%238B4513"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="%23D2B48C" stroke-width="2"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 5rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--color-primary);
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            color: #666;
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .card-img {
+            height: 200px;
+            background-color: var(--color-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        .card h3 {
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+        }
+        
+        .tarot-deck {
+            background-color: var(--color-accent);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .tarot-deck h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tarot-deck p {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .process {
+            background-color: white;
+        }
+        
+        .process-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            counter-reset: step;
+        }
+        
+        .step {
+            flex: 0 0 calc(33.333% - 2rem);
+            margin-bottom: 2rem;
+            position: relative;
+            padding-left: 2.5rem;
+            counter-increment: step;
+        }
+        
+        .step:before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background-color: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .step h3 {
+            margin-bottom: 0.5rem;
+            color: var(--color-primary);
+        }
+        
+        .pricing {
+            background-color: var(--color-light);
+        }
+        
+        .pricing-plans {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        .pricing-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid var(--color-primary);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+        
+        .price {
+            font-size: 1.8rem;
+            margin: 1rem 0;
+        }
+        
+        .pricing-card ul {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        
+        .pricing-card ul li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .pricing-card ul li:before {
+            content: "✓";
+            color: var(--color-primary);
+            position: absolute;
+            left: 0;
+        }
+        
+        .testimonials {
+            background-color: white;
+        }
+        
+        .testimonials-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        .testimonial {
+            background-color: var(--color-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .testimonial p {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial .client {
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+        
+        footer {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .step {
+                flex: 0 0 100%;
+            }
+            
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Portal do Tarô</div>
+                <ul class="nav-links">
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#about">Sobre</a></li>
+                    <li><a href="#services">Serviços</a></li>
+                    <li><a href="#process">Como Funciona</a></li>
+                    <li><a href="#pricing">Preços</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+                <a href="#order" class="btn">Pedir Oraculo</a>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Descubra o Futuro com o Tarô</h1>
+            <p>Oferecemos leituras precisas e confiáveis, mantendo sempre a ética e a justiça em nossas consultas. Conheça o poder do tarot com profissionais experientes e dedicados.</p>
+            <a href="#order" class="btn">Pedir Oraculo</a>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Sobre Nós</h2>
+                <p>Uma abordagem ética e profissional para adivinhações taroticas</p>
+            </div>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-img">🃏</div>
+                    <div class="card-content">
+                        <h3>Profissionais Qualificados</h3>
+                        <p>Nossa equipe é composta por leituras taroticas com anos de experiência e formação especializada. Cada consulta é realizada por profissionais dedicados ao desenvolvimento pessoal e espiritual.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-img">⚖️</div>
+                    <div class="card-content">
+                        <h3>Ética e Justiça</h3>
+                        <p>Mantemos um código de conduta rigoroso que prioriza a confidencialidade, o respeito e a honestidade em todas as nossas consultas. Nossas leituras são sempre éticas e justas.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-img">💰</div>
+                    <div class="card-content">
+                        <h3>Modelo Sustentável</h3>
+                        <p>Estabelecemos um modelo de negócio que permite oferecer serviços de qualidade a preços acessíveis, enquanto mantemos padrões éticos e profissionais elevados.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nossos Serviços</h2>
+                <p>Descubra as diferentes formas de consultoria tarotica disponível</p>
+            </div>
+            <div class="cards">
+                <div class="card">
+                    <div class="card-img">🔮</div>
+                    <div class="card-content">
+                        <h3>Leitura Básica</h3>
+                        <p>Consulta rápida com 3-5 cartas para esclarecer dúvidas sobre o presente ou tomar decisões importantes.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-img">🎯</div>
+                    <div class="card-content">
+                        <h3>Leitura Especializada</h3>
+                        <p>Consultas mais detalhadas com interpretação profunda para questões amorosas, profissionais ou espirituais.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-img">🔄</div>
+                    <div class="card-content">
+                        <h3>Leitura de Evolução</h3>
+                        <p>Um estudo completo da sua jornada espiritual e evolutiva, com orientações para o crescimento pessoal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tarot-deck" class="tarot-deck section">
+        <div class="container">
+            <h2>O Baralho do Tarô</h2>
+            <p>Nosso tarot é composto por 78 cartas, 22 Arcanos Maiores e 56 Arcanos Menores, cada uma carregando significados profundos e simbólicos. As cartas são interpretadas em contexto, considerando a energia do consultor, o momento histórico e as questões específicas do cliente.</p>
+            <p>Cada leitura é única e personalizada, respeitando a liberdade de cada indivíduo para tomar suas próprias decisões.</p>
+        </div>
+    </section>
+
+    <section id="process" class="section process">
+        <div class="container">
+            <div class="section-title">
+                <h2>Como Funciona</h2>
+                <p>Um processo simples e seguro para sua consulta tarotica</p>
+            </div>
+            <div class="process-steps">
+                <div class="step">
+                    <h3>Escolha o Oraculo</h3>
+                    <p>Selecione o tipo de consulta que melhor atende às suas necessidades.</p>
+                </div>
+                <div class="step">
+                    <h3>Pagamento</h3>
+                    <p>Pague via cartão ou boleto para garantir sua consulta.</p>
+                </div>
+                <div class="step">
+                    <h3>Receba a Leitura</h3>
+                    <p>Após o pagamento, receba sua leitura por e-mail em até 48 horas.</p>
+                </div>
+                <div class="step">
+                    <h3>Interaja</h3>
+                    <p>Posso tirar dúvidas ou esclarecer pontos específicos da sua leitura.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="section pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nossos Planos</h2>
+                <p>Opções de pagamento para atender diferentes necessidades</p>
+            </div>
+            <div class="pricing-plans">
+                <div class="pricing-card">
+                    <h3>Básico</h3>
+                    <div class="price">R$ 49,00</div>
+                    <ul>
+                        <li>Leitura de 3 cartas</li>
+                        <li>Resposta via e-mail</li>
+                        <li>Consulta de curta duração</li>
+                        <li>Atendimento padrão</li>
+                    </ul>
+                    <a href="#order" class="btn">Comprar</a>
+                </div>
+                <div class="pricing-card featured">
+                    <h3>Padrão</h3>
+                    <div class="price">R$ 99,00</div>
+                    <ul>
+                        <li>Leitura de 7 cartas</li>
+                        <li>Resposta via e-mail e WhatsApp</li>
+                        <li>Consulta detalhada</li>
+                        <li>Atendimento prioritário</li>
+                        <li>Interpretação adicional</li>
+                    </ul>
+                    <a href="#order" class="btn">Comprar</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Premium</h3>
+                    <div class="price">R$ 199,00</div>
+                    <ul>
+                        <li>Leitura de 14 cartas</li>
+                        <li>Resposta via e-mail, WhatsApp e vídeo</li>
+                        <li>Consulta personalizada</li>
+                        <li>Atendimento VIP</li>
+                        <li>Consultoria de acompanhamento</li>
+                    </ul>
+                    <a href="#order" class="btn">Comprar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="section testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>Depoimentos</h2>
+                <p>O que nossos clientes dizem sobre nossos serviços</p>
+            </div>
+            <div class="testimonials-container">
+                <div class="testimonial">
+                    <p>"A leitura do Portal do Tarô foi extremamente precisa. Conseguir prever alguns desafios que estavam por vir foi incrível. O processo foi rápido e fácil."</p>
+                    <div class="client">— Maria Silva, 32 anos</div>
+                </div>
+                <div class="testimonial">
+                    <p>"Graças à orientação tarotica, consegui finalmente deixar de lado um relacionamento tóxico. O profissional é muito respeitoso e mantém a ética."</p>
+                    <div class="client">— Carlos Oliveira, 45 anos</div>
+                </div>
+                <div class="testimonial">
+                    <p>"O serviço é excelente! A interpretação das cartas foi clara e me ajudou a tomar decisões importantes na minha vida profissional. Recomendo demais!"</p>
+                    <div class="client">— Ana Paula, 28 anos</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="order" class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Pedir Oraculo</h2>
+                <p>Pronto para descobrir o que o tarot tem a te oferecer?</p>
+            </div>
+            <form id="order-form">
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Telefone</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="service">Serviço</label>
+                    <select id="service" name="service" required>
+                        <option value="">Selecione o serviço</option>
+                        <option value="basic">Leitura Básica (R$49,00)</option>
+                        <option value="standard">Leitura Padrão (R$99,00)</option>
+                        <option value="premium">Leitura Premium (R$199,00)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="question">Sua Questão</label>
+                    <textarea id="question" name="question" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Pagamento</label>
+                    <div>
+                        <input type="radio" id="credit-card" name="payment" value="credit-card" required>
+                        <label for="credit-card">Cartão de Crédito</label>
+                    </div>
+                    <div style="margin-left: 20px;">
+                        <input type="radio" id="boleto" name="payment" value="boleto">
+                        <label for="boleto">Boleto Bancário</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Finalizar Pedido</button>
+            </form>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Portal do Tarô</h3>
+                    <p>Oferecendo leituras taroticas éticas e confiáveis para ajudar na tomada de decisões e no crescimento pessoal.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links Rápidos</h3>
+                    <ul style="list-style: none;">
+                        <li><a href

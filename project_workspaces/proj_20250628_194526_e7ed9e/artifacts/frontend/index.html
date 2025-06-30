@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VapeWorld - Premium Vapes & Pods</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #3498db;
+        }
+        
+        .cart-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://via.placeholder.com/1920x800');
+            background-size: cover;
+            background-position: center;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Featured Products */
+        .featured-products {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 1rem;
+        }
+        
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-price {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .add-to-cart {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Categories Section */
+        .categories {
+            background-color: #2c3e50;
+            color: white;
+            padding: 3rem 0;
+            margin-top: 3rem;
+        }
+        
+        .categories-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        
+        .category {
+            text-align: center;
+            margin: 1rem;
+            cursor: pointer;
+        }
+        
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Newsletter */
+        .newsletter {
+            background-color: #3498db;
+            padding: 3rem 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .newsletter-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+        }
+        
+        .newsletter-form input {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .newsletter-form button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-form input, 
+            .newsletter-form button {
+                width: 100%;
+                border-radius: 4px;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="header-container">
+            <div class="logo">VapeWorld</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Products</a></li>
+                    <li><a href="#">Categories</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="cart-icon">🛒</div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Indulge in Premium Vapes & Pods</h1>
+            <p>Discover the finest selection of e-cigarettes, vape pens, and disposable pods at VapeWorld</p>
+            <a href="#" class="btn">Shop Now</a>
+        </div>
+    </section>
+    
+    <!-- Featured Products -->
+    <section>
+        <div class="featured-products">
+            <h2 class="section-title">Featured Products</h2>
+            <div class="products-grid">
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/300x200?text=Pod+1" alt="Pod 1" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">Pod Pro 5000</div>
+                        <div class="product-price">R$ 49.90</div>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/300x200?text=Pod+2" alt="Pod 2" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">VapeGo Max</div>
+                        <div class="product-price">R$ 89.90</div>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/300x200?text=Pod+3" alt="Pod 3" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">UltraPod Mini</div>
+                        <div class="product-price">R$ 59.90</div>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card">
+                    <img src="https://via.placeholder.com/300x200?text=Pod+4" alt="Pod 4" class="product-image">
+                    <div class="product-info">
+                        <div class="product-name">CloudX Pro</div>
+                        <div class="product-price">R$ 129.90</div>
+                        <button class="add-to-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Categories Section -->
+    <section class="categories">
+        <h2 class="section-title" style="color: white;">Browse Categories</h2>
+        <div class="categories-container">
+            <div class="category">
+                <div class="category-icon">💨</div>
+                <h3>Vape Pens</h3>
+            </div>
+            <div class="category">
+                <div class="category-icon">🥤</div>
+                <h3>Pods</h3>
+            </div>
+            <div class="category">
+                <div class="category-icon">🔋</div>
+                <h3>Batteries</h3>
+            </div>
+            <div class="category">
+                <div class="category-icon">💧</div>
+                <h3>E-Liquids</h3>
+            </div>
+            <div class="category">
+                <div class="category-icon">🛠️</div>
+                <h3>Accessories</h3>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Newsletter Section -->
+    <section class="newsletter">
+        <h2>Subscribe to Our Newsletter</h2>
+        <p>Stay updated with our latest products and exclusive offers</p>
+        <div class="newsletter-form">
+            <input type="email" placeholder="Enter your email">
+            <button>Subscribe</button>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2023 VapeWorld. All rights reserved.</p>
+        <p>Policies: Terms | Privacy | Returns</p>
+    </footer>
+</body>
+</html>

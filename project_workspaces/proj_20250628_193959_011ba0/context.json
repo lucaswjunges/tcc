@@ -1,0 +1,137 @@
+{
+  "project_id": "proj_20250628_193959_011ba0",
+  "project_name": "Projeto criar um simples hello world em python...",
+  "project_goal": "criar um simples hello world em python",
+  "project_type": "general",
+  "status": "completed_successfully",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250628_193959_011ba0",
+  "task_queue": [],
+  "completed_tasks": [
+    {
+      "task_id": "b46b4ff0-66bd-4715-a62a-253c6dc4a82b",
+      "description": "Criar estrutura básica do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação básica do projeto de website de venda de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "README.md criado com informações básicas do projeto",
+      "created_at": "2025-06-28T22:39:59.836544",
+      "updated_at": "2025-06-28T22:39:59.836564",
+      "retries": 2,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "456cf466-07d3-4fd2-ab07-839278823703",
+      "description": "Criar estrutura do backend",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/app.py",
+        "content_guideline": "Criar API básica Flask/FastAPI para gerenciar produtos de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "API backend criada com endpoints básicos para produtos",
+      "created_at": "2025-06-28T22:39:59.836595",
+      "updated_at": "2025-06-28T22:39:59.836599",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "e5ba7e64-b97d-42bd-8d09-2b6e7bc39582",
+      "description": "Criar estrutura do frontend",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "frontend/index.html",
+        "content_guideline": "Criar página principal do website de venda de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Página HTML principal criada com layout básico",
+      "created_at": "2025-06-28T22:39:59.836614",
+      "updated_at": "2025-06-28T22:39:59.836616",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "121da957-0b71-45f6-9343-5cdda604491d",
+      "description": "Configurar banco de dados",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/database.py",
+        "content_guideline": "Configurar conexão e modelos do banco de dados para produtos e pedidos",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Modelos de banco de dados criados para produtos e pedidos",
+      "created_at": "2025-06-28T22:39:59.836632",
+      "updated_at": "2025-06-28T22:39:59.836635",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "artifacts_state": {
+    "README.md": {
+      "path": "README.md",
+      "hash": "6a13bb7a9de877a77860b8162f32c35bad2d5e719565286dce4d75ce9c2e8597",
+      "summary": "Arquivo criado/sobrescrito: README.md",
+      "last_modified": null
+    },
+    "backend/app.py": {
+      "path": "backend/app.py",
+      "hash": "f79e2586652d5ee4e309fc980eaf6aed3403a4e7a29b431c8f6e3b99827e444d",
+      "summary": "Arquivo criado/sobrescrito: backend/app.py",
+      "last_modified": null
+    },
+    "frontend/index.html": {
+      "path": "frontend/index.html",
+      "hash": "eadb9bb8a09cc5835c5591804e8c8620d6cc69748e2b78e7452dbc11d79b44b2",
+      "summary": "Arquivo criado/sobrescrito: frontend/index.html",
+      "last_modified": null
+    },
+    "backend/database.py": {
+      "path": "backend/database.py",
+      "hash": "e7f22bb1310c7daa9c0e87c25b8cfa9667e9490144c3104012a3798d352829b4",
+      "summary": "Arquivo criado/sobrescrito: backend/database.py",
+      "last_modified": null
+    }
+  },
+  "metrics": {
+    "total_iterations": 7,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

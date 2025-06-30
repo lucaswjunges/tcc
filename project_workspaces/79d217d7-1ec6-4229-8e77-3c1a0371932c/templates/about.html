@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nós - Leitura de Tarô</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f5f0;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: #8B4513;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 20px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #d4af37;
+        }
+        
+        .hero {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://source.unsplash.com/random/1200x800/?tarot');
+            background-size: cover;
+            background-position: center;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #d4af37;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #c19b2e;
+        }
+        
+        section {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #8B4513;
+        }
+        
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .values {
+            background-color: #f1e5d7;
+        }
+        
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .value-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .value-icon {
+            font-size: 3rem;
+            color: #8B4513;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonials {
+            background-color: #f8f5f0;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial-author {
+            font-weight: bold;
+            color: #8B4513;
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-links li {
+            margin: 0 15px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: #d4af37;
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Arcano Maior</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="about.html">Sobre</a></li>
+                    <li><a href="services.html">Serviços</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Sobre Nós</h1>
+            <p>Descubra o poder do Tarô com profissionais sérios e éticos</p>
+            <a href="#about" class="btn">Conheça nossa missão</a>
+        </div>
+    </section>
+    
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">Nossa Missão</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Na Arcano Maior, acreditamos que o Tarô é uma ferramenta poderosa para autoconhecimento e orientação espiritual. Nosso objetivo é oferecer leituras precisas e significativas, mantendo sempre a ética e a credibilidade que merecem as pessoas que buscam orientação através dessas cartas.</p>
+                    <p>Fundada em 2023 por carteiros experientes, nossa plataforma nasceu da necessidade de criar um espaço seguro e confiável para quem busca respostas através do Tarô. Trabalhamos com profissionais altamente qualificados, que respeitam o livre arbítrito dos consultores e oferecem interpretações justas e equilibradas.</p>
+                    <p>Entendemos que o valor do conhecimento espiritual deve ser acessível a todos, por isso oferecemos diferentes níveis de serviço, desde leituras rápidas até consultas profundas, sempre mantendo a qualidade e a ética como nosso principal guia.</p>
+                </div>
+                <div class="about-image">
+                    <img src="https://source.unsplash.com/random/600x400/?tarot,spiritual" alt="Sessão de tarô">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="values">
+        <div class="container">
+            <h2 class="section-title">Nossos Valores</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">⚖️</div>
+                    <h3>Etica</h3>
+                    <p>Tratamos cada consulta com a máxima honestidade e respeitamos o livre arbítrito do cliente.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">📚</div>
+                    <h3>Conhecimento</h3>
+                    <p>Nossos carteiros possuem anos de estudo e prática em diferentes tradições tarotísticas.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">🛡️</div>
+                    <h3>Confidencialidade</h3>
+                    <p>Todas as informações dos clientes são tratadas com absoluta confidencialidade.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">✨</div>
+                    <h3>Profissionalismo</h3>
+                    <p>Oferecemos leituras claras, objetivas e sempre alinhadas com o bem-estar do cliente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">O Que Dizem Nossos Clientes</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"A leitura que fiz através da Arcano Maior foi extremamente precisa e me ajudou a tomar uma decisão importante sobre minha carreira. O profissional é extremamente habilidoso e respeitoso."</p>
+                    <p class="testimonial-author">— Maria S., 32 anos</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Graças à orientação recebida, consegui superar um bloqueio emocional que estava me impedindo de avançar. A ética e a credibilidade da equipe são impressionantes."</p>
+                    <p class="testimonial-author">— Carlos R., 45 anos</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"A primeira consulta foi apenas para curiosidade, mas os insights que recebi foram tão relevantes que decidi fazer uma leitura mais profunda. Recomendo fortemente!"</p>
+                    <p class="testimonial-author">— Ana L., 28 anos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="about.html">Sobre</a></li>
+                <li><a href="services.html">Serviços</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="contact.html">Contato</a></li>
+            </ul>
+            <p>© 2023 Arcano Maior - Todos os direitos reservados</p>
+            <p class="copyright">Este site é uma ferramenta para fins educacionais e de entretenimento. As informações obtidas através das leituras são interpretadas pelos carteiros e não devem ser consideradas como conselhos profissionais.</p>
+        </div>
+    </footer>
+</body>
+</html>

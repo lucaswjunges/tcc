@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - Consulta de Tarô</title>
+    <style>
+        :root {
+            --primary-color: #8A2BE2;
+            --secondary-color: #4B0082;
+            --accent-color: #FF69B4;
+            --text-color: #F5F5F5;
+            --background-color: #1A1A2E;
+            --card-bg: #2A2A4A;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--secondary-color);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(26, 26, 46, 0.8), rgba(26, 26, 46, 0.8)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%234B0082"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="%238A2BE2" stroke-width="1"/></svg>');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .payment-section {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .payment-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            text-align: center;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-option {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem;
+            background-color: var(--background-color);
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .payment-option:hover {
+            border-color: var(--accent-color);
+        }
+
+        .payment-option.selected {
+            border-color: var(--accent-color);
+            background-color: var(--secondary-color);
+        }
+
+        .payment-option img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-form {
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: 1px solid #3A3A5A;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .terms {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            padding: 2rem 0;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .footer-section p, .footer-section a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-color);
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #3A3A5A;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .payment-section {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Arcano Maior</div>
+                <ul class="nav-links">
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Sobre</a></li>
+                    <li><a href="#">Consultas</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Complete seu pagamento</h1>
+        <p>Selecione o método de pagamento e finalize sua consulta de Tarô</p>
+    </section>
+
+    <div class="container">
+        <section class="payment-section">
+            <h2 class="payment-title">Escolha sua consulta</h2>
+            <div class="payment-options">
+                <div class="payment-option selected">
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='30' viewBox='0 0 40 30'><rect width='40' height='30' fill='%234B0082'/><text x='50%' y='50%' font-family='Arial' font-size='14' text-anchor='middle' fill='%23F5F5F5'>Consulta Básica</text></svg>" alt="Consulta Básica">
+                    <h3>Consulta Básica</h3>
+                    <p>R$ 79,00</p>
+                </div>
+                <div class="payment-option">
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='30' viewBox='0 0 40 30'><rect width='40' height='30' fill='%234B0082'/><text x='50%' y='50%' font-family='Arial' font-size='14' text-anchor='middle' fill='%23F5F5F5'>Consulta Especial</text></svg>" alt="Consulta Especial">
+                    <h3>Consulta Especial</h3>
+                    <p>R$ 149,00</p>
+                </div>
+                <div class="payment-option">
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='30' viewBox='0 0 40 30'><rect width='40' height='30' fill='%234B0082'/><text x='50%' y='50%' font-family='Arial' font-size='14' text-anchor='middle' fill='%23F5F5F5'>Sessão Premium</text></svg>" alt="Sessão Premium">
+                    <h3>Sessão Premium</h3>
+                    <p>R$ 249,00</p>
+                </div>
+            </div>
+
+            <form class="payment-form" action="/process_payment" method="POST">
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Telefone</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="card">Número do Cartão</label>
+                    <input type="text" id="card" name="card" placeholder="0000 0000 0000 0000" required>
+                </div>
+                <div class="form-group">
+                    <label for="expiry">Validade</label>
+                    <input type="text" id="expiry" name="expiry" placeholder="MM/AA" required>
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                </div>
+                <div class="form-group">
+                    <label for="plan">Plano</label>
+                    <select id="plan" name="plan" required>
+                        <option value="">Selecione uma consulta</option>
+                        <option value="basic">Consulta Básica - R$ 79,00</option>
+                        <option value="special">Consulta Especial - R$ 149,00</option>
+                        <option value="premium">Sessão Premium - R$ 249,00</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-block">Finalizar Pagamento</button>
+                <p class="terms">Ao finalizar o pagamento, você concorda com nossos Termos de Uso e Política de Privacidade.</p>
+            </form>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Arcano Maior</h3>
+                    <p>Consultas de Tarô online com profissionais especializados. Entrega rápida e precisa dos seus insights.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links Rápidos</h3>
+                    <p><a href="#">Início</a></p>
+                    <p><a href="#">Sobre Nós</a></p>
+                    <p><a href="#">Consultas</a></p>
+                    <p><a href="#">Blog</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <p>Email: contato@arcanomaior.com.br</p>
+                    <p>WhatsApp: (11) 9999-9999</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Arcano Maior - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Update the select dropdown value
+                    const planName = this.querySelector('h3').textContent;
+                    const planType = planName.toLowerCase().replace(' ', '');
+                    
+                    document.getElementById('plan').value = planType;
+                });
+            });
+            
+            // Form validation
+            const form = document.querySelector('.payment-form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const card = document.getElementById('card').value;
+                const expiry = document.getElementById('expiry').value;
+                const cvv = document.getElementById('cvv').value;
+                const plan = document.getElementById('plan').value;
+                
+                if (!name || !email || !phone || !card || !expiry || !cvv || !plan) {
+                    alert('Por favor, preencha todos os campos.');
+                    return;
+                }
+                
+                // Simple card number validation
+                if (!/^\d{16}$/.test(card.replace(/\D/g, ''))) {
+                    alert('Número do cartão inválido. Use o formato: 0000 0000 0000 0000');
+                    return;
+                }
+                
+                // Simple expiry validation
+                if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+                    alert('Formato de validade inválido. Use o formato: MM/AA');
+                    return;
+                }
+                
+                // Simple CVV validation
+                if (!/^\d{3,4}$/.test(cvv)) {
+                    alert('CVV inválido. Deve ter 3 ou 4 dígitos.');
+                    return;
+                }
+                
+                // In a real application, you would send this data to a server
+                // For demonstration, we'll just show an alert
+                alert('Pagamento processado com sucesso! Redirecionando para a confirmação...');
+                form.submit();
+            });
+        });
+    </script>
+</body>
+</html>

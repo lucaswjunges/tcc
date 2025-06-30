@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevenção de Falhas em Motores Industriais - Blog Técnico</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --text-color: #2c3e50;
+            --text-light: #f1f1f1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-color);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://via.placeholder.com/1500x500') center/cover no-repeat;
+            height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--text-light);
+            padding: 2rem;
+        }
+        
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin: 3rem 0 2rem;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .post-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .post-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .post-card-content {
+            padding: 1.5rem;
+        }
+        
+        .post-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .read-more {
+            display: inline-block;
+            color: var(--secondary-color);
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: var(--text-light);
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .footer-content p {
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Motores Inteligentes</div>
+                <ul class="nav-links">
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Artigos</a></li>
+                    <li><a href="#">Pesquisas</a></li>
+                    <li><a href="#">Sobre</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Prevenção de Falhas em Motores Industriais</h1>
+            <p>Explorando a aplicação de CNN e Visão Computacional para detecção e prevenção de falhas em motores elétricos industriais</p>
+            <a href="#" class="btn">Leia nosso artigo completo</a>
+        </div>
+    </section>
+    
+    <section class="container">
+        <h2 class="section-title">Últimos Artigos</h2>
+        <div class="posts-grid">
+            <!-- Post 1 -->
+            <article class="post-card">
+                <img src="https://via.placeholder.com/400x200?text=Motor+ELC" alt="Motor Elétrico">
+                <div class="post-card-content">
+                    <span class="post-category">Artigo Científico</span>
+                    <h3>Aplicação de CNN em Análise de Vibrações de Motores</h3>
+                    <div class="post-meta">
+                        <span>Publicado: 15/08/2023</span>
+                        <span>Leia em 10 min</span>
+                    </div>
+                    <p>Este estudo analisa a aplicação de Redes Neurais Convolucionais (CNN) para o diagnóstico de falhas em motores elétricos baseado na análise de dados de vibração.</p>
+                    <a href="#" class="read-more">Leia mais</a>
+                </div>
+            </article>
+            
+            <!-- Post 2 -->
+            <article class="post-card">
+                <img src="https://via.placeholder.com/400x200?text=Vis%C3%A3o+Computacional" alt="Visão Computacional">
+                <div class="post-card-content">
+                    <span class="post-category">Pesquisa</span>
+                    <h3>Visão Computacional para Monitoramento em Tempo Real</h3>
+                    <div class="post-meta">
+                        <span>Publicado: 02/07/2023</span>
+                        <span>Leia em 8 min</span>
+                    </div>
+                    <p>Proposta de sistema de monitoramento em tempo real utilizando técnicas de visão computacional para detecção precoce de falhas em equipamentos industriais.</p>
+                    <a href="#" class="read-more">Leia mais</a>
+                </div>
+            </article>
+            
+            <!-- Post 3 -->
+            <article class="post-card">
+                <img src="https://via.placeholder.com/400x200?text=Método+Proposto" alt="Método Proposto">
+                <div class="post-card-content">
+                    <span class="post-category">Inovação</span>
+                    <h3>Método de Detecção de Falhas Baseado em Deep Learning</h3>
+                    <div class="post-meta">
+                        <span>Publicado: 19/06/2023</span>
+                        <span>Leia em 12 min</span>
+                    </div>
+                    <p>Apresentação do novo método de detecção de falhas utilizando técnicas combinadas de aprendizado profundo e processamento de imagem.</p>
+                    <a href="#" class="read-more">Leia mais</a>
+                </div>
+            </article>
+        </div>
+    </section>
+    
+    <section class="container">
+        <h2 class="section-title">Sobre Nosso Blog</h2>
+        <div class="about-section">
+            <p>Nosso blog destina-se a compartilhar pesquisas, metodologias e resultados sobre a aplicação de técnicas de Machine Learning e Visão Computacional na prevenção de falhas em motores industriais. O objetivo é promover o conhecimento técnico e contribuir para a segurança operacional em diversas indústrias.</p>
+            <p>Atualmente, estamos desenvolvendo um sistema que utiliza Redes Neurais Convolucionais para análise de dados de sensores e imagens térmicas, permitindo a detecção precoce de falhas em motores antes que causem paradas indesejadas ou danos maiores.</p>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class=

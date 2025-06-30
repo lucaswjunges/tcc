@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Vapes Shop - Sua loja de vapes e pods</title>
+    <style>
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2d3e50;
+            --secondary: #e67e22;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --text: #2c3e50;
+            --accent: #f39c12;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* Header e navegação */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--light);
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #d35400;
+        }
+        
+        /* Produtos em destaque */
+        .featured-products {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.2rem;
+            color: var(--primary);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-price {
+            font-weight: bold;
+            color: var(--secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-description {
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-column ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--secondary);
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header e Navegação -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Cloud <span>Vapes</span></div>
+                <ul class="nav-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Produtos</a></li>
+                    <li><a href="#">Categorias</a></li>
+                    <li><a href="#">Promoções</a></li>
+                    <li><a href="#">Sobre</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+                <div class="hamburger">☰</div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Descubra o universo vape</h1>
+                <p>Explore nossa coleção exclusiva de vapes, pods e acessórios. Encontre o seu estilo de vape favorito com as melhores marcas e preços.</p>
+                <a href="#" class="btn">Comprar Agora</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produtos em Destaque -->
+    <section class="featured-products">
+        <div class="container">
+            <h2 class="section-title">Produtos em Destaque</h2>
+            <div class="products-grid">
+                <!-- Produto 1 -->
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1577803645773-f96470509666?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Pod de Vape" class="product-img">
+                    <div class="product-info">
+                        <h3 class="product-name">Pod de Vape Original</h3>
+                        <p class="product-price">R$ 69,90</p>
+                        <p class="product-description">Dispositivo vape simples e eficiente com resistência de 1.8 ohms.</p>
+                        <a href="#" class="btn">Ver Detalhes</a>
+                    </div>
+                </div>
+                
+                <!-- Produto 2 -->
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1585155770447-2f66e2a397b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Kit Vape" class="product-img">
+                    <div class="product-info">
+                        <h3 class="product-name">Kit Vape MTL</h3>
+                        <p class="product-price">R$ 149,90</p>
+                        <p class="product-description">Kit completo com atomizador MTL, cartuchos e eletrônico de última geração.</p>
+                        <a href="#" class="btn">Ver Detalhes</a>
+                    </div>
+                </div>
+                
+                <!-- Produto 3 -->
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1573100925118-eb2565aa98de?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Atomizador Vape" class="product-img">
+                    <div class="product-info">
+                        <h3 class="product-name">Atomizador FCT</h3>
+                        <p class="product-price">R$ 89,90</p>
+                        <p class="product-description">Atomizador de topo com resistência de 1.2 ohms para vaporização mais eficiente.</p>
+                        <a href="#" class="btn">Ver Detalhes</a>
+                    </div>
+                </div>
+                
+                <!-- Produto 4 -->
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1592078615290-033ee584e4b9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cartucho Vape" class="product-img">
+                    <div class="product-info">
+                        <h3 class="product-name">Cartucho de 5% PG/VG</h3>
+                        <p class="product-price">R$ 49,90</p>
+                        <p class="product-description">Cartucho com sabor intenso e longa duração, 3mg de nicotina.</p>
+                        <a href="#" class="btn">Ver Detalhes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Cloud Vapes</h3>
+                    <p>Loja especializada em vapes, pods e acessórios de qualidade com preços competitivos.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Produtos</a></li>
+                        <li><a href="#">Promoções</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Suporte</h3>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Perguntas Frequentes</a></li>
+                        <li><a href="#">Entregas</a></li>
+                        <li><a href="#">Trocas</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li>📱 (11) 99999-9999</li>
+                        <li>✉️ contato@cloudvapes.com</li>
+                        <li>📍 Av. Paulista, 1000 - São Paulo</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Cloud Vapes. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

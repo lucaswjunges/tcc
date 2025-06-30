@@ -1,0 +1,12 @@
+pandas
+numpy
+matplotlib
+seaborn
+tensorflow
+opencv-python
+scikit-learn
+pil
+reportlab
+texlive-latex
+pdflatex
+bibtex

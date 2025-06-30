@@ -1,0 +1,92 @@
+Django>=3.2
+
+djangorestframework>=3.12
+
+drf-yasg>=1.17
+
+psycopg2-binary>=2.9
+
+mysqlclient>=2.0
+
+pyodbc>=4.0
+
+whitenoise>=5.3
+
+corsheaders>=3.0
+
+python-multipart>=1.2
+
+python-dotenv>=0.15
+
+pytz>=2021.3
+
+django-cryptography>=4.0
+
+django-allauth>=0.50
+
+django-guardian>=2.8
+
+django-modeltranslation>=1.15
+
+django-taggit>=3.1
+
+django-versatileimagefield>=2.1
+
+paypal-rest-sdk>=1.16
+
+django-oscar==2.6
+
+# E-commerce framework (optional)
+
+# Database management
+
+# Authentication
+
+django-allauth>=0.50
+
+django-guardian>=2.8
+
+# Payment processing
+
+django-oscar-paypal>=0.1
+
+# Template and static file handling
+django-compressor>=2.4
+
+# Security
+
+cryptography>=3.4
+
+# Testing
+pytest>=6.2
+pytest-django>=4.5
+pytest-cms>=2.0
+faker>=8.10
+
+# Documentation
+django-sphinx-theme>=0.8
+
+docutils>=0.17
+
+# Development tools
+black>=22.8
+flake8>=5.0
+pre-commit>=3.10
+pip-tools>=6.6
+
+# Optional: Email handling
+django-ninja>=0.1
+django-sendgrid-envelope>=1.0
+
+# Optional: Image processing
+django-versatileimagefield>=2.1
+
+# Optional: Caching
+redis>=4.3
+django-redis>=5.5
+
+# Optional: Monitoring
+newrelic-django>=9.0
+
+# Optional: Analytics
+django-redis-sessions>=0.8

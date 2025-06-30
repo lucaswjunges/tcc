@@ -1,0 +1,147 @@
+{
+  "project_id": "proj_20250628_212428_9565b5",
+  "project_name": "Projeto criar um sistema de blog simples com Python Flask...",
+  "project_goal": "criar um sistema de blog simples com Python Flask",
+  "project_type": "general",
+  "status": "planned",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250628_212428_9565b5",
+  "task_queue": [
+    {
+      "task_id": "ff868407-1be5-4054-ad21-a20f7243c577",
+      "description": "Criar modelos para blog",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "models.py",
+        "content_guideline": "Modelos para blog: Post, Category, Tag, Comment, Author com relacionamentos",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "in_progress",
+      "acceptance_criteria": "Modelos de blog implementados",
+      "created_at": "2025-06-29T00:24:28.149185",
+      "updated_at": "2025-06-29T00:24:28.149187",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "efef8785-82b4-4893-a76d-8f7b3bbe39c7",
+      "description": "Criar aplicação Flask para blog",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "app.py",
+        "content_guideline": "Aplicação Flask com rotas para blog: listar posts, criar post, visualizar post, comentários",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Aplicação Flask funcional para blog",
+      "created_at": "2025-06-29T00:24:28.149199",
+      "updated_at": "2025-06-29T00:24:28.149201",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "c40349ee-0cb1-4b49-bf10-970ed03329a2",
+      "description": "Criar templates para blog",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "templates/index.html",
+        "content_guideline": "Templates HTML para blog: página inicial com lista de posts, página de post individual",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Templates HTML para blog criados",
+      "created_at": "2025-06-29T00:24:28.149217",
+      "updated_at": "2025-06-29T00:24:28.149219",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "completed_tasks": [
+    {
+      "task_id": "a84b8645-424d-4093-b45d-253817fbfcd2",
+      "description": "Criar documentação do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação completa para: criar um sistema de blog simples com Python Flask. Incluir instalação, uso, estrutura e exemplos específicos para este tipo de projeto.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "README.md específico e completo para o projeto",
+      "created_at": "2025-06-29T00:24:28.149120",
+      "updated_at": "2025-06-29T00:24:28.149139",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "317100db-2f22-475d-8e88-a3f4e7f7086c",
+      "description": "Criar arquivo de dependências",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "requirements.txt",
+        "content_guideline": "Listar dependências Python necessárias para: criar um sistema de blog simples com Python Flask. Incluir frameworks e bibliotecas específicas.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "requirements.txt com dependências específicas do projeto",
+      "created_at": "2025-06-29T00:24:28.149162",
+      "updated_at": "2025-06-29T00:24:28.149166",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "artifacts_state": {
+    "README.md": {
+      "path": "README.md",
+      "hash": "123ea54e05ffcdc797ef43c5e359c407fc4baf179241dda3ae312068ef88f448",
+      "summary": "Arquivo criado/sobrescrito: README.md",
+      "last_modified": null
+    },
+    "requirements.txt": {
+      "path": "requirements.txt",
+      "hash": "345e0c20136a1ebc52a99b7b314db0a7933544b3b122f751e0d59a6013df4665",
+      "summary": "Arquivo criado/sobrescrito: requirements.txt",
+      "last_modified": null
+    }
+  },
+  "metrics": {
+    "total_iterations": 3,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

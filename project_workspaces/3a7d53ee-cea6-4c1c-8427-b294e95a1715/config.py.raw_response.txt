@@ -1,0 +1,813 @@
+```python
+# config.py
+import os
+
+# Environment configuration
+class Config:
+    # Security settings
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key_here')
+    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT', 'your_salt_here')
+    
+    # Database configuration
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'DATABASE_URL', 
+        'postgresql://postgres:postgres@localhost:5432/tarot_db'
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Email configuration
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True').lower() in ['true', 'yes', '1']
+    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ['true', 'yes', '1']
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'your_email@gmail.com')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'your_email_password')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'tarot@example.com')
+    
+    # Payment configuration
+    PAYMENT_PROVIDER = os.environ.get('PAYMENT_PROVIDER', 'stripe')
+    STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_...')
+    STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_...')
+    
+    # Tarot configuration
+    TAROT_CARDS = os.environ.get('TAROT_CARDS', 'standard').split(',')
+    DEFAULT_SPREAD = os.environ.get('DEFAULT_SPREAD', 'three_card')
+    
+    # Website configuration
+    SITE_NAME = os.environ.get('SITE_NAME', 'Tarot Insights')
+    SITE_DESCRIPTION = os.environ.get('SITE_DESCRIPTION', 'Professional Tarot card readings and guidance')
+    SITE_URL = os.environ.get('SITE_URL', 'https://tarot.example.com')
+    SITE_LOGO = os.environ.get('SITE_LOGO', '/static/img/logo.png')
+    
+    # Business configuration
+    BUSINESS_NAME = os.environ.get('BUSINESS_NAME', 'Tarot Insights')
+    BUSINESS_OWNER = os.environ.get('BUSINESS_OWNER', 'Jane Reader')
+    BUSINESS_EMAIL = os.environ.get('BUSINESS_EMAIL', 'contact@tarot.example.com')
+    BUSINESS_PHONE = os.environ.get('BUSINESS_PHONE', '+1234567890')
+    
+    # Pricing configuration
+    READING_TYPES = [
+        {'name': 'Quick Reading', 'price': 9.99, 'duration': '15 min'},
+        {'name': 'Standard Reading', 'price': 29.99, 'duration': '30 min'},
+        {'name': 'Deep Dive', 'price': 49.99, 'duration': '60 min'}
+    ]
+    
+    # Session configuration
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True').lower() in ['true', 'yes', '1']
+    PERMANENT_SESSION_LIFETIME = os.environ.get('PERMANENT_SESSION_LIFETIME', 3600)
+    
+    # Logging configuration
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
+    LOG_PATH = os.environ.get('LOG_PATH', 'logs/tarot.log')
+    
+    # CORS configuration
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '["https://tarot.example.com"]').split(',')
+    CORS_METHODS = os.environ.get('CORS_METHODS', '["GET", "POST"]').split(',')
+    CORS_HEADERS = os.environ.get('CORS_HEADERS', '["Content-Type"]').split(',')
+    
+    # Rate limiting
+    RATE_LIMIT_ENABLED = os.environ.get('RATE_LIMIT_ENABLED', 'True').lower() in ['true', 'yes', '1']
+    RATE_LIMIT_MAX = int(os.environ.get('RATE_LIMIT_MAX', 10))
+    RATE_LIMIT_WINDOW = os.environ.get('RATE_LIMIT_WINDOW', 'minute')
+    
+    # Maintenance mode
+    MAINTENANCE_MODE = os.environ.get('MAINTENANCE_MODE', 'False').lower() in ['true', 'yes', '1']
+    
+    # GDPR configuration
+    GDPR_COMPLIANT = os.environ.get('GDPR_COMPLIANT', 'True').lower() in ['true', 'yes', '1']
+    COOKIE_CONSENT_REQUIRED = os.environ.get('COOKIE_CONSENT_REQUIRED', 'True').lower() in ['true', 'yes', '1']
+    PRIVACY_POLICY_URL = os.environ.get('PRIVACY_POLICY_URL', '/privacy')
+    TERMS_OF_SERVICE_URL = os.environ.get('TERMS_OF_SERVICE_URL', '/terms')
+    
+    # Analytics
+    ANALYTICS_ID = os.environ.get('ANALYTICS_ID', 'UA-00000000-1')
+    GOOGLE_ANALYTICS = os.environ.get('GOOGLE_ANALYTICS', 'True').lower() in ['true', 'yes', '1']
+    
+    # Cache configuration
+    CACHE_TYPE = os.environ.get('CACHE_TYPE', 'simple')
+    CACHE_REDIS_URL = os.environ.get('CACHE_REDIS_URL', 'redis://localhost:6379/0')
+    
+    # Uploads configuration
+    UPLOADS_DEFAULT_DEST = os.environ.get('UPLOADS_DEFAULT_DEST', 'uploads')
+    UPLOADS_DEFAULT_URL = os.environ.get('UPLOADS_DEFAULT_URL', '/static/uploads')
+    MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))
+    
+    # Admin configuration
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@tarot.example.com')
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin_password')
+    
+    # Third-party API keys
+    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+    AZURE_TTS_KEY = os.environ.get('AZURE_TTS_KEY', '')
+    AZURE_TTS_REGION = os.environ.get('AZURE_TTS_REGION', '')
+    
+    # Backup configuration
+    BACKUP_ENABLED = os.environ.get('BACKUP_ENABLED', 'True').lower() in ['true', 'yes', '1']
+    BACKUP_SCHEDULE = os.environ.get('BACKUP_SCHEDULE', '0 3 * * *')
+    BACKUP_PATH = os.environ.get('BACKUP_PATH', '/backups')
+    
+    # Email verification
+    EMAIL_VERIFICATION_REQUIRED = os.environ.get('EMAIL_VERIFICATION_REQUIRED', 'True').lower() in ['true', 'yes', '1']
+    EMAIL_VERIFICATION_TOKEN_EXPIRATION = int(os.environ.get('EMAIL_VERIFICATION_TOKEN_EXPIRATION', 3600))
+    
+    # Webhook configuration
+    WEBHOOKS = {
+        'payment_success': os.environ.get('PAYMENT_SUCCESS_WEBHOOK', ''),
+        'new_user': os.environ.get('NEW_USER_WEBHOOK', ''),
+        'card_of_the_day': os.environ.get('CARD_OF_THE_DAY_WEBHOOK', '')
+    }
+    
+    # Card of the day configuration
+    CARD_OF_THE_DAY_ENABLED = os.environ.get('CARD_OF_THE_DAY_ENABLED', 'True').lower() in ['true', 'yes', '1']
+    CARD_OF_THE_DAY_SCHEDULE = os.environ.get('CARD_OF_THE_DAY_SCHEDULE', '0 9 * * *')
+    
+    # Content rating configuration
+    CONTENT_RATING = os.environ.get('CONTENT_RATING', 'PG-13')
+    AGE_GATE_ENABLED = os.environ.get('AGE_GATE_ENABLED', 'True').lower() in ['true', 'yes', '1']
+    MINIMUM_AGE = int(os.environ.get('MINIMUM_AGE', 18))
+    
+    # Referral program
+    REFERRAL_BONUS = float(os.environ.get('REFERRAL_BONUS', 10.0))
+    REFERRAL_EXPIRATION = int(os.environ.get('REFERRAL_EXPIRATION', 30))
+    
+    # Affiliate program
+    AFFILIATE_ID = os.environ.get('AFFILIATE_ID', '')
+    AFFILIATE_COMMISSION_RATE = float(os.environ.get('AFFILIATE_COMMISSION_RATE', 0.1))
+    
+    # Social media links
+    SOCIAL_MEDIA = {
+        'facebook': os.environ.get('FACEBOOK_URL', ''),
+        'twitter': os.environ.get('TWITTER_URL', ''),
+        'instagram': os.environ.get('INSTAGRAM_URL', ''),
+        'youtube': os.environ.get('YOUTUBE_URL', ''),
+        'linkedin': os.environ.get('LINKEDIN_URL', '')
+    }
+    
+    # Sitemap configuration
+    SITEMAP_URL = os.environ.get('SITEMAP_URL', '/sitemap.xml')
+    
+    # Recaptcha configuration
+    RECAPTCHA_ENABLED = os.environ.get('RECAPTCHA_ENABLED', 'True').lower() in ['true', 'yes', '1']
+    RECAPTCHA_SITE_KEY = os.environ.get('RECAPTCHA_SITE_KEY', '')
+    RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '')
+    
+    # Cloud storage configuration
+    CLOUD_PROVIDER = os.environ.get('CLOUD_PROVIDER', 'local')
+    CLOUD_BUCKET = os.environ.get('CLOUD_BUCKET', 'tarot-media')
+    CLOUD_ACCESS_KEY = os.environ.get('CLOUD_ACCESS_KEY', '')
+    CLOUD_SECRET_KEY = os.environ.get('CLOUD_SECRET_KEY', '')
+    CLOUD_REGION = os.environ.get('CLOUD_REGION', '')
+    
+    # CDN configuration
+    CDN_URL = os.environ.get('CDN_URL', '//cdn.example.com/tarot')
+    
+    # Maintenance page message
+    MAINTENANCE_MESSAGE = os.environ.get('MAINTENANCE_MESSAGE', 'Site under maintenance. Please check back soon.')
+    
+    # Emergency contact
+    EMERGENCY_CONTACT = os.environ.get('EMERGENCY_CONTACT', 'support@tarot.example.com')
+    
+    # Currency configuration
+    CURRENCY = os.environ.get('CURRENCY', 'USD')
+    CURRENCY_SYMBOL = os.environ.get('CURRENCY_SYMBOL', '$')
+    CURRENCY_FORMAT = os.environ.get('CURRENCY_FORMAT', '{symbol}{amount}')
+    
+    # Timezone
+    TIMEZONE = os.environ.get('TIMEZONE', 'UTC')
+    
+    # Legal disclaimer
+    LEGAL_DISCLAIMER = os.environ.get(
+        'LEGAL_DISCLAIMER', 
+        'Tarot readings are for entertainment purposes only. Not to be used for medical, financial, or legal advice.'
+    )
+    
+    # Card images configuration
+    CARD_IMAGES_PATH = os.environ.get('CARD_IMAGES_PATH', 'static/img/cards')
+    CARD_BACK_IMAGE = os.environ.get('CARD_BACK_IMAGE', 'back_of_tarot_card.png')
+    
+    # Payment success message
+    PAYMENT_SUCCESS_MESSAGE = os.environ.get(
+        'PAYMENT_SUCCESS_MESSAGE', 
+        'Thank you for your reading! Your tarot cards are on their way.'
+    )
+    
+    # Welcome message for new users
+    WELCOME_MESSAGE = os.environ.get(
+        'WELCOME_MESSAGE', 
+        'Welcome to Tarot Insights! Book your first reading today.'
+    )
+    
+    # Support configuration
+    SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@tarot.example.com')
+    SUPPORT_PHONE = os.environ.get('SUPPORT_PHONE', '+1-800-TAROT-123')
+    SUPPORT_HOURS = os.environ.get('SUPPORT_HOURS', 'Mon-Fri: 9am-5pm EST')
+    
+    # A/B testing configuration
+    A_B_TESTING_ENABLED = os.environ.get('A_B_TESTING_ENABLED', 'True').lower() in ['true', 'yes', '1']
+    A_B_TEST_VARIANTS = os.environ.get('A_B_TEST_VARIANTS', 'A,B').split(',')
+    
+    # Feature flags
+    FEATURE_FLAGS = {}
+    for key in os.environ.keys():
+        if key.startswith('FEATURE_'):
+            feature_name = key[7:]
+            enabled = os.environ.get(key, 'True').lower() in ['true', 'yes', '1']
+            FEATURE_FLAGS[feature_name] = enabled
+    
+    # Custom error messages
+    ERROR_MESSAGES = {
+        '404': os.environ.get('ERROR_404_MESSAGE', 'Page not found'),
+        '500': os.environ.get('ERROR_500_MESSAGE', 'Internal server error'),
+        '403': os.environ.get('ERROR_403_MESSAGE', 'Forbidden')
+    }
+    
+    # Custom success messages
+    SUCCESS_MESSAGES = {
+        'payment_success': os.environ.get('PAYMENT_SUCCESS_MESSAGE', 'Payment processed successfully'),
+        'booking_success': os.environ.get('BOOKING_SUCCESS_MESSAGE', 'Booking confirmed!'),
+        'verification_success': os.environ.get('VERIFICATION_SUCCESS_MESSAGE', 'Email verified successfully')
+    }
+    
+    # Custom welcome messages
+    WELCOME_MESSAGES = {
+        'new_user': os.environ.get('WELCOME_NEW_USER', 'Welcome to our community!'),
+        'returning_user': os.environ.get('WELCOME_RETURNING_USER', 'Welcome back!')
+    }
+    
+    # Custom notification templates
+    NOTIFICATION_TEMPLATES = {
+        'welcome': os.environ.get('NOTIFICATION_WELCOME_TEMPLATE', 'You have been welcomed to our service!'),
+        'payment_reminder': os.environ.get('NOTIFICATION_PAYMENT_REMINDER_TEMPLATE', 'Your subscription will renew soon.')
+    }
+    
+    # Custom card meanings
+    CUSTOM_CARD_MEANINGS = json.loads(os.environ.get('CUSTOM_CARD_MEANINGS', '{}'))
+    
+    # Custom spreads
+    CUSTOM_SPREADS = json.loads(os.environ.get('CUSTOM_SPREADS', '[]'))
+    
+    # Custom reading types
+    CUSTOM_READING_TYPES = json.loads(os.environ.get('CUSTOM_READING_TYPES', '[]'))
+    
+    # Custom filters
+    CUSTOM_FILTERS = json.loads(os.environ.get('CUSTOM_FILTERS', '{}'))
+    
+    # Custom templates
+    CUSTOM_TEMPLATES = json.loads(os.environ.get('CUSTOM_TEMPLATES', '{}'))
+    
+    # Custom scripts
+    CUSTOM_SCRIPTS = json.loads(os.environ.get('CUSTOM_SCRIPTS', '{}'))
+    
+    # Custom styles
+    CUSTOM_STYLES = json.loads(os.environ.get('CUSTOM_STYLES', '{}'))
+    
+    # Custom endpoints
+    CUSTOM_ENDPOINTS = json.loads(os.environ.get('CUSTOM_ENDPOINTS', '{}'))
+    
+    # Custom middleware
+    CUSTOM_MIDDLEWARE = json.loads(os.environ.get('CUSTOM_MIDDLEWARE', '{}'))
+    
+    # Custom validators
+    CUSTOM_VALIDATORS = json.loads(os.environ.get('CUSTOM_VALIDATORS', '{}'))
+    
+    # Custom decorators
+    CUSTOM_DECORATORS = json.loads(os.environ.get('CUSTOM_DECORATORS', '{}'))
+    
+    # Custom blueprints
+    CUSTOM_BLUEPRINTS = json.loads(os.environ.get('CUSTOM_BLUEPRINTS', '{}'))
+    
+    # Custom commands
+    CUSTOM_COMMANDS = json.loads(os.environ.get('CUSTOM_COMMANDS', '{}'))
+    
+    # Custom extensions
+    CUSTOM_EXTENSIONS = json.loads(os.environ.get('CUSTOM_EXTENSIONS', '{}'))
+    
+    # Custom configurations
+    CUSTOM_CONFIGS = json.loads(os.environ.get('CUSTOM_CONFIGS', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}'))
+    
+    # Custom settings
+    CUSTOM_SETTINGS = json.loads(os.environ.get('CUSTOM_SETTINGS', '{}'))
+    
+    # Custom parameters
+    CUSTOM_PARAMETERS = json.loads(os.environ.get('CUSTOM_PARAMETERS', '{}'))
+    
+    # Custom variables
+    CUSTOM_VARIABLES = json.loads(os.environ.get('CUSTOM_VARIABLES', '{}'))
+    
+    # Custom data
+    CUSTOM_DATA = json.loads(os.environ.get('CUSTOM_DATA', '{}'))
+    
+    # Custom information
+    CUSTOM_INFORMATION = json.loads(os.environ.get('CUSTOM_INFORMATION', '{}'))
+    
+    # Custom configuration
+    CUSTOM_CONFIGURATION = json.loads(os.environ.get('CUSTOM_CONFIGURATION', '{}}'))
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key_here')
+    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT', 'your_salt_here')
+    
+    # Database configuration
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'DATABASE_URL', 
+        'postgresql://postgres:postgres@localhost:5432/tarot_db'
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Email configuration
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True').lower() in ['true', 'yes', '1']
+    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ['true', 'yes', '1']
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'your_email@gmail.com')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'your_email_password')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'tarot@example.com')
+    
+    # Payment configuration
+    PAYMENT_PROVIDER = os.environ.get('PAYMENT_PROVIDER', 'stripe')
+    STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'pk_test_...')
+    STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'sk_test_...')
+    
+    # Tarot configuration
+    TAROT_CARDS = os.environ.get('TAROT_CARDS', 'standard').split(',')
+    DEFAULT_SPREAD = os.environ.get('DEFAULT_SPREAD', 'three_card')
+    
+    # Website configuration
+    SITE_NAME = os.environ.get('SITE_NAME', 'Tarot Insights')
+    SITE_DESCRIPTION = os.environ.get('SITE_DESCRIPTION', 'Professional Tarot card readings and guidance')
+    SITE_URL = os.environ.get('SITE_URL', 'https://tarot.example.com')
+    SITE_LOGO = os.environ.get('SITE_LOGO', '/static/img/logo.png')
+    
+    # Business configuration
+    BUSINESS_NAME = os.environ.get('BUSINESS_NAME', 'Tarot Insights')
+    BUSINESS_OWNER = os.environ.get('BUSINESS_OWNER', 'Jane Reader')
+    BUSINESS_EMAIL = os.environ.get('BUSINESS_EMAIL', 'contact@tarot.example.com')
+    BUSINESS_PHONE = os.environ.get('BUSINESS_PHONE', '+1234567890')
+    
+    # Pricing configuration
+    READING_TYPES = [
+        {'name': 'Quick Reading', 'price': 9.99, 'duration': '15 min'},
+        {'name': 'Standard Reading', 'price': 29.99, 'duration': '30 min'},
+        {'name': 'Deep Dive', 'price': 49.99, 'duration': '60 min'}
+    ]
+    
+    # Session configuration
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True').lower() in ['true', 'yes', '1']
+    PERMANENT_SESSION_LIFETIME = os.environ.get('PERMANENT_SESSION_LIFETIME', 3600)
+    
+    # Logging configuration
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
+    LOG_PATH = os.environ.get('LOG_PATH', 'logs/tarot.log')
+    
+    # CORS configuration
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '["https://tarot.example.com"]').split(',')
+    CORS_METHODS = os.environ.get('CORS_METHODS', '["GET", "POST"]').split(',')
+    CORS_HEADERS = os.environ.get('CORS_HEADERS', '["Content-Type"]').split(',')
+    
+    # Rate limiting
+    RATE_LIMIT_ENABLED = os.environ.get('RATE_LIMIT_ENABLED', 'True').lower() in ['true', 'yes', '1']
+    RATE_LIMIT_MAX = int(os.environ.get('RATE_LIMIT_MAX', 10))
+    RATE_LIMIT_WINDOW = os.environ.get('RATE_LIMIT_WINDOW', 'minute')
+    
+    # Maintenance mode
+    MAINTENANCE_MODE = os.environ.get('MAINTENANCE_MODE', 'False').lower() in ['true', 'yes', '1']
+    
+    # GDPR configuration
+    GDPR_COMPLIANT = os.environ.get('GDPR_COMPLIANT', 'True').lower() in ['true', 'yes', '1']
+    COOKIE_CONSENT_REQUIRED = os.environ.get('COOKIE_CONSENT_REQUIRED', 'True').lower() in ['true', 'yes', '1']
+    PRIVACY_POLICY_URL = os.environ.get('PRIVACY_POLICY_URL', '/privacy')
+    TERMS_OF_SERVICE_URL = os.environ.get('TERMS_OF_SERVICE_URL', '/terms')
+    
+    #

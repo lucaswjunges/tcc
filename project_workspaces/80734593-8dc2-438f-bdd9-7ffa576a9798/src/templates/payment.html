@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - Consulta de Tarô</title>
+    <style>
+        :root {
+            --primary-color: #8a6d3b;
+            --secondary-color: #d4b464;
+            --dark-color: #3e2723;
+            --light-color: #f5f5f5;
+            --accent-color: #ffca28;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        nav {
+            background-color: var(--dark-color);
+            padding: 10px 0;
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 0 15px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .payment-section {
+            background-color: white;
+            border-radius: 5px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .payment-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .price {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #555;
+        }
+        
+        .payment-form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .payment-form {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .payment-method input {
+            width: auto;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background-color: #6d4c41;
+        }
+        
+        .ethics {
+            background-color: #f9f0d9;
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .ethics h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+        }
+        
+        .disclaimer {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin-top: 10px;
+        }
+        
+        .secure-payment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            color: var(--secondary-color);
+        }
+        
+        .secure-payment img {
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Carteira de Tarô</h1>
+            <p>Consultas de Tarot Profissionais</p>
+        </div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#">Início</a></li>
+            <li><a href="#">Sobre</a></li>
+            <li><a href="#">Como Funciona</a></li>
+            <li><a href="#">Consultas</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Contato</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <section class="payment-section">
+            <h2>Pagamento para Consulta de Tarô</h2>
+            <p class="price">R$ 120,00 <span>para uma consulta individual</span></p>
+            
+            <p class="description">
+                Ao realizar este pagamento, você estará reservando uma consulta exclusiva com um tarólogo experiente. 
+                O pagamento garante sua posição na agenda e permite que o tarólogo prepare-se adequadamente para sua consulta.
+            </p>
+            
+            <div class="secure-payment">
+                <p>Pagamento Seguro</p>
+                <img src="https://via.placeholder.com/50x20?text=SSL" alt="SSL Secure">
+                <img src="https://via.placeholder.com/50x20?text=3DSecure" alt="3D Secure">
+            </div>
+            
+            <form class="payment-form" action="/checkout" method="post">
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Telefone</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="birthdate">Data de Nascimento</label>
+                    <input type="date" id="birthdate" name="birthdate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo de Consulta</label>
+                    <select name="tarot-type" required>
+                        <option value="">Selecione o tipo de consulta</option>
+                        <option value="relationship">Relacionamentos</option>
+                        <option value="career">Carreira</option>
+                        <option value="finance">Finanças</option>
+                        <option value="general">Pergunta Geral</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Pergunta Específica</label>
+                    <input type="text" name="question" placeholder="Digite sua pergunta aqui..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Pagamento</label>
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <input type="radio" id="credit-card" name="payment-method" value="credit-card" checked>
+                            <label for="credit-card">Cartão de Crédito</label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="paypal" name="payment-method" value="paypal">
+                            <label for="paypal">PayPal</label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="boleto" name="payment-method" value="boleto">
+                            <label for="boleto">Boleto</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="card-details" style="display: none;">
+                    <label for="card-number">Número do Cartão</label>
+                    <input type="text" id="card-number" name="card-number" placeholder="0000 0000 0000 0000">
+                </div>
+                
+                <div class="form-group" id="card-expiry" style="display: none;">
+                    <label for="card-expiry">Validade</label>
+                    <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/AA">
+                </div>
+                
+                <div class="form-group" id="card-cvv" style="display: none;">
+                    <label for="card-cvv">CVV</label>
+                    <input type="text" id="card-cvv" name="card-cvv" placeholder="000">
+                </div>
+                
+                <div class="form-group" id="boleto-info" style="display: none;">
+                    <p>Um boleto bancário será gerado para o pagamento. Você receberá os detalhes por email.</p>
+                </div>
+                
+                <div class="form-group" id="paypal-info" style="display: none;">
+                    <p>Você será redirecionado para o PayPal para completar o pagamento.</p>
+                </div>
+                
+                <button type="submit" class="btn">Confirmar Pagamento</button>
+            </form>
+        </section>
+        
+        <section class="ethics">
+            <h3>Compromisso com a Ética e Credibilidade</h3>
+            <p>
+                Na Carteira de Tarô, valorizamos a transparência e a integridade em todas as nossas consultas. 
+                Nossos tarólogos são profissionais qualificados que seguem princípios éticos:
+            </p>
+            <ul>
+                <li>Respeito pela autonomia do cliente - as cartas são interpretadas como ferramentas de reflexão, não como preditoras</li>
+                <li>Confidencialidade absoluta - todas as informações são tratadas com sigilo</li>
+                <li>Imparcialidade - todas as cartas têm valor igual de interpretação</li>
+                <li>Transparência nos preços - sem taxas ocultas ou surpresas</li>
+                <li>Disponibilidade para esclarecer dúvidas sobre a consulta</li>
+            </ul>
+            <p>
+                O pagamento é apenas para garantir a disponibilidade do tarólogo e o tempo necessário para sua consulta, 
+                seguindo o princípio de que o serviço tem valor e deve ser remunerado.
+            </p>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 Carteira de Tarô - Consultas Profissionais</p>
+            <p class="disclaimer">
+                As consultas de tarô não devem substituir a orientação de profissionais de saúde. 
+                Este serviço é para fins informativos e espirituais apenas.
+            </p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentMethods = document.querySelectorAll('input[name="payment-method"]');
+            const cardDetails = document.getElementById('card-details');
+            const cardExpiry = document.getElementById('card-expiry');
+            const cardCvv = document.getElementById('card-cvv');
+            const boletoInfo = document.getElementById('boleto-info');
+            const paypalInfo = document.getElementById('paypal-info');
+            
+            paymentMethods.forEach(method => {
+                method.addEventListener('change', function() {
+                    // Mostrar apenas os campos relevantes
+                    if (this.value === 'credit-card') {
+                        cardDetails.style.display = 'block';
+                        cardExpiry.style.display = 'block';
+                        cardCvv.style.display = 'block';
+                        boletoInfo.style.display = 'none';
+                        paypalInfo.style.display = 'none';
+                    } else if (this.value === 'boleto') {
+                        cardDetails.style.display = 'none';
+                        cardExpiry.style.display = 'none';
+                        cardCvv.style.display = 'none';
+                        boletoInfo.style.display = 'block';
+                        paypalInfo.style.display = 'none';
+                    } else if (this.value === 'paypal') {
+                        cardDetails.style.display = 'none';
+                        cardExpiry.style.display = 'none';
+                        cardCvv.style.display = 'none';
+                        boletoInfo.style.display = 'none';
+                        paypalInfo.style.display = 'block';
+                    }
+                });
+            });
+            
+            // Formatar campo de número do cartão
+            const cardNumberInput = document.getElementById('card-number');
+            cardNumberInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 16) value = value.slice(0, 16);
+                
+                value = value.replace(/(\d{4})/g, '$1 ').trim();
+                
+                e.target.value = value;
+            });
+            
+            // Formatar campo de validade
+            const cardExpiryInput = document.getElementById('card-expiry');
+            cardExpiryInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 4) value = value.slice(0, 4);
+                
+                value = value.replace(/(\d{2})/g, '$1/').trim();
+                
+                e.target.value = value;
+            });
+        });
+    </script>
+</body>
+</html>

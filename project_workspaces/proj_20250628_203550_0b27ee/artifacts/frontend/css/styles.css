@@ -1,0 +1,211 @@
+/* CSS para o artigo TCC sobre Sistema de prevenção de falhas em motores industriais
+ usando CNN e Visão Computacional
+ Tema: Moderno e responsivo com grid, flexbox, animações e tema consistente */
+
+/* Variáveis para manter a consistência do tema */
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --accent-color: #e74c3c;
+  --background-color: #ecf0f1;
+  --text-color: #333;
+  --light-text: #fff;
+  --border-radius: 4px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Reset e estilos base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Layout principal usando grid */
+.main-container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+  min-height: 100vh;
+}
+
+.header {
+  grid-area: header;
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 5px solid var(--secondary-color);
+}
+
+.sidebar {
+  grid-area: sidebar;
+  background-color: #fff;
+  padding: 1.5rem;
+  border-right: 1px solid var(--background-color);
+}
+
+.main-content {
+  grid-area: main;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.footer {
+  grid-area: footer;
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto;
+  border-top: 5px solid var(--secondary-color);
+}
+
+/* Estilos dos cards usando flexbox */
+.card {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--secondary-color);
+  padding-bottom: 0.5rem;
+}
+
+/* Estilos de navegação */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.nav-link {
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: var(--transition);
+  border-radius: var(--border-radius);
+}
+
+.nav-link:hover {
+  background-color: var(--secondary-color);
+  color: var(--light-text);
+}
+
+/* Estilos de botões */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--secondary-color);
+  color: var(--light-text);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: bold;
+  transition: var(--transition);
+}
+
+.btn:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+/* Estilos de formulários */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .main-container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "main"
+      "sidebar"
+      "footer";
+  }
+  .header, .footer, .sidebar {
+    grid-area: 1;
+  }
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--background-color);
+  }
+  .main-content {
+    grid-column: 1 / -1;
+  }
+}

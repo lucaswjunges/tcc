@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mistérios do Tarô</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Mistérios do Tarô</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/sobre">Sobre o Tarô</a></li>
+                <li><a href="/tipos_de_leitura">Tipos de Leitura</a></li>
+                <li><a href="/contato">Contato</a></li>
+                {% if 'username' in session %}
+                    <li><a href="/perfil">Perfil</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/cadastro">Cadastro</a></li>
+                {% endif %}
+
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Descubra seu Caminho</h2>
+            <p>O Tarô é uma ferramenta poderosa para autoconhecimento e orientação. Explore os mistérios e encontre respostas para suas perguntas mais profundas.</p>
+            <a href="/tipos_de_leitura" class="cta-button">Agende sua Leitura</a>
+        </section>
+
+        <section class="features">
+            <h2>Nossos Serviços</h2>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <h3>Leitura da Semana</h3>
+                    <p>Uma visão geral das energias que te influenciam na semana atual.</p>
+                    <a href="/leitura_semana">Saiba Mais</a>
+                </div>
+                <div class="feature-card">
+                    <h3>Leitura do Amor</h3>
+                    <p>Desvende os mistérios do seu coração e encontre clareza em seus relacionamentos.</p>
+                    <a href="/leitura_amor">Saiba Mais</a>
+                </div>
+                <div class="feature-card">
+                    <h3>Leitura da Carreira</h3>
+                    <p>Orientação para tomar decisões importantes em sua vida profissional.</p>
+                    <a href="/leitura_carreira">Saiba Mais</a>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="testimonials">
+            <h2>Depoimentos</h2>
+            <div class="testimonial-slider">
+                <!-- Depoimentos aqui -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Mistérios do Tarô. Todos os direitos reservados.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

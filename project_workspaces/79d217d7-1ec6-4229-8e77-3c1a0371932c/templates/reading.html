@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitura de Tarô - Serviços de Adivinhação</title>
+    <style>
+        :root {
+            --primary-color: #8B4513;
+            --secondary-color: #DAA520;
+            --accent-color: #00008B;
+            --light-color: #FFF8DC;
+            --dark-color: #2F4F4F;
+            --text-color: #333;
+            --white: #FFFFFF;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%238B4513"/><path d="M0 0L100 100M100 0L0 100" stroke="%23DAA520" stroke-width="2"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            text-align: center;
+            padding: 5rem 1rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: #B8860B;
+            transform: translateY(-2px);
+        }
+        
+        .section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+            font-size: 2.2rem;
+        }
+        
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 1.5rem;
+            margin: 0 1rem 2rem;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .step:hover {
+            transform: translateY(-10px);
+        }
+        
+        .step-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        
+        .step h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .pricing {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .pricing-options {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
+        .pricing-card {
+            flex: 1;
+            min-width: 250px;
+            margin: 1rem;
+            padding: 2rem;
+            background-color: var(--light-color);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .pricing-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+        
+        .form-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .payment-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .payment-option {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .payment-option.selected {
+            border-color: var(--secondary-color);
+            background-color: rgba(218, 165, 32, 0.1);
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: var(--white);
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .disclaimer {
+            background-color: #FFF0F5;
+            border-left: 5px solid #FF69B4;
+            padding: 1rem;
+            margin: 2rem 0;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <span class="logo-icon">🃏</span>
+                    <span>Leitura de Tarô</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#como-funciona">Como Funciona</a></li>
+                    <li><a href="#precos">Preços</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Encontre respostas através do Tarô</h1>
+            <p>Obtenha orientações espirituais e insights pessoais com nossas leituras de Tarô. Um serviço sério, ético e confiável para ajudá-lo em sua jornada.</p>
+            <a href="#leitura" class="btn">Agendar Leitura</a>
+        </div>
+    </section>
+
+    <section id="como-funciona" class="section">
+        <div class="container">
+            <h2 class="section-title">Como Funciona</h2>
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-icon">📋</div>
+                    <h3>1. Selecione o tipo de leitura</h3>
+                    <p>Escolha o tipo de consulta que deseja fazer. Cada leitura tem seu foco específico e duração.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">💰</div>
+                    <h3>2. Pague o serviço</h3>
+                    <p>Realize o pagamento seguro pelo método selecionado. Nossas transações são protegidas e confiáveis.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🔮</div>
+                    <h3>3. Receba sua leitura</h3>
+                    <p>Após o pagamento, você receberá os resultados da leitura por e-mail em até 48 horas úteis.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="precos" class="section">
+        <div class="container">
+            <h2 class="section-title">Nossos Planos</h2>
+            <div class="pricing-options">
+                <div class="pricing-card">
+                    <h3>Leitura Básica</h3>
+                    <div class="price">R$ 49 <span>/ consulta</span></div>
+                    <p>Leitura simples com 3 cartões para responder uma pergunta específica.</p>
+                    <ul>
+                        <li>Até 30 minutos</li>
+                        <li>1 consulta</li>
+                        <li>Resposta direta</li>
+                    </ul>
+                    <a href="#leitura" class="btn" style="margin-top: 1rem;">Selecionar</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Leitura Especial</h3>
+                    <div class="price">R$ 99 <span>/ consulta</span></div>
+                    <p>Leitura detalhada com 7 cartões para explorar diferentes aspectos da sua vida.</p>
+                    <ul>
+                        <li>Até 60 minutos</li>
+                        <li>1 consulta</li>
+                        <li>Análise abrangente</li>
+                    </ul>
+                    <a href="#leitura" class="btn" style="margin-top: 1rem;">Selecionar</a>
+                </div>
+                <div class="pricing-card">
+                    <h3>Leitura Premium</h3>
+                    <div class="price">R$ 199 <span>/ consulta</span></div>
+                    <p>Leitura completa com 14 cartões para uma análise profunda e detalhada.</p>
+                    <ul>
+                        <li>Até 90 minutos</li>
+                        <li>1 consulta</li>
+                        <li>Visão holística</li>
+                    </ul>
+                    <a href="#leitura" class="btn" style="margin-top: 1rem;">Selecionar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="leitura" class="section">
+        <div class="container">
+            <h2 class="section-title">Solicitar uma Leitura</h2>
+            <div class="form-container">
+                <form id="reading-form">
+                    <div class="form-group">
+                        <label for="name">Nome Completo</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthdate">Data de Nascimento</label>
+                        <input type="date" id="birthdate" name="birthdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gênero</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Selecione</option>
+                            <option value="male">Masculino</option>
+                            <option value="female">Feminino</option>
+                            <option value="other">Outro</option>
+                            <option value="prefer-not">Prefiro não informar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reading-type">Tipo de Leitura</label>
+                        <select id="reading-type" name="reading-type" required>
+                            <option value="">Selecione</option>
+                            <option value="basic">Leitura Básica (R$49)</option>
+                            <option value="special">Leitura Especial (R$99)</option>
+                            <option value="premium">Leitura Premium (R$199)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="question">Sua Questão</label>
+                        <textarea id="question" name="question" placeholder="Descreva sua questão ou o que gostaria de descobrir..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Forma de Pagamento</label>
+                        <div class="payment-options">
+                            <div class="payment-option" onclick="selectPayment(this)">
+                                <div class="payment-method">Cartão de Crédito</div>
+                            </div>
+                            <div class="payment-option" onclick="selectPayment(this)">
+                                <div class="payment-method">Boleto Bancário</div>
+                            </div>
+                            <div class="payment-option" onclick="selectPayment(this)">
+                                <div class="payment-method">Pix</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-number">Número do Cartão (se aplicável)</label>
+                        <input type="text" id="card-number" name="card-number">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="card-expiry">Validade</label>
+                            <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/AA">
+                        </div>
+                        <div class="form-group">
+                            <label for="card-cvv">CVV</label>
+                            <input type="text" id="card-cvv" name="card-cvv" placeholder="123">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-holder">Nome no Cartão</label>
+                        <input type="text" id="card-holder" name="card-holder">
+                    </div>
+                    <button type="submit" class="btn">Finalizar Solicitação</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="disclaimer">
+                <strong>Disclaimer:</strong> As leituras de Tarô são para fins de entretenimento e auto-reflexão. Não devem ser consideradas consultas médicas, financeiras ou legais. O resultado das leituras não deve ser usado para tomar decisões importantes que possam afetar sua vida. Lembre-se de que o seu futuro é moldado por suas próprias ações e escolhas. O Tarô oferece orientação, não predição definitiva.
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Leitura de Tarô</h3>
+                    <p>Oferecemos leituras de Tarô sérias, éticas e confiáveis para ajudá-lo em sua jornada espiritual e de autoconhecimento.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Início</a></li>
+                        <li><a href="#como-funciona">Como Funciona</a></li>
+                        <li><a href="#precos">Preços</a></li>
+                        <li><a href="#sobre">Sobre Nós</a></li>
+                        <li><a href="#contato">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Formas de Pagamento</h3>
+                    <ul class="footer-links">
+                        <li>Cartão de Crédito</li>
+                        <li>Boleto Bancário</li>
+                        <li>Pix</li>
+                        <li>Transferência Bancária</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <ul class="footer-links">
+                        <li>Email: contato@leituradetarot.com.br</li>
+                        <li>Telefone: (11) 9999-9999</li>
+                        <li>Instagram: @leituradetarot</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Leitura de Tarô. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function selectPayment(element) {
+            const options = document.querySelectorAll('.payment-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        document.getElementById('reading-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Aqui seria a lógica para processar o pedido
+            // Em um ambiente real, isso seria enviado para um backend
+            
+            alert('Solicitação recebida! Você receberá um e-mail em até 24 horas confirmando sua leitura.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

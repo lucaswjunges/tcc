@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Prevenção de Falhas em Motores Industriais</title>
+    <style>
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Container principal */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Cabeçalho e navegação */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #0d6efd;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(13, 110, 253, 0.85), rgba(13, 110, 253, 0.9)), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmZmYiIC8+CiAgPHJlY3QgeD0iMTAwJSIgeT0iMTAwJSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNhKSIvPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMyMjUiIC8+Cjwvc3ZnPg==');
+            background-size: cover;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #0b5ed7;
+        }
+        
+        /* Seção de produtos em destaque */
+        .featured {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2.2rem;
+            color: #333;
+        }
+        
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .product-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .product-img {
+            height: 200px;
+            background-color: #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+        
+        .product-content {
+            padding: 20px;
+        }
+        
+        .product-content h3 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .product-content p {
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        /* Rodapé */
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #6c757d;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Prevenção Inteligente</div>
+                <ul class="nav-links">
+                    <li><a href="#home">Início</a></li>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#produtos">Produtos</a></li>
+                    <li><a href="#pesquisa">Pesquisa</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Prevenção de Falhas em Motores Industriais</h1>
+            <p>Sistema de monitoramento em tempo real utilizando CNN e Visão Computacional para detectar falhas antes que causem interrupções no processo produtivo.</p>
+            <a href="#produtos" class="btn">Conheça Nossos Produtos</a>
+        </div>
+    </section>
+
+    <section id="produtos" class="featured">
+        <div class="container">
+            <h2 class="section-title">Produtos em Destaque</h2>
+            <div class="products">
+                <div class="product-card">
+                    <div class="product-img">Sistema de Monitoramento</div>
+                    <div class="product-content">
+                        <h3>Sistema de Análise de Falhas</h3>
+                        <p>Detector de anomalias em motores utilizando técnicas de aprendizado de máquina e visão computacional.</p>
+                        <a href="#" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-img">Aplicativo</div>
+                    <div class="product-content">
+                        <h3>Central de Alertas</h3>
+                        <p>Interface web para visualização em tempo real das condições dos equipamentos e envio de alertas.</p>
+                        <a href="#" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-img">Hardware</div>
+                    <div class="product-content">
+                        <h3>Kit de Captura de Dados</h3>
+                        <p>Dispositivo especializado para captura e pré-processamento de dados de vibração e temperatura.</p>
+                        <a href="#" class="btn">Saiba Mais</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <p>Email: contato@prevencaointeligente.com.br</p>
+                    <p>Telefone: (11) 9999-9999</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links Úteis</h3>
+                    <p><a href="#" style="color: white; text-decoration: none;">Artigo Científico</a></p>
+                    <p><a href="#" style="color: white; text-decoration: none;">GitHub</a></p>
+                    <p><a href="#" style="color: white; text-decoration: none;">LinkedIn</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <p>Termos de Uso</p>
+                    <p>Política de Privacidade</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Prevenção Inteligente. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

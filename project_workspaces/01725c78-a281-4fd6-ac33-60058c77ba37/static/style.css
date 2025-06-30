@@ -1,0 +1,97 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 960px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+header h1 {
+    margin-bottom: 10px;
+}
+
+.tarot-card {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    width: 200px;  /* Adjust as needed */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+.tarot-card img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.tarot-card p {
+    margin-top: 10px;
+}
+
+
+.reading-section {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+.reading-section h2 {
+  margin-bottom: 10px;
+}
+
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    font-size: 0.8em;
+}
+
+/* Styling for payment buttons or forms can be added here */
+.payment-button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Responsive Design - Adjust as needed */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    .tarot-card {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

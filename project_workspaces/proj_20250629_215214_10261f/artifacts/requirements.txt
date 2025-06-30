@@ -1,0 +1,49 @@
+Django>=4.0
+
+djangorestframework>=3.12
+
+djoser==2.14.0
+
+djangorestframework-simplejwt>=7.0
+
+django-cors-headers>=3.9
+
+django-filter>=2.4
+
+djmoney>=0.15
+
+django-mptt>=0.6
+
+django-storages>=1.9
+
+whitenoise>=6.5
+
+psycopg2-binary>=2.9
+
+dj-localeurl>=0.4
+
+# Payment Processing
+stripe>=2.40
+
+# Admin & UI Enhancements
+django-admin-tools>=4.0
+django-tables2>=2.4
+
+# Forms & Validation
+django-crispy-forms>=2.4
+
+# Analytics & Tracking
+django-geo-ip>=2.2
+
+# Security & Optimization
+django-secure>=4.1
+
+# Markdown Support
+django-markdown>=3.0
+
+# Database Tools
+sqlparse>=0.4
+
+# Testing & Linting
+factory-boy>=3.1
+pytest-django>=4.5

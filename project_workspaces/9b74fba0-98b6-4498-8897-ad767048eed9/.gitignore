@@ -1,0 +1,70 @@
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+.coverage
+.pytest_cache/
+htmlcov/
+.coverage
+.tox/
+
+# Virtual Environment
+venv/
+env/
+*.venv/
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+*.py~ 
+*.orig
+*.bak
+*~
+
+# Operating System
+.DS_Store
+Thumbs.db
+*.pyc
+
+# Web Project Files
+*.html~
+*.css~
+*.js~
+*.py~
+*.md~
+*.bak
+*.tmp
+*.swp
+
+# Build and Generated Files
+build/
+dist/
+docs/_build/
+
+# Environment Files
+.env
+.envrc
+
+# Database Files
+*.sqlite3
+*.db
+
+# Logs
+*.log
+
+# Fofoca Website Specific
+website/
+static/
+templates/
+media/

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/readings">Leituras</a>
+            <a href="/profile">Perfil</a>
+            <a href="/logout">Sair</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Meu Perfil</h1>
+
+        <section id="user-info">
+            <h2>Informações da Conta</h2>
+            <p><strong>Nome de Usuário:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <a href="/edit_profile">Editar Perfil</a>
+        </section>
+
+        <section id="reading-history">
+            <h2>Histórico de Leituras</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Tipo de Leitura</th>
+                        <th>Detalhes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reading in readings %}
+                        <tr>
+                            <td>{{ reading.date }}</td>
+                            <td>{{ reading.type }}</td>
+                            <td><a href="/reading/{{ reading.id }}">Ver Detalhes</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Tarot Website</p>
+    </footer>
+</body>
+</html>

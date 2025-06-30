@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Vapor Tech</title>
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #ff006e;
+            --dark-color: #1a1a2e;
+            --light-color: #f8f9fa;
+            --success-color: #06d6a0;
+            --error-color: #ef476f;
+            --font-main: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-main);
+        }
+
+        body {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgogIDxkZWZzPgogICAgPHBhdHRlcm4gaWQ9InBhdHRlcm4iIHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgcGF0dGVyblRyYW5zZm9ybT0icm90YXRlKDQ1KSI+CiAgICAgIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIj48L3JlY3Q+CiAgICA8L3BhdHRlcm4+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiPjwvcmVjdD4KPC9zdmc+');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .login-container {
+            background-color: rgba(26, 26, 46, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            color: var(--light-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.3);
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus ~ label,
+        .form-group input:not(:placeholder-shown) ~ label {
+            top: -10px;
+            left: 10px;
+            font-size: 0.8rem;
+            background-color: var(--dark-color);
+            padding: 0 5px;
+            color: var(--primary-color);
+        }
+
+        .btn-login {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #2a75e6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(58, 134, 255, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .signup-link {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .signup-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animação de entrada */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-container {
+            animation: fadeIn 0.8s ease-out;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input');
+            
+            inputs.forEach(input => {
+                if (input.type === 'text' || input.type === 'password') {
+                    input.addEventListener('focus', function() {
+                        this.parentElement.classList.add('focused');
+                    });
+                    
+                    input.addEventListener('blur', function() {
+                        if (this.value === '') {
+                            this.parentElement.classList.remove('focused');
+                        }
+                    });
+                }
+            });
+            
+            const loginForm = document.querySelector('.login-form');
+            const loginButton = document.querySelector('.btn-login');
+            
+            loginButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                if (!email || !password) {
+                    const errorMessages = document.querySelectorAll('.error-message');
+                    if (errorMessages[0]) errorMessages[0].style.display = 'block';
+                    return;
+                }
+                
+                // Aqui seria a lógica de autenticação real
+                console.log('Tentando login com:', { email, password });
+                alert('Login simulado. Em um ambiente de produção, isso conectaria ao backend.');
+            });
+            
+            // Permitir login com Enter
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginButton.click();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>Vapor<span>Tech</span></h1>
+        </div>
+        
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <input type="text" id="email" placeholder=" " required>
+                <label for="email">Email</label>
+                <div class="error-message" id="emailError">Por favor, insira um email válido</div>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" id="password" placeholder=" " required>
+                <label for="password">Senha</label>
+                <div class="error-message" id="passwordError">Por favor, insira sua senha</div>
+            </div>
+            
+            <button type="submit" class="btn-login">Entrar</button>
+            
+            <div class="signup-link">
+                Não tem uma conta? <a href="#">Registre-se agora</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

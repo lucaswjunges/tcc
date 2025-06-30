@@ -1,0 +1,112 @@
+{
+  "project_id": "proj_20250628_145719_711725",
+  "project_name": "Projeto test simple goal...",
+  "project_goal": "test simple goal",
+  "project_type": "general",
+  "status": "completed_successfully",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250628_145719_711725",
+  "task_queue": [
+    {
+      "task_id": "1051f8e1-b0b7-4e49-b799-6906e215bc4b",
+      "description": "Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Corrigir erro na tarefa: Criar estrutura básica do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação básica do projeto de website de venda de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: Correção aplicada para: README.md criado com informações básicas do projeto",
+      "created_at": "2025-06-28T17:57:27.876786",
+      "updated_at": "2025-06-28T17:57:27.876793",
+      "retries": 2,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "c31cc039-8afd-4302-acd0-eeabb9e05876",
+      "description": "Criar estrutura do backend",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/app.py",
+        "content_guideline": "Criar API básica Flask/FastAPI para gerenciar produtos de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "API backend criada com endpoints básicos para produtos",
+      "created_at": "2025-06-28T17:57:19.749585",
+      "updated_at": "2025-06-28T17:57:19.749588",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "0210fd18-cd85-475b-9078-f17e728405ac",
+      "description": "Criar estrutura do frontend",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "frontend/index.html",
+        "content_guideline": "Criar página principal do website de venda de vapes e pods",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Página HTML principal criada com layout básico",
+      "created_at": "2025-06-28T17:57:19.749602",
+      "updated_at": "2025-06-28T17:57:19.749605",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "a16a6c96-f7bd-4130-a31b-c05117d56684",
+      "description": "Configurar banco de dados",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "backend/database.py",
+        "content_guideline": "Configurar conexão e modelos do banco de dados para produtos e pedidos",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Modelos de banco de dados criados para produtos e pedidos",
+      "created_at": "2025-06-28T17:57:19.749621",
+      "updated_at": "2025-06-28T17:57:19.749623",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "completed_tasks": [],
+  "artifacts_state": {},
+  "metrics": {
+    "total_iterations": 50,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

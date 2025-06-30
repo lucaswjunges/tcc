@@ -1,0 +1,27 @@
+{
+  "project_id": "proj_20250629_213147_8244f4",
+  "project_name": "Projeto Criar um website de venda de vapes e pods funciona...",
+  "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python",
+  "project_type": "general",
+  "status": "initializing",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250629_213147_8244f4",
+  "task_queue": [],
+  "completed_tasks": [],
+  "artifacts_state": {},
+  "metrics": {
+    "total_iterations": 0,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

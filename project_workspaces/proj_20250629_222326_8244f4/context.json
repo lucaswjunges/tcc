@@ -1,0 +1,137 @@
+{
+  "project_id": "proj_20250629_222326_8244f4",
+  "project_name": "Projeto Criar um website de venda de vapes e pods funciona...",
+  "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python",
+  "project_type": "general",
+  "status": "completed_successfully",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250629_222326_8244f4",
+  "task_queue": [],
+  "completed_tasks": [
+    {
+      "task_id": "a52608c1-5b94-4f4d-91db-e9639c701216",
+      "description": "Criar documentação do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação completa para: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Incluir instalação, uso, estrutura e exemplos específicos para este tipo de projeto.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "README.md específico e completo para o projeto",
+      "created_at": "2025-06-30T01:23:26.938199",
+      "updated_at": "2025-06-30T01:23:26.938218",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "0a99e3ac-8e80-44ff-99fc-f3103acbc6b0",
+      "description": "Criar arquivo de dependências",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "requirements.txt",
+        "content_guideline": "Listar dependências Python necessárias para: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Incluir frameworks e bibliotecas específicas.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "requirements.txt com dependências específicas do projeto",
+      "created_at": "2025-06-30T01:23:26.938242",
+      "updated_at": "2025-06-30T01:23:26.938245",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "39d48bb2-0339-412e-a368-9e4e9d32f239",
+      "description": "Criar aplicação principal",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "main.py",
+        "content_guideline": "Aplicação principal com estrutura básica e funcionalidades core",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Aplicação principal implementada",
+      "created_at": "2025-06-30T01:23:26.938271",
+      "updated_at": "2025-06-30T01:23:26.938273",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "1ae1025a-04bf-486a-8784-449ed173d833",
+      "description": "Criar configurações",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "config.py",
+        "content_guideline": "Configurações do projeto com variáveis de ambiente e settings",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "Configurações implementadas",
+      "created_at": "2025-06-30T01:23:26.938291",
+      "updated_at": "2025-06-30T01:23:26.938293",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "artifacts_state": {
+    "README.md": {
+      "path": "README.md",
+      "hash": "7b234bdda6e325086037d650ecd75300431b662a55b515322f48fba8016545f4",
+      "summary": "Arquivo criado/sobrescrito: README.md",
+      "last_modified": null
+    },
+    "requirements.txt": {
+      "path": "requirements.txt",
+      "hash": "b94b0ba527e22253961f8211e38af81458c580427ed9b44da9fe1e12515d6673",
+      "summary": "Arquivo criado/sobrescrito: requirements.txt",
+      "last_modified": null
+    },
+    "main.py": {
+      "path": "main.py",
+      "hash": "c4fb6b2bc39bc7b092861542f24bf10ac4aff791d9ebdf6ed374e6dbc7051456",
+      "summary": "Arquivo criado/sobrescrito: main.py",
+      "last_modified": null
+    },
+    "config.py": {
+      "path": "config.py",
+      "hash": "f499726cda61cc11eeb6535ec754ea66ff378dbab66b12e808ad9e4af55b178d",
+      "summary": "Arquivo criado/sobrescrito: config.py",
+      "last_modified": null
+    }
+  },
+  "metrics": {
+    "total_iterations": 5,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

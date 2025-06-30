@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VapeShop - Sobre Nós</title>
+    <style>
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #e74c3c;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #e74c3c;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), url('https://via.placeholder.com/1920x600') center/cover no-repeat;
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Sobre nós section */
+        .about-section {
+            padding: 80px 0;
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .about-text p {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Nossos valores */
+        .values-section {
+            background-color: #ecf0f1;
+            padding: 80px 0;
+        }
+
+        .values-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .value-card {
+            flex: 1;
+            min-width: 250px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .value-card i {
+            font-size: 40px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .value-card h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 60px 0 20px;
+        }
+
+        .footer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-col {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-col h3 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-col ul li a:hover {
+            color: #e74c3c;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            transition: background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: #e74c3c;
+        }
+
+        .copyright {
+            margin-top: 40px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 15px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .values-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">Vape<span>Shop</span></a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/products">Produtos</a></li>
+                    <li><a href="/about">Sobre</a></li>
+                    <li><a href="/contact">Contato</a></li>
+                    <li><a href="/login" class="btn">Entrar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Sobre a VapeShop</h1>
+            <p>Seu destino para vaporizadores e atomizadores de óleo canábico de alta qualidade</p>
+            <a href="/products" class="btn">Ver Produtos</a>
+        </div>
+    </section>
+
+    <!-- Sobre Nós -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Quem Somos</h2>
+                    <p>A VapeShop é uma empresa apaixonada por tecnologia e inovação no mundo dos vaporizadores e atomizadores de óleo canábico. Fundada em 2020, nossa missão é proporcionar aos nossos clientes produtos de alta qualidade, seguros e eficientes.</p>
+                    <p>Trabalhamos com as melhores marcas do mercado, sempre atentos às tendências e inovações da indústria. Nossa equipe é composta por especialistas em e-cigarettes e vaporização, prontos para ajudá-lo em qualquer dúvida ou necessidade.</p>
+                    <p>Na VapeShop, a satisfação do cliente é nossa prioridade. Oferecemos suporte personalizado, consultoria técnica e garantimos a qualidade de nossos produtos através de rigorosos processos de controle de qualidade.</p>
+                </div>
+                <div class="about-image">
+                    <img src="https://via.placeholder.com/600x400" alt="Nossa loja">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nossos Valores -->
+    <section class="values-section">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 40px;">Nossos Valores</h2>
+            <div class="values-container">
+                <div class="value-card">
+                    <i>🔍</i>
+                    <h3>Qualidade</h3>
+                    <p>Selecionamos apenas os melhores produtos do mercado para oferecer aos nossos clientes.</p>
+                </div>
+                <div class="value-card">
+                    <i>🛡️</i>
+                    <h3>Segurança</h3>
+                    <p>Todos os nossos produtos são testados para garantir a segurança do usuário.</p>
+                </div>
+                <div class="value-card">
+                    <i>💡</i>
+                    <h3>Inovação</h3>
+                    <p>Estamos sempre atentos às novas tecnologias e tendências do mercado.</p>
+                </div>
+                <div class="value-card">
+                    <i>🤝</i>
+                    <h3>Suporte</h3>
+                    <p>Oferecemos suporte personalizado e consultoria técnica para nossos clientes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-col">
+                <h3>VapeShop</h3>
+                <p>Sua loja especializada em vaporizadores e atomizadores de óleo canábico.</p>
+                <div class="social-links">
+                    <a href="#"><i>f</i></a>
+                    <a href="#"><i>in</i></a>
+                    <a href="#"><i>ig</i></a>
+                    <a href="#"><i>yt</i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/products">Produtos</a></li>
+                    <li><a href="/about">Sobre Nós</a></li>
+                    <li><a href="/contact">Contato</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Categorias</h3>
+                <ul>
+                    <li><a href="#">Vaporizadores</a></li>
+                    <li><a href="#">Atomizadores</a></li>
+                    <li><a href="#">Óleos Canábicos</a></li>
+                    <li><a href="#">Acessórios</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contato</h3>
+                <ul>
+                    <li>📱 (11) 9999-9999</li>
+                    <li>✉️ contato@vapes.shop</li>
+                    <li>📍 São Paulo, SP</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 VapeShop. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>

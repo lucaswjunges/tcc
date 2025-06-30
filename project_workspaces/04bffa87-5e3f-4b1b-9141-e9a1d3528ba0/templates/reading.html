@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitura de Tarô | Portal da Sabedoria</title>
+    <style>
+        /* Reset e estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #8a6d3b;
+            --secondary-color: #e6d7b5;
+            --accent-color: #d4a5a5;
+            --dark-color: #333333;
+            --light-color: #f8f5f0;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header e navegação */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Banner principal */
+        .banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://source.unsplash.com/random/1200x600/?tarot') no-repeat center center/cover;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        .banner h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .banner p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #6d542b;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Seções */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 15px auto;
+        }
+
+        /* Sobre nós */
+        .about {
+            background-color: white;
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Como funciona */
+        .process {
+            background-color: var(--light-color);
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .step h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        /* Leituras em destaque */
+        .readings {
+            background-color: white;
+        }
+
+        .reading-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .reading-card {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .reading-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .reading-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .reading-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .reading-card:hover .reading-image img {
+            transform: scale(1.1);
+        }
+
+        .reading-content {
+            padding: 20px;
+        }
+
+        .reading-content h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .reading-content p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .reading-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+
+        /* Depoimentos */
+        .testimonials {
+            background-color: var(--light-color);
+        }
+
+        .testimonial-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .testimonial {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+            padding: 0 30px;
+        }
+
+        .testimonial-text::before,
+        .testimonial-text::after {
+            content: '"';
+            font-size: 3rem;
+            color: var(--primary-color);
+            opacity: 0.3;
+            position: absolute;
+        }
+
+        .testimonial-text::before {
+            top: -20px;
+            left: 0;
+        }
+
+        .testimonial-text::after {
+            bottom: -40px;
+            right: 0;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Formulário de leitura */
+        .appointment {
+            background-color: white;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: var(--light-color);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(138, 109, 59, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        .footer-column p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+            }
+
+            .banner h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .steps {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <span class="logo-icon">♣</span>
+                <span>Portal da Sabedoria</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#about">Sobre</a></li>
+                    <li><a href="#process">Como Funciona</a></li>
+                    <li><a href="#readings">Leituras</a></li>
+                    <li><a href="#appointment">Agendar</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Banner Principal -->
+    <section class="banner">
+        <h1>Descubra o Caminho com o Tarô</h1>
+        <p>Consultas personalizadas para orientação espiritual e esclarecimento sobre sua jornada de vida.</p>
+        <a href="#appointment" class="btn">Agendar Leitura</a>
+    </section>
+
+    <!-- Sobre Nós -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">Sobre Nós</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Uma Abordagem Ética e Profissional</h3>
+                    <p>Na Portal da Sabedoria, acreditamos que o tarô é uma ferramenta poderosa para autoconhecimento e orientação espiritual. Nossa missão é oferecer leituras precisas e respeitosas, mantendo sempre a ética e a integridade.</p>
+                    <p>Os nossos leitores são profissionais experientes, dedicados a ajudar você a encontrar respostas para suas questões de vida. Cada leitura é conduzida com sensibilidade e respeito, sempre mantendo o sigilo e a confidencialidade.</p>
+                    <p>Nosso compromisso é proporcionar uma experiência transformadora que possa trazer insights valiosos para sua jornada pessoal.</p>
+                </div>
+                <div class="about-image">
+                    <img src="https://source.unsplash.com/random/600x400/?tarot,reader" alt="Leitora de Tarô">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona -->
+    <section id="process" class="process">
+        <div class="container">
+            <h2 class="section-title">Como Funciona</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">1</div>
+                    <h3>Escolha seu Oráculo</h3>
+                    <p>Selecione o baralho de tarô que melhor se alinha com sua intenção ou deixe que a energia escolha por você.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">2</div>
+                    <h3>Formule sua Questão</h3>
+                    <p>Prepare sua mente e coração para a leitura, formulando uma questão clara ou deixando aberta sua intenção.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <h3>Receba sua Leitura</h3>
+                    <p>Obtenha uma leitura detalhada e interpretada por um leitor qualificado, com insights para sua jornada.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leituras em Destaque -->
+    <section id="readings" class="readings">
+        <div class="container">
+            <h2 class="section-title">Leituras em Destaque</h2>
+            <div class="reading-grid">
+                <div class="reading-card">
+                    <div class="reading-image">
+                        <img src="https://source.unsplash.com/random/600x400/?tarot,love" alt="Leitura de Amor">
+                    </div>
+                    <div class="reading-content">
+                        <h3>Cartas do Amor</h3>
+                        <p>Descubra o estado atual do seu relacionamento e o que o futuro reserva para vocês.</p>
+                        <div class="reading-meta">
+                            <span>Duração: 45 minutos</span>
+                            <span>R$ 190,00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="reading-card">
+                    <div class="reading-image">
+                        <img src="https://source.unsplash.com/random/600x400/?tarot,finance" alt="Leitura Financeira">
+                    </div>
+                    <div class="reading-content">
+                        <h3>O Caminho Financeiro</h3>
+                        <p>Obtenha orientações sobre sua situação econômica, investimentos e abundância.</p>
+                        <div class="reading-meta">
+                            <span>Duração: 45 minutos</span>
+                            <span>R$ 190,00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="reading-card">
+                    <div class="reading-image">
+                        <img src="https://source.unsplash.com/random/600x400/?tarot,health" alt="Leitura de Saúde">
+                    </div>
+                    <div class="reading-content">
+                        <h3>Cartas da Saúde</h3>
+                        <p>Energize seu corpo e espírito, receba conselhos sobre bem-estar e equilíbrio.</p>
+                        <div class="reading-meta">
+                            <span>Duração: 45 minutos</span>
+                            <span>R$ 190,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Depoimentos -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">O Que Nossos Clientes Dizem</h2>
+            <div class="testimonial-container">
+                <div class="testimonial">
+                    <div class="testimonial-text">
+                        A leitura que fiz com a Portal da Sabedoria foi uma experiência transformadora. As cartas trouxeram insights que eu não conseguia enxergar sozinha. O leitor foi extremamente respeitoso e profissional, mantendo todo o sigilo necessário.
+                    </div>
+                    <div class="testimonial-author">— Maria Silva, 32 anos</div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-text">
+                        Estava perdido na minha jornada pessoal até encontrar o serviço da Portal da Sabedoria. A leitura foi clara e direta, me ajudou a entender bloqueios e oportunidades. Recomendo fortemente!
+                    </div>
+                    <div class="testimonial-author">— Carlos Oliveira, 45 anos</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulário de Agendamento -->
+    <section id="appointment" class="appointment">
+        <div class="container">
+            <h2 class="section-title">Agende sua Leitura</h2>
+            <div class="form-container">
+                <form id="reading-form">
+                    <div class="form-group">
+                        <label for="name">Nome Completo</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tarot-pack">Escolha o Pacote</label>
+                        <select id="tarot-pack" name="tarot-pack" required>
+                            <option value="">Selecione um pacote</option>
+                            <option value="quick">Leitura Rápida (30 minutos) - R$ 120,00</option>
+                            <option value="standard">Leitura Padrão (45 minutos) - R$ 190,00</option>
+                            <option value="premium">Leitura Premium (60 minutos) - R$ 270,00</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Data da Leitura</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Sua Intenção</label>
+                        <textarea id="message" name="message" placeholder="Descreva brevemente sua intenção ou pergunta..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment">Forma de Pagamento</label>
+                        <select id="payment" name="payment" required>
+                            <option value="">Selecione a forma de pagamento</option>
+                            <option value="credit-card">Cartão de Crédito</option>
+                            <option value="debit-card">Cartão de Débito</option>
+                            <option value="pix">PIX</option>
+                            <option value="bank-transfer">Transferência Bancária</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Agendar Agora</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Portal da Sabedoria</h3>
+                    <p>Oferecendo leituras de tarô éticas e profissionais para guiá-lo em sua jornada espiritual.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-icon">f</a>
+                        <a href="#" class="social-icon">in</a>
+                        <a href="#" class="social-icon">ig</a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Início</a></li>
+                        <li><a href="#about">Sobre Nós</a></li>
+                        <li><a href="#process">Como Funciona</a></li>
+                        <li><a href="#readings">Leituras</a></li>
+                        <li><a href="#appointment">Agendar</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <p>email@portaldasabedoria.com.br</p>
+                    <p>(11) 9999-9999</p>
+                    <p>Av. Paulista, 1000 - São Paulo/SP</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Portal da Sabedoria. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script para validação do formulário
+        document.getElementById('reading-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validação básica
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const date = document.getElementById('date').value;
+            
+            if (!name || !email || !phone || !date) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            // Em um ambiente real, aqui seria enviado os dados para o servidor
+            alert('Sua leitura foi agendada com sucesso! Entraremos em contato para confirmar os detalhes.');
+            this.reset();
+        });
+
+        // Animação de scroll suave
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartas do Tarô - Adivinhações Online</title>
+    <style>
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f5f0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Cabeçalho */
+        header {
+            background-color: #8b5a2b;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #f9f5f0;
+        }
+
+        /* Banner principal */
+        .banner {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://via.placeholder.com/1200x400');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .banner-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .banner-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #8b5a2b;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #6d4626;
+        }
+
+        /* Seções */
+        section {
+            padding: 3rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #8b5a2b;
+        }
+
+        /* Sobre o Tarô */
+        .about-tarot {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .about-tarot p {
+            margin-bottom: 1rem;
+        }
+
+        /* Galeria de cartas */
+        .cards-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Como funciona */
+        .how-it-works {
+            background-color: #f9f5f0;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .step {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            color: #8b5a2b;
+            margin-bottom: 1rem;
+        }
+
+        /* Depoimentos */
+        .testimonials {
+            background-color: white;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial {
+            background-color: #f9f5f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+        }
+
+        /* CTA (Call to Action) */
+        .cta {
+            background-color: #8b5a2b;
+            color: white;
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .cta h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .cta p {
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-links {
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: white;
+            margin: 0 0.5rem;
+            text-decoration: none;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+            }
+
+            .banner-content h1 {
+                font-size: 2rem;
+            }
+
+            .cards-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">Cartas do Tarô</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="cartas.html">Cartas</a></li>
+                    <li><a href="como-funciona.html">Como Funciona</a></li>
+                    <li><a href="depoimentos.html">Depoimentos</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Banner Principal -->
+    <section class="banner">
+        <div class="banner-content">
+            <h1>Descubra o que o universo tem a te oferecer</h1>
+            <p>Consultas de Tarô online com profissionais especializados</p>
+            <a href="consulta.html" class="btn">Agendar Consulta</a>
+        </div>
+    </section>
+
+    <!-- Sobre o Tarô -->
+    <section class="about-tarot">
+        <div class="container">
+            <h2 class="section-title">O que é o Tarô?</h2>
+            <p>O Tarô é um sistema de cartas de consulta espiritual originário da Europa do século XV. Composto por 78 cartas, representa um arcênvio completo do conhecimento espiritual, abrangendo todos os aspectos da vida humana.</p>
+            <p>Cada carta possui um significado simbólico que pode ser interpretado de diversas maneiras, dependendo do contexto da consulta e da intuição do leitor. As cartas são utilizadas para obter orientação, compreender situações complexas e visualizar possíveis caminhos futuros.</p>
+            <p>Na nossa plataforma, todas as consultas são realizadas por leituras éticas e respeitosas, sempre mantendo o sigilo e a confidencialidade dos nossos clientes.</p>
+        </div>
+    </section>
+
+    <!-- Galeria de Cartas -->
+    <section class="cards-gallery-section">
+        <div class="container">
+            <h2 class="section-title">Nossas Cartas</h2>
+            <div class="cards-gallery">
+                <!-- Carta 1 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 1 - Água do Ceiro" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">Água do Ceiro</div>
+                        <p>Novo começo, renovação, limpeza.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 2 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 2 - A Roupa Nova" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">A Roupa Nova</div>
+                        <p>Super progresso, inovação, visibilidade.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 3 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 3 - A Forja" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">A Forja</div>
+                        <p>Transformação, purificação, testes.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 4 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 4 - A Justiça" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">A Justiça</div>
+                        <p>Equidade, justiça, causa e efeito.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 5 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 5 - A Regência" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">A Regência</div>
+                        <p>Responsabilidade, liderança, poder.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 6 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 6 - O Ermitão" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">O Ermitão</div>
+                        <p>Solitário, busca interior, iluminação.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 7 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 7 - As Rodas da Fortuna" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">As Rodas da Fortuna</div>
+                        <p>Mudanças, destino, sorte.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 8 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 8 - A Justiça" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">A Justiça</div>
+                        <p>Equidade, justiça, causa e efeito.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 9 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 9 - O Louco" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">O Louco</div>
+                        <p>Confiança, aventureiro, perda de medo.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 10 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 10 - A Força" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">A Força</div>
+                        <p>Coragem, convicção, domínio emocional.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 11 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 11 - O Pescador" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">O Pescador</div>
+                        <p>Intuição, magia, abundância.</p>
+                    </div>
+                </div>
+
+                <!-- Carta 12 -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/200x300" alt="Carta 12 - Os Dois" class="card-img">
+                    <div class="card-content">
+                        <div class="card-title">Os Dois</div>
+                        <p>Parceria, união, complementaridade.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Como Funciona</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">1</div>
+                    <h3>Escolha seu oráculo</h3>
+                    <p>Selecione o tipo de consulta e o tarólogo que melhor atende às suas necessidades.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">2</div>
+                    <h3>Faça sua pergunta</h3>
+                    <p>Defina claramente o que deseja descobrir ou entender na consulta.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <h3>Receba sua leitura</h3>
+                    <p>Após a consulta, você receberá um relatório detalhado com as interpretações.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Pronto para descobrir o que o universo tem a te oferecer?</h2>
+            <p>Agende sua consulta hoje mesmo e receba uma orientação personalizada.</p>
+            <a href="consulta.html" class="btn">Agendar Consulta</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="logo">Cartas do Tarô</div>
+            <p>© 2023 Cartas do Tarô - Todos os direitos reservados.</p>
+            <div class="footer-links">
+                <a href="termos.html">Termos de Uso</a>
+                <a href="privacidade.html">Política de Privacidade</a>
+                <a href="contato.html">Contato</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

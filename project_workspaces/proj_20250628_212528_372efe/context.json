@@ -1,0 +1,120 @@
+{
+  "project_id": "proj_20250628_212528_372efe",
+  "project_name": "Projeto criar uma API REST para gerenciamento de tarefas...",
+  "project_goal": "criar uma API REST para gerenciamento de tarefas",
+  "project_type": "general",
+  "status": "planned",
+  "workspace_path": "/home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250628_212528_372efe",
+  "task_queue": [
+    {
+      "task_id": "7de69e8c-46ea-481b-b80d-eb72752ec498",
+      "description": "Criar arquivo de dependências",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "requirements.txt",
+        "content_guideline": "Listar dependências Python necessárias para: criar uma API REST para gerenciamento de tarefas. Incluir frameworks e bibliotecas específicas.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "in_progress",
+      "acceptance_criteria": "requirements.txt com dependências específicas do projeto",
+      "created_at": "2025-06-29T00:25:28.901106",
+      "updated_at": "2025-06-29T00:25:28.901109",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "84d83d62-57de-45e6-8aa5-2ae706fcfd71",
+      "description": "Criar API REST",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "api.py",
+        "content_guideline": "API REST com endpoints CRUD, autenticação, validação e documentação",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "API REST funcional implementada",
+      "created_at": "2025-06-29T00:25:28.901129",
+      "updated_at": "2025-06-29T00:25:28.901132",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    },
+    {
+      "task_id": "578daef6-e703-42f2-bcfe-e1fd4512e3e4",
+      "description": "Criar schemas de validação",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "schemas.py",
+        "content_guideline": "Schemas Marshmallow/Pydantic para validação de dados da API",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "pending",
+      "acceptance_criteria": "Schemas de validação implementados",
+      "created_at": "2025-06-29T00:25:28.901144",
+      "updated_at": "2025-06-29T00:25:28.901146",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "completed_tasks": [
+    {
+      "task_id": "817c1463-25ec-4a73-83b2-05f7804f1842",
+      "description": "Criar documentação do projeto",
+      "type": "CREATE_FILE",
+      "details": {
+        "file_path": "README.md",
+        "content_guideline": "Criar documentação completa para: criar uma API REST para gerenciamento de tarefas. Incluir instalação, uso, estrutura e exemplos específicos para este tipo de projeto.",
+        "overwrite": false
+      },
+      "dependencies": [],
+      "status": "completed",
+      "acceptance_criteria": "README.md específico e completo para o projeto",
+      "created_at": "2025-06-29T00:25:28.901063",
+      "updated_at": "2025-06-29T00:25:28.901083",
+      "retries": 0,
+      "max_retries": 3,
+      "assigned_agent_id": null,
+      "execution_history": [],
+      "validation_history": [],
+      "raw_llm_response_planning": null
+    }
+  ],
+  "artifacts_state": {
+    "README.md": {
+      "path": "README.md",
+      "hash": "0cc8ed6059c5741da23cac8b4cfdd3439f3c3c5530a83b906ddee5459ad97a89",
+      "summary": "Arquivo criado/sobrescrito: README.md",
+      "last_modified": null
+    }
+  },
+  "metrics": {
+    "total_iterations": 2,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

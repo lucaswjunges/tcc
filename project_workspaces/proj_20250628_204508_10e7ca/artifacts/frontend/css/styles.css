@@ -1,0 +1,133 @@
+/* Reset e estilos base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background-color: var(--background-light);
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Grid e flexbox para layout principal */
+.site-grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 
+    'header header'
+    'nav nav'
+    'main main'
+    'footer footer';
+  gap: 20px;
+  height: 100vh;
+}
+
+header {
+  grid-area: header;
+  background-color: var(--background-primary);
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+  grid-area: nav;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--background-secondary);
+}
+
+main {
+  grid-area: main;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 20px;
+  height: 100%;
+}
+
+section {
+  padding: 20px;
+  background-color: var(--background-light);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+  grid-area: footer;
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--background-primary);
+  color: var(--text-secondary);
+}
+
+/* Variáveis de tema */
+:root {
+  --background-primary: #f5f5f5;
+  --background-secondary: #ffffff;
+  --background-light: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --accent-color: #4a6ee0;
+  --accent-hover: #3a59c9;
+}
+
+/* Estilos para elementos específicos */
+.portfolio-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.portfolio-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* Animações */
+.fade-in {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .site-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      'header'
+      'nav'
+      'main'
+      'footer';
+  }
+  main {
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto auto auto auto;
+  }
+  nav {
+    flex-direction: column;
+  }
+}

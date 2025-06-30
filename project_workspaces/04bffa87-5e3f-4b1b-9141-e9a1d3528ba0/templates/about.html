@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nós | Leituras de Tarô</title>
+    <style>
+        /* Reset e estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f5f0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: #2c1e19;
+            color: #d4af37;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #d4af37;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #d4af37;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(44, 30, 25, 0.8), rgba(44, 30, 25, 0.8)), url('https://images.unsplash.com/photo-1529042410759-befb1259ef29?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #d4af37;
+            color: #2c1e19;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #b8972e;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sobre Section */
+        .about-section {
+            padding: 80px 0;
+            background-color: #fff;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+            color: #2c1e19;
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: #d4af37;
+            margin: 15px auto 0;
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2c1e19;
+        }
+
+        .about-text p {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Processo Section */
+        .process-section {
+            padding: 80px 0;
+            background-color: #f8f5f0;
+        }
+
+        .process-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .process-step {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .process-step:hover {
+            transform: translateY(-10px);
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background-color: #d4af37;
+            color: #2c1e19;
+            border-radius: 50%;
+            line-height: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .process-step h3 {
+            margin-bottom: 15px;
+            color: #2c1e19;
+        }
+
+        /* Credibilidade Section */
+        .credibility-section {
+            padding: 80px 0;
+            background-color: #fff;
+        }
+
+        .credibility-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .credibility-item {
+            flex: 1;
+            min-width: 250px;
+            padding: 30px;
+            background-color: #f8f5f0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .credibility-icon {
+            font-size: 40px;
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+
+        .credibility-item h3 {
+            margin-bottom: 15px;
+            color: #2c1e19;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2c1e19;
+            color: #d4af37;
+            padding: 50px 0 20px;
+        }
+
+        .footer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #d4af37;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #fff;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            font-size: 14px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 15px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .process-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">Leituras de Tarô</a>
+            <nav>
+                <ul>
+                    <li><a href="/">Início</a></li>
+                    <li><a href="/about.html">Sobre</a></li>
+                    <li><a href="/services.html">Serviços</a></li>
+                    <li><a href="/contact.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Sobre Nós</h1>
+            <p>Descubra o poder do Tarô com profissionais experientes e éticos</p>
+            <a href="/services.html" class="btn">Agendar uma Leitura</a>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">Nossa História</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Uma Jornada de Descoberta</h3>
+                    <p>O caminho do Tarô começou para mim como uma busca pessoal por orientação e compreensão. Após anos de estudo e prática intensiva, desenvolvi uma conexão profunda com as cartas e sua sabedoria ancestrais.</p>
+                    <p>O que começou como uma prática espiritual transformou-se em uma missão de compartilhar essa ferramenta poderosa com aqueles que buscam orientação, clareza e autoconhecimento.</p>
+                    <p>Nossa abordagem combina tradições antiguas com uma visão moderna, sempre mantendo a ética e integridade como princípios fundamentais.</p>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Sessão de Leitura de Tarô">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="process-section">
+        <div class="container">
+            <h2 class="section-title">Nossa Abordagem</h2>
+            <div class="process-container">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3>Consulta Inicial</h3>
+                    <p>Estabelecemos uma conexão e discutimos suas intenções para a leitura.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3>Preparação</h3>
+                    <p>Preparamos o ambiente e as cartas para uma leitura precisa e significativa.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3>Leitura Guiada</h3>
+                    <p>Realizamos a leitura com foco em sua consulta específica e mensagens relevantes.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h3>Interpretação</h3>
+                    <p>Oferecemos insights claros e significados que ressoam com sua jornada.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="credibility-section">
+        <div class="container">
+            <h2 class="section-title">Compromisso com a Credibilidade</h2>
+            <div class="credibility-container">
+                <div class="credibility-item">
+                    <div class="credibility-icon">✓</div>
+                    <h3>Profissionais Qualificados</h3>
+                    <p>Carteiras de tarô e treinamento contínuo em métodos tradicionais.</p>
+                </div>
+                <div class="credibility-item">
+                    <div class="credibility-icon">✓</div>
+                    <h3>Confidencialidade</h3>
+                    <p>Seus dados e informações de leitura são tratados com o mais alto sigilo.</p>
+                </div>
+                <div class="credibility-item">
+                    <div class="credibility-icon">✓</div>
+                    <h3>Transparência</h3>
+                    <p>Preços claros e sem surpresas em nossos serviços de leitura.</p>
+                </div>
+                <div class="credibility-item">
+                    <div class="credibility-icon">✓</div>
+                    <h3>Etica Profissional</h3>
+                    <p>Respeitamos sua livre vontade e nunca pressionamos para comprar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>Leituras de Tarô</h3>
+                    <p>Oferecendo orientação e insights através do poder do Tarô.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/about.html">Sobre</a></li>
+                        <li><a href="/services.html">Serviços</a></li>
+                        <li><a href="/contact.html">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Serviços</h3>
+                    <ul>
+                        <li><a href="/services.html#reading">Leitura Online</a></li>
+                        <li><a href="/services.html#reading">Leitura Presencial</a></li>
+                        <li><a href="/services.html#workshop">Workshops</a></li>
+                        <li><a href="/services.html#tarot-kit">Kit Iniciante</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li>Email: contato@leiturastarot.com</li>
+                        <li>WhatsApp: (11) 9999-9999</li>
+                        <li>Instagram: @leiturastarot</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Leituras de Tarô. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

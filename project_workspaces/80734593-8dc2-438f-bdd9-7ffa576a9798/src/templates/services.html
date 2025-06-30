@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços - Leituras de Tarô</title>
+    <style>
+        /* Reset e estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f5f0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Cabeçalho */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #8a2be2;
+        }
+
+        .logo span {
+            color: #333;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #8a2be2;
+        }
+
+        /* Banner */
+        .banner {
+            background: linear-gradient(rgba(138, 43, 226, 0.8), rgba(138, 43, 226, 0.9)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%238a2be2"/><text x="50%" y="50%" font-family="Arial" font-size="10" fill="%23fff" text-anchor="middle" dominant-baseline="middle">Tarô</text></svg>');
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+        }
+
+        .banner h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .banner p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Seção de Serviços */
+        .services-section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            color: #333;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background-color: #8a2be2;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-image {
+            height: 200px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8a2be2;
+            font-size: 48px;
+        }
+
+        .service-content {
+            padding: 20px;
+        }
+
+        .service-content h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .service-content p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .service-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #8a2be2;
+            margin-bottom: 20px;
+        }
+
+        .service-button {
+            display: inline-block;
+            background-color: #8a2be2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .service-button:hover {
+            background-color: #6a1cb9;
+        }
+
+        /* Seção de Como Funciona */
+        .how-it-works {
+            background-color: #f0e6ff;
+            padding: 60px 0;
+        }
+
+        .steps-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .step {
+            flex: 0 0 calc(25% - 30px);
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            right: -15%;
+            width: 30%;
+            height: 2px;
+            background-color: #8a2be2;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background-color: #8a2be2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .step h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Seção de Depoimentos */
+        .testimonials {
+            padding: 60px 0;
+        }
+
+        .testimonials-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 350px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .testimonial-text::before {
+            content: '"';
+            font-size: 60px;
+            color: #8a2be2;
+            opacity: 0.2;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8a2be2;
+            font-size: 24px;
+        }
+
+        .author-info h4 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .author-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Seção de FAQ */
+        .faq {
+            background-color: #f0e6ff;
+            padding: 60px 0;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-question {
+            background-color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 24px;
+            color: #8a2be2;
+        }
+
+        .faq-question.active::after {
+            content: '-';
+        }
+
+        .faq-answer {
+            background-color: #eef5ff;
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s, padding 0.3s;
+        }
+
+        .faq-question.active + .faq-answer {
+            padding: 20px;
+            max-height: 1000px;
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 60px 0 20px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: #8a2be2;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #8a2be2;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            font-size: 14px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 15px;
+            }
+
+            .banner h1 {
+                font-size: 36px;
+            }
+
+            .step {
+                flex: 0 0 calc(50% - 30px);
+                margin-bottom: 30px;
+            }
+
+            .step:not(:last-child)::after {
+                display: none;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .banner h1 {
+                font-size: 28px;
+            }
+
+            .section-title h2 {
+                font-size: 28px;
+            }
+
+            .step {
+                flex: 0 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">Carteira<span>de Tarô</span></div>
+            <nav>
+                <ul>
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Sobre</a></li>
+                    <li><a href="#" class="active">Serviços</a></li>
+                    <li><a href="#">Depoimentos</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner">
+        <div class="container">
+            <h1>Descubra o Caminho com Leituras de Tarô</h1>
+            <p>Oferecemos serviços de adivinhação ética e confiável para orientação pessoal e tomada de decisão</p>
+        </div>
+    </section>
+
+    <!-- Seção de Serviços -->
+    <section class="services-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nossos Serviços</h2>
+            </div>
+            <div class="services-grid">
+                <!-- Serviço 1 -->
+                <div class="service-card">
+                    <div class="service-image">🃏</div>
+                    <div class="service-content">
+                        <h3>Leitura Básica de Tarô</h3>
+                        <p>Uma leitura introdutória para iniciantes ou para quem deseja uma orientação rápida sobre questões atuais. Identificamos os principais desafios e oportunidades que estão presentes na sua vida.</p>
+                        <div class="service-price">R$ 70,00</div>
+                        <a href="#" class="service-button">Agendar Agora</a>
+                    </div>
+                </div>
+
+                <!-- Serviço 2 -->
+                <div class="service-card">
+                    <div class="service-image">🔮</div>
+                    <div class="service-content">
+                        <h3>Leitura Especializada</h3>
+                        <p>Uma análise detalhada dos arcos de sua vida (relacionamentos, carreira, finanças, saúde). Utilizamos técnicas avançadas para identificar padrões e tendências importantes.</p>
+                        <div class="service-price">R$ 150,00</div>
+                        <a href="#" class="service-button">Agendar Agora</a>
+                    </div>
+                </div>
+
+                <!-- Serviço 3 -->
+                <div class="service-card">
+                    <div class="service-image">🎯</div>
+                    <div class="service-content">
+                        <h3>Leitura para Decisões</h3>
+                        <p>Fórumas orientação clara para tomar decisões importantes (carrer, amor, finanças). Receba insights específicos para cada situação e possibilidades de ação.</p>
+                        <div class="service-price">R$ 120,00</div>
+                        <a href="#" class="service-button">Agendar Agora</a>
+                    </div>
+                </div>
+
+                <!-- Serviço 4 -->
+                <div class="service-card">
+                    <div class="service-image">🌙</div>
+                    <div class="service-content">
+                        <h3>Leitura Noturna</h3>
+                        <p>Leitura realizada à meia-noite para questões mais espirituais ou de natureza mais sutil. Ideal para questões de autoconhecimento e transformação pessoal.</p>
+                        <div class="service-price">R$ 90,00</div>
+                        <a href="#" class="service-button">Agendar Agora</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Como Funciona -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>Como Funciona</h2>
+            </div>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Escolha o Serviço</h3>
+                    <p>Selecione o tipo de leitura que melhor atende às suas necessidades</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Agende sua Leitura</h3>
+                    <p>Reserve um horário confortável para sua consulta</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Prepare suas Perguntas</h3>
+                    <p>Defina claramente o que deseja descobrir na leitura</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Receba sua Leitura</h3>
+                    <p>Obtenha insights claros e orientações personalizadas</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Depoimentos -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>Depoimentos</h2>
+            </div>
+            <div class="testimonials-container">
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        A leitura de Tarô mudou minha perspectiva sobre alguns relacionamentos. Conseguir entender os sinais que estava ignorando foi extremamente liberador. O processo foi respeitoso e eticamente sólido.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">A</div>
+                        <div class="author-info">
+                            <h4>Ana Silva</h4>
+                            <p>Cliente há 1 ano</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        Estava em um momento de crise profissional e a leitura me trouxe orientações claras sobre como proceder. O tarólogo foi honesto sobre as possibilidades e não me deu falsas esperanças.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">M</div>
+                        <div class="author-info">
+                            <h4>Marcelo Santos</h4>
+                            <p>Cliente há 6 meses</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-text">
+                        O serviço é rápido, eficiente e mantém um equilíbrio entre espiritualidade e racionalidade. O valor é justo e o profissional demonstra profundo conhecimento do baralho.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">F</div>
+                        <div class="author-info">
+                            <h4>Fernanda Oliveira</h4>
+                            <p>Cliente há 3 meses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção FAQ -->
+    <section class="faq">
+        <div class="container">
+            <div class="section-title">
+                <h2>Perguntas Frequentes</h2>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">Como posso ter certeza de que a leitura é ética?</div>
+                    <div class="faq-answer">
+                        <p>Nosso processo é transparente e respeitoso. Não fazemos predições absolutas, apenas oferecemos insights e possibilidades. Respeitamos sua liberdade de decisão e não influenciamos seus caminhos. Todos os dados são mantidos em total confidencialidade.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">As leituras podem ser realizadas remotamente?</div>
+                    <div class="faq-answer">
+                        <p>Sim, oferecemos leituras online por videochamada ou chat. Para leituras remotas, basta ter um dispositivo com câmera e microfone. O processo é igualmente eficaz e respeitoso.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Quantas perguntas posso fazer em uma leitura?</div>
+                    <div class="faq-answer">
+                        <p>Recomendamos focar em uma ou duas questões principais para uma leitura mais profunda. Se tiver várias dúvidas, podemos combinarmos uma leitura mais abrangente ou duas sessões mais focadas.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Como vocês lidam com questões sensíveis?</div>
+                    <div class="faq-answer">
+                        <p>Todo conteúdo abordado em nossas leituras é tratado com o máximo respeito e confidencialidade. Nossos profissionais são capacitados para lidar com questões complexas com sensibilidade e ética, sempre mantendo o foco no bem-estar do cliente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-column">
+                    <h3>Carteira de Tarô</h3>
+                    <p>Oferecendo leituras de Tarô éticas e confiáveis para orientação pessoal e tomada de decisão.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Serviços</h3>
+                    <ul>
+                        <li><a href="#">Leitura Básica</a></li>
+                        <li><a href="#">Leitura Especializada</a></li>
+                        <li><a href="#">Leitura para Decisões</a></li>
+                        <li><a href="#">Leitura Noturna</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Úteis</h3>
+                    <ul>
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Como Funciona</a></li>
+                        <li><a href="#">Depoimentos</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li>contato@carteiradetaro.com</li>
+                        <li>(11) 9999-9999</li>
+                        <li>Av. Paulista, 1000 - São Paulo</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Carteira de Tarô - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Script para FAQ
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

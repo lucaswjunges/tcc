@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Produtos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para o catálogo */
+        .card-product {
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .card-product:hover {
+            transform: translateY(-5%);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .filter-section {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .search-container {
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 1000;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de busca e filtros -->
+    <div class="search-container mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0"><i class="bi bi-grid-3x3-gap-fill"></i> Catálogo de Produtos</h2>
+            <div class="input-group w-25">
+                <input type="text" class="form-control" placeholder="Buscar produtos..." id="searchInput">
+                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Filtros laterais -->
+            <div class="col-lg-3 col-md-4 filter-section mb-4">
+                <h5>Filtros</h5>
+                
+                <div class="mb-3">
+                    <h6>Categorias</h6>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" id="filterCategoryAll" checked>
+                        <label class="form-check-label" for="filterCategoryAll">Todas</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" id="filterCategory1">
+                        <label class="form-check-label" for="filterCategory1">Sensores</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" id="filterCategory2">
+                        <label class="form-check-label" for="filterCategory2">Câmeras</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" id="filterCategory3">
+                        <label class="form-check-label" for="filterCategory3">Controladores</label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Preço</h6>
+                    <div class="mb-1">
+                        <label for="priceRange" class="form-label">Faixa de Preço</label>
+                        <input type="range" class="form-range" id="priceRange" min="0" max="1000" step="50" value="500">
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>R$ 0</span>
+                            <span>R$ 500</span>
+                            <span>R$ 1000</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Marca</h6>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" id="filterBrand1" checked>
+                        <label class="form-check-label" for="filterBrand1">Marca A</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" id="filterBrand2">
+                        <label class="form-check-label" for="filterBrand2">Marca B</label>
+                    </div>
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" id="filterBrand3">
+                        <label class="form-check-label" for="filterBrand3">Marca C</label>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-primary w-100" id="applyFilters">
+                    Aplicar Filtros
+                </button>
+            </div>
+            
+            <!-- Produtos -->
+            <div class="col-lg-9 col-md-8">
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-product h-100">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='%230d6efd' viewBox='0 0 150 150'%3E%3Ccircle cx='75' cy='75' r='70' fill='%230d6efd'/%3E%3C/svg%3E" 
+                                         class="img-fluid rounded" alt="Produto" style="max-height: 120px;">
+                                </div>
+                                <h5 class="card-title mb-2">Sensor de Temperatura Modelo X1</h5>
+                                <p class="card-text text-muted small mb-2">Marca: Marca A</p>
+                                <p class="card-text text-muted small mb-3">Monitoramento de temperatura em motores industriais</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0">R$ 249,90</span>
+                                    <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-product h-100">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='%2328a745' viewBox='0 0 150 150'%3E%3Ccircle cx='75' cy='75' r='70' fill='%2328a745'/%3E%3C/svg%3E" 
+                                         class="img-fluid rounded" alt="Produto" style="max-height: 120px;">
+                                </div>
+                                <h5 class="card-title mb-2">Câmera de Alta Resolução</h5>
+                                <p class="card-text text-muted small mb-2">Marca: Marca B</p>
+                                <p class="card-text text-muted small mb-3">Captura imagens detalhadas para análise de motores</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0">R$ 899,00</span>
+                                    <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-product h-100">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='%23ffc107' viewBox='0 0 150 150'%3E%3Ccircle cx='75' cy='75' r='70' fill='%23ffc107'/%3E%3C/svg%3E" 
+                                         class="img-fluid rounded" alt="Produto" style="max-height: 120px;">
+                                </div>
+                                <h5 class="card-title mb-2">Controlador CNC Avançado</h5>
+                                <p class="card-text text-muted small mb-2">Marca: Marca C</p>
+                                <p class="card-text text-muted small mb-3">Controle preciso de motores industriais</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0">R$ 1.299,00</span>
+                                    <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card card-product h-100">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='%236f42c1' viewBox='0 0 150 150'%3E%3Ccircle cx='75' cy='75' r='70' fill='%236f42c1'/%3E%3C/svg%3E" 
+                                         class="img-fluid rounded" alt="Produto" style="max-height: 120px;">
+                                </div>
+                                <h5 class="card-title mb-2">Software de Análise de Falhas</h5>
+                                <p class="card-text text-muted small mb-2">Marca: Marca A</p>
+                                <p class="card-text text-muted small mb-3">Processamento de dados e detecção de falhas em motores</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0">R$ 749,00</span>
+                                    <button class="btn btn-sm btn-outline-primary">Detalhes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Paginação -->
+                <nav aria-label="Navegação de página de produtos">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Próximo</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts necessários -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Script para o botão de busca
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const searchTerm = document.getElementById('searchInput').value;
+            if (searchTerm.trim() !== '') {
+                alert(`Busca ativada por: ${searchTerm}`);
+                // Aqui você adicionaria a lógica de busca
+            }
+        });
+    </script>
+</body>
+</html>

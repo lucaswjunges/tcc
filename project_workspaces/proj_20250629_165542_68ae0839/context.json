@@ -1,0 +1,27 @@
+{
+  "project_id": "proj_20250629_165542_68ae0839",
+  "project_name": "Blog API",
+  "project_goal": "Create a REST API for a blog management system",
+  "project_type": "general",
+  "status": "initializing",
+  "workspace_path": "project_workspaces/proj_20250629_165542_68ae0839",
+  "task_queue": [],
+  "completed_tasks": [],
+  "artifacts_state": {},
+  "metrics": {
+    "total_iterations": 0,
+    "total_cost_usd": 0.0,
+    "total_tokens": {
+      "prompt": 0,
+      "completion": 0
+    },
+    "error_count": 0,
+    "last_updated": null
+  },
+  "engine_config": {
+    "max_project_iterations": 50,
+    "max_iterations_per_task": 3,
+    "default_executor_model": null,
+    "timeout_seconds": 300
+  }
+}

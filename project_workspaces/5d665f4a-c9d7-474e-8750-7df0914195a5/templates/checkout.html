@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Vapor Tech</title>
+    <style>
+        /* Reset e estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0d6efd;
+        }
+
+        .logo span {
+            color: #ff6b00;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #0d6efd;
+        }
+
+        /* Checkout container */
+        .checkout-container {
+            padding: 40px 0;
+        }
+
+        .checkout-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .checkout-steps::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #dee2e6;
+            z-index: 1;
+        }
+
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .step.active .step-icon {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .step.completed .step-icon {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .step-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .step.active .step-text {
+            color: #0d6efd;
+            font-weight: 600;
+        }
+
+        .checkout-content {
+            display: flex;
+            gap: 40px;
+        }
+
+        .checkout-summary {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkout-summary h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 22px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #0d6efd;
+            font-weight: 600;
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .cart-total-label {
+            font-weight: 500;
+        }
+
+        .cart-total-value {
+            font-weight: 600;
+        }
+
+        .cart-total .cart-total-value.final {
+            font-size: 1.2rem;
+        }
+
+        .checkout-form {
+            flex: 2;
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .checkout-form h2 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 22px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0d6efd;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .payment-method {
+            flex: 1;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-method:hover {
+            border-color: #0d6efd;
+        }
+
+        .payment-method.selected {
+            border-color: #0d6efd;
+            background-color: #f0f8ff;
+        }
+
+        .payment-method img {
+            max-width: 40px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0b5ed7;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #0d6efd;
+            color: #0d6efd;
+        }
+
+        .btn-outline:hover {
+            background-color: #f0f8ff;
+        }
+
+        .form-note {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #fff;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #495057;
+            color: #adb5bd;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .checkout-content {
+                flex-direction: column;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .step {
+                margin-bottom: 20px;
+            }
+
+            .checkout-steps::before {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">Vapor<span>Tech</span></div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Produtos</a></li>
+                    <li><a href="#">Sobre</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="checkout-container">
+        <div class="container">
+            <div class="checkout-steps">
+                <div class="step active">
+                    <div class="step-icon">1</div>
+                    <div class="step-text">Carrinho</div>
+                </div>
+                <div class="step active">
+                    <div class="step-icon">2</div>
+                    <div class="step-text">Informações</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <div class="step-text">Entrega</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon">4</div>
+                    <div class="step-text">Pagamento</div>
+                </div>
+                <div class="step">
+                    <div class="step-icon">5</div>
+                    <div class="step-text">Confirmação</div>
+                </div>
+            </div>
+
+            <div class="checkout-content">
+                <div class="checkout-summary">
+                    <h2>Resumo do Pedido</h2>
+                    <div class="cart-item">
+                        <img src="https://via.placeholder.com/60x60" alt="Atomizador Pro">
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">Atomizador Pro Max</div>
+                            <div class="cart-item-price">R$ 129,90</div>
+                        </div>
+                    </div>
+                    <div class="cart-item">
+                        <img src="https://via.placeholder.com/60x60" alt="Óleo Canábico">
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">Óleo Canábico Premium 10ml</div>
+                            <div class="cart-item-price">R$ 89,90</div>
+                        </div>
+                    </div>
+                    <div class="cart-item">
+                        <img src="https://via.placeholder.com/60x60" alt="Carregador Rápido">
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">Carregador Rápido USB-C</div>
+                            <div class="cart-item-price">R$ 49,90</div>
+                        </div>
+                    </div>
+
+                    <div class="cart-total">
+                        <div class="cart-total-row">
+                            <span class="cart-total-label">Subtotal</span>
+                            <span class="cart-total-value">R$ 269,70</span>
+                        </div>
+                        <div class="cart-total-row">
+                            <span class="cart-total-label">Desconto</span>
+                            <span class="cart-total-value">R$ 0,00</span>
+                        </div>
+                        <div class="cart-total-row">
+                            <span class="cart-total-label">Taxa de entrega</span>
+                            <span class="cart-total-value">R$ 19,90</span>
+                        </div>
+                        <div class="cart-total-row">
+                            <span class="cart-total-label">Total</span>
+                            <span class="cart-total-value final">R$ 289,60</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-form">
+                    <h2>Informações Pessoais</h2>
+                    <form id="checkout-form">
+                        <div class="form-section">
+                            <h3>Dados do Frequentador</h3>
+                            <div class="form-group">
+                                <label for="name">Nome Completo</label>
+                                <input type="text" id="name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-mail</label>
+                                <input type="email" id="email" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Telefone</label>
+                                <input type="tel" id="phone" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Endereço de Entrega</h3>
+                            <div class="form-group">
+                                <label for="address">Endereço</label>
+                                <input type="text" id="address" class="form-control" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="number">Número</label>
+                                    <input type="text" id="number" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="complement">Complemento</label>
+                                    <input type="text" id="complement" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="district">Bairro</label>
+                                    <input type="text" id="district" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">Cidade</label>
+                                    <input type="text" id="city" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="state">Estado</label>
+                                    <input type="text" id="state" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="zipcode">CEP</label>
+                                <input type="text" id="zipcode" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Forma de Pagamento</h3>
+                            <p class="form-note">Selecione a forma de pagamento preferida:</p>
+                            <div class="payment-methods">
+                                <div class="payment-method" onclick="selectPayment(this)">
+                                    <img src="https://via.placeholder.com/40x25" alt="Cartão">
+                                    <div>Cartão de Crédito</div>
+                                </div>
+                                <div class="payment-method" onclick="selectPayment(this)">
+                                    <img src="https://via.placeholder.com/40x25" alt="Boleto">
+                                    <div>Boleto Bancário</div>
+                                </div>
+                                <div class="payment-method" onclick="selectPayment(this)">
+                                    <img src="https://via.placeholder.com/40x25" alt="Pix">
+                                    <div>PIX</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-block">Finalizar Compra</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-column">
+                <h3>VaporTech</h3>
+                <ul>
+                    <li><a href="#">Sobre Nós</a></li>
+                    <li><a href="#">Nossa História</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Trabalhe Conosco</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Produtos</h3>
+                <ul>
+                    <li><a href="#">Atomizadores</a></li>
+                    <li><a href="#">Óleos e Acessórios</a></li>
+                    <li><a href="#">Cigarros Eletrônicos</a></li>
+                    <li><a href="#">Baterias</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Suporte</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Contato</a></li>
+                    <li><a href="#">Política de Entrega</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contato</h3>
+                <ul>
+                    <li>contato@vatortech.com</li>
+                    <li>(11) 9999-9999</li>
+                    <li>Av. Paulista, 1000 - São Paulo</li>
+                </ul>
+            </div>
+        </div>
+        <div class="container">
+            <div class="copyright">
+                &copy; 2023 VaporTech. Todos os direitos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function selectPayment(element) {
+            // Remove selected class from all payment methods
+            const paymentMethods = document.querySelectorAll('.payment-method');
+            paymentMethods.forEach(method => {
+                method.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked method
+            element.classList.add('selected');
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic form validation
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const zipcode = document.getElementById('zipcode').value;
+            
+            if (!name || !email || !phone || !address || !zipcode) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            // In a real application, you would send the form data to your backend
+            alert('Pedido enviado com sucesso! Você será redirecionado para a página de confirmação.');
+            // window.location.href = '/confirmation';
+        });
+    </script>
+</body>
+</html>

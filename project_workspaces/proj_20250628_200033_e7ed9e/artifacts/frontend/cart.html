@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho de Compras | Vapes & Pods</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Vapes & Pods</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="products.html">Produtos</a></li>
+                <li><a href="cart.html" class="active">Carrinho</a></li>
+                <li><a href="account.html">Minha Conta</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="cart-container">
+            <h2>Meu Carrinho</h2>
+            
+            <div class="cart-summary">
+                <div class="cart-items">
+                    <!-- Itens do carrinho serão inseridos aqui via JavaScript -->
+                </div>
+                
+                <div class="cart-total">
+                    <p>Total: R$ <span id="total-amount">0.00</span></p>
+                </div>
+            </div>
+            
+            <div class="cart-actions">
+                <button id="checkout-button" class="btn-primary">Finalizar Compra</button>
+                <button id="continue-shopping" class="btn-secondary">Continuar Comprando</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Vapes & Pods. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // JavaScript para manipular o carrinho
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lógica para atualizar o carrinho, calcular totais e lidar com o checkout
+        });
+    </script>
+</body>
+</html>

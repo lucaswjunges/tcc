@@ -1,0 +1,4 @@
+numpy
+pandas
+matplotlib
+seaborn	ensorflow==2.15.1	opencv-python	pillow	scikit-learn	openpyxl	PyPDF2	reportlab	pylatex	python-docx

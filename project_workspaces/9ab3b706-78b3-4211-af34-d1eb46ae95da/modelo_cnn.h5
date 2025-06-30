@@ -1,0 +1,9 @@
+# Este arquivo não contém conteúdo legível por humanos.
+# Ele armazena o modelo CNN treinado em formato HDF5.
+# Os detalhes da arquitetura, treinamento e performance do modelo 
+# devem ser descritos no artigo.
+
+# Carregue este modelo em Python usando:
+
+# from tensorflow import keras
+# model = keras.models.load_model('modelo_cnn.h5')

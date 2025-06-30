@@ -1,0 +1,17 @@
+*.pyc
+__pycache__/
+venv/
+.env
+.DS_Store
+db.sqlite3
+*.log
+node_modules/
+bower_components/
+/public/uploads
+/tmp
+/cache
+/sessions
+*.pem
+*.key
+.vscode/
+.idea/

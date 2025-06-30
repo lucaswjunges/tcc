@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perguntas Frequentes - Tarô Online</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('faq') }}">FAQ</a>
+            <a href="{{ url_for('contact') }}">Contato</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Perguntas Frequentes</h1>
+
+        <section class="faq-section">
+            <h2>Sobre as Leituras</h2>
+            <details>
+                <summary>Como funciona a leitura de Tarô online?</summary>
+                <p>Após escolher a sua leitura e efetuar o pagamento, você receberá um e-mail com instruções e um link para agendar sua sessão.  A leitura será realizada por um tarólogo experiente e enviada para você em até [prazo].</p>
+            </details>
+            <details>
+                <summary>Quais tipos de leituras vocês oferecem?</summary>
+                <p>Oferecemos diferentes tipos de leituras, como leitura geral, amor, carreira, finanças e espiritualidade.  Confira a página inicial para ver todas as opções disponíveis.</p>
+            </details>
+            <details>
+                <summary>Quanto tempo dura uma leitura?</summary>
+                <p>A duração da leitura varia de acordo com o tipo escolhido.  As informações de duração estão disponíveis na descrição de cada leitura.</p>
+            </details>
+            <details>
+                <summary>As leituras são gravadas?</summary>
+                <p>Não, as leituras não são gravadas.  Recomendamos que você anote os pontos principais durante a sua sessão.</p>
+            </details>
+        </section>
+
+        <section class="faq-section">
+            <h2>Pagamentos e Segurança</h2>
+            <details>
+                <summary>Quais formas de pagamento são aceitas?</summary>
+                <p>Aceitamos [formas de pagamento, ex: cartão de crédito, PayPal, etc.].</p>
+            </details>
+            <details>
+                <summary>Meus dados de pagamento estão seguros?</summary>
+                <p>Sim, seus dados de pagamento são processados de forma segura por [nome do processador de pagamento] e não são armazenados em nosso sistema.</p>
+            </details>
+        </section>
+
+        <section class="faq-section">
+            <h2>Outras Dúvidas</h2>
+            <details>
+                <summary>Como posso entrar em contato com vocês?</summary>
+                <p>Você pode entrar em contato conosco através do formulário na página de contato ou pelo e-mail [seu e-mail].</p>
+            </details>
+            <details>
+                <summary>Qual o prazo de resposta para as minhas perguntas?</summary>
+                <p>Responderemos suas perguntas em até [prazo].</p>
+            </details>
+            <details>
+                <summary>O que o Tarô NÃO pode fazer?</summary>
+                <p>O Tarô é uma ferramenta de autoconhecimento e não deve ser usado para tomar decisões importantes no lugar de profissionais qualificados. Ele não prevê o futuro de forma definitiva e não substitui aconselhamento médico, psicológico ou jurídico.</p>
+            </details>
+
+
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 - Tarô Online</p>
+    </footer>
+</body>
+</html>

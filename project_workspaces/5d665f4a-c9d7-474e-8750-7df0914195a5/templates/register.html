@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudVape - Registro</title>
+    <style>
+        :root {
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #38b000;
+            --error-color: #d00000;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2a75e6;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(58, 134, 255, 0.1);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(58, 134, 255, 0.9), rgba(131, 56, 236, 0.9)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%233a86ff"/><circle cx="50" cy="50" r="40" fill="%238338ec" opacity="0.3"/></svg>');
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px;
+        }
+
+        .auth-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .auth-card p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+        }
+
+        .terms {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .terms input {
+            margin-right: 10px;
+        }
+
+        .terms a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-block {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-block:hover {
+            background-color: #2a75e6;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #666;
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            color: #555;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .social-btn:hover {
+            background-color: #e9e9e9;
+        }
+
+        .facebook {
+            color: #1877f2;
+        }
+
+        .google {
+            color: #4285f4;
+        }
+
+        .already-account {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .already-account a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .already-account a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 40px 0;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column ul li a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                padding: 15px 0;
+            }
+
+            nav ul {
+                margin: 15px 0;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .auth-container {
+                flex-direction: column;
+            }
+
+            .auth-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Cloud<span>Vape</span></div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Início</a></li>
+                        <li><a href="#">Produtos</a></li>
+                        <li><a href="#">Categorias</a></li>
+                        <li><a href="#">Promoções</a></li>
+                        <li><a href="#">Sobre</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-buttons">
+                    <button class="btn btn-secondary">Entrar</button>
+                    <button class="btn btn-primary">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Explore o universo dos vapores</h1>
+            <p>Descubra nossa coleção exclusiva de atomizadores, cartuchos e óleos canábicos de alta qualidade</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h2>Crie sua conta</h2>
+                <p>Preencha os campos abaixo para se registrar e fazer parte da nossa comunidade</p>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="name">Nome completo</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmar senha</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required>
+                    </div>
+                    <div class="terms">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">Aceito os <a href="#">termos e condições</a> e a <a href="#">política de privacidade</a></label>
+                    </div>
+                    <button type="submit" class="btn-block">Cadastrar</button>
+                </form>
+                <div class="divider">
+                    <span>Ou</span>
+                </div>
+                <div class="social-login">
+                    <div class="social-btn facebook">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 2h-3a5 5 0 00-5 5v3H7v10h3v5h5v-10h3v-3a5 5 0 00-5-5H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="social-btn google">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 12.79A9 9 0 0114.22 5.5C13.02 5.5 12 6.5 12 7.7v2.8c0 1.2.99 2.2 2.2 2.2 1.2 0 2.16-.8 2.16-2V7.7c0-1.2-.96-2.2-2.16-2.2zM6 12.79a6 6 0 0112-5.29c0 1.1-.36 2.15-.96 3.01-.38.52-.8.96-1.28 1.3-.5.35-1 .6-1.54.8-.65.2-1.3.32-2 .44-.48.09-.94.15-1.42.15-.48 0-.95-.06-1.42-.15-.64-.24-1.28-.46-1.76-.8-1.05-1.1-1.41-2.16-1.41-3.25 0-1.1.37-2.15.97-3.01z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+                <p class="already-account">Já possui uma conta? <a href="#">Entrar</a></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>CloudVape</h3>
+                    <ul>
+                        <li><a href="#">Sobre nós</a></li>
+                        <li><a href="#">Nossa história</a></li>
+                        <li><a href="#">Missão e valores</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Categorias</h3>
+                    <ul>
+                        <li><a href="#">Atomizadores</a></li>
+                        <li><a href="#">Cartuchos</a></li>
+                        <li><a href="#">Óleos Canábicos</a></li>
+                        <li><a href="#">Acessórios</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Cliente</h3>
+                    <ul>
+                        <li><a href="#">Minha conta</a></li>
+                        <li><a href="#">Pedidos</a></li>
+                        <li><a href="#">Lista de desejos</a></li>
+                        <li><a href="#">Histórico de pedidos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Suporte</h3>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contato</a></li>
+                        <li><a href="#">Política de entrega</a></li>
+                        <li><a href="#">Devoluções</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 CloudVape. Todos os direitos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+            
+            // Aqui você adicionaria a lógica de envio do formulário para o servidor
+            alert('Conta criada com sucesso!');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

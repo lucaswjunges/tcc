@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho de Compras</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        
+        .item-quantity {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            cursor: pointer;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .quantity-btn:hover {
+            background-color: #ddd;
+        }
+        
+        .remove-btn {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .remove-btn:hover {
+            background-color: #ff1111;
+        }
+        
+        .cart-summary {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f5f5f5;
+        }
+        
+        .checkout-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 40px 0;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Meu Carrinho</h1>
+        </header>
+        
+        <main>
+            <table id="cart-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Preço</th>
+                        <th>Quantidade</th>
+                        <th>Total</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    <!-- Itens do carrinho serão inseridos aqui via JavaScript -->
+                </tbody>
+            </table>
+            
+            <div id="empty-cart" class="empty-cart" style="display: none;">
+                <p>Seu carrinho está vazio.</p>
+            </div>
+            
+            <div class="cart-summary">
+                <p>Subtotal: <span id="subtotal">R$ 0,00</span></p>
+                <p>Taxa de entrega: R$ 0,00</p>
+                <p>Total: <span id="total">R$ 0,00</span></p>
+                <button id="checkout-btn" class="checkout-btn">Finalizar Compra</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Estrutura do carrinho de compras
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Elementos DOM
+        const cartItemsElement = document.getElementById('cart-items');
+        const emptyCartElement = document.getElementById('empty-cart');
+        const subtotalElement = document.getElementById('subtotal');
+        const totalElement = document.getElementById('total');
+        const checkoutButton = document.getElementById('checkout-btn');
+        
+        // Função para renderizar os itens do carrinho
+        function renderCart() {
+            cartItemsElement.innerHTML = '';
+            
+            if (cart.length === 0) {
+                emptyCartElement.style.display = 'block';
+                document.getElementById('cart-table').style.display = 'none';
+                subtotalElement.textContent = 'R$ 0,00';
+                totalElement.textContent = 'R$ 0,00';
+                return;
+            }
+            
+            emptyCartElement.style.display = 'none';
+            document.getElementById('cart-table').style.display = 'table';
+            
+            let subtotal = 0;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.description}</td>
+                    <td>R$ ${item.price.toFixed(2)}</td>
+                    <td>
+                        <div class="item-quantity">
+                            <button class="quantity-btn decrease-btn" data-index="${index}">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn increase-btn" data-index="${index}">+</button>
+                        </div>
+                    </td>
+                    <td>R$ ${itemTotal.toFixed(2)}</td>
+                    <td>
+                        <button class="remove-btn" data-index="${index}\

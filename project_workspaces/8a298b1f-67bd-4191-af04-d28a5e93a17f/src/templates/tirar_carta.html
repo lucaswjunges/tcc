@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartas do Destino | Leitura de Tarô Online</title>
+    <style>
+        :root {
+            --primary-color: #8b5a2b;
+            --secondary-color: #c19a6b;
+            --accent-color: #d4af37;
+            --light-color: #f5e9d7;
+            --dark-color: #3a2a1d;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent-color);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://source.unsplash.com/random/1200x800/?tarot') no-repeat center center/cover;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        section {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto;
+        }
+        
+        .how-it-works {
+            background-color: white;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .step {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 2rem;
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .step:hover {
+            transform: translateY(-10px);
+        }
+        
+        .step-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .step h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .process {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 3rem;
+        }
+        
+        .process-step {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .process-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
+        
+        .process-description {
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .process-description h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .testimonials {
+            background-color: var(--light-color);
+        }
+        
+        .testimonials-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .testimonial {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            max-width: 350px;
+            position: relative;
+        }
+        
+        .testimonial::before {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: var(--accent-color);
+            opacity: 0.3;
+            line-height: 1;
+        }
+        
+        .testimonial p {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-author img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        
+        .testimonial-author h4 {
+            color: var(--primary-color);
+        }
+        
+        .testimonial-author p.small {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .faq {
+            background-color: white;
+        }
+        
+        .faq-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .faq-answer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            display: none;
+        }
+        
+        .faq-answer.show {
+            display: block;
+        }
+        
+        .pricing {
+            background-color: var(--light-color);
+        }
+        
+        .plans {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .plan {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .plan:hover {
+            transform: translateY(-10px);
+        }
+        
+        .plan.popular {
+            border: 2px solid var(--accent-color);
+            position: relative;
+        }
+        
+        .plan.popular::before {
+            content: 'MAIS POPULAR';
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 5px 30px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transform: rotate(45deg);
+        }
+        
+        .plan h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .plan-price {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .plan-price span {
+            font-size: 1rem;
+            color: #777;
+        }
+        
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .plan-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .contact {
+            background-color: white;
+        }
+        
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--light-color);
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-section ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section ul li a:hover {
+            color: var(--accent-color);
+        }
+        
+        .copyright {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .step, .plan {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <span class="logo-icon">🃏</span>
+                <span>Cartas do Destino</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#como-funciona">Como Funciona</a></li>
+                    <li><a href="#precos">Preços</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                    <li><a href="#" class="btn">Tirar uma Carta Gratuita</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Descubra o que as Cartas do Tarô Preparam Para Você</h1>
+        <p>Consulte um leitor profissional online, receba insights e orientações para sua vida pessoal e profissional.</p>
+        <a href="#como-funciona" class="btn">Saiba mais</a>
+    </section>
+
+    <section id="como-funciona" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Como Funciona</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">📝</div>
+                    <h3>Crie sua conta</h3>
+                    <p>Registre-se gratuitamente para iniciar sua jornada de autoconhecimento e descobertas através das cartas do Tarô.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🔍</div>
+                    <h3>Selecione sua consulta</h3>
+                    <p>Escolha o tipo de leitura que melhor atende às suas necessidades e objetivos pessoais.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">💬</div>
+                    <h3>Conecte-se com um leitor</h3>
+                    <p>Receba respostas detalhadas e orientações personalizadas de nossos leitores especializados.</p>
+                </div>
+            </div>
+            
+            <div class="process">
+                <div class="process-step">
+                    <div class="process-number">1</div>
+                    <div class="process-description">
+                        <h3>Escolha sua consulta</h3>
+                        <p>Seja uma leitura rápida ou uma consulta profunda, temos opções para cada momento da sua vida.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="process-number">2</div>
+                    <div class="process-description">
+                        <h3>Seu leitor particular</h3>
+                        <p>Nosso sistema conecta você a leitores qualificados e credíveis, prontos para ajudá-lo.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="process-number">3</div>
+                    <div class="process-description">
+                        <h3>Receba sua leitura</h3>
+                        <p>Obtenha insights profundos e orientações práticas para sua vida pessoal e profissional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="precos" class="pricing">
+        <div class="container">
+            <h2 class="section-title">Nossos Planos</h2>
+            <div class="plans">
+                <div class="plan">
+                    <h3>Consulta Rápida</h3>
+                    <div class="plan-price">R$ 49 <span>/única</span></div>
+                    <ul class="plan-features">
+                        <li>1 consulta de 15 minutos</li>
+                        <li>3 cartas significativas</li>
+                        <li>Resposta por e-mail</li>
+                        <li>Acesso por 7 dias</li>
+                    </ul>
+                    <a href="#" class="btn">Contratar</a>
+                </div>
+                <div class="plan popular">
+                    <h3>Leitura Completa</h3>
+                    <div class="plan-price">R$ 99 <span>/única</span></div>
+                    <ul class="plan-features">
+                        <li>1 consulta de 30 minutos</li>
+                        <li>7 cartas significativas</li>
+                        <li>Resposta detalhada por e-mail</li>
+                        <li>Cartas interpretadas em vídeo</li>
+                        <li>Acesso por 30 dias</li>
+                    </ul>
+                    <a href="#" class="btn">Contratar</a>
+                </div>
+                <div class="plan">
+                    <h3>Plano Premium</h3>
+                    <div class="plan-price">R$ 199 <span>/única</span></div>
+                    <ul class="plan-features">
+                        <li>3 consultas de 30 minutos</li>
+                        <li>12 cartas significativas</li>
+                        <li>Resposta detalhada por e-mail</li>
+                        <li>Cartas interpretadas em vídeo</li>
+                        <li>Acesso por 90 dias</li>
+                        <li>Consulta de acompanhamento</li>
+                    </ul>
+                    <a href="#" class="btn">Contratar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">O que nossos clientes dizem</h2>
+            <div class="testimonials-container">
+                <div class="testimonial">
+                    <p>"A leitura que fiz com a Clara mudou minha perspectiva sobre minha carreira. Ela identificou pontos que eu não via e me deu orientações preciosas para o meu próximo passo profissional."</p>
+                    <div class="testimonial-author">
+                        <div style="background-color: #ddd; width: 50px; height: 50px; border-radius: 50%;"></div>
+                        <div>
+                            <h4>Carlos Silva</h4>
+                            <p class="small">Consulta de Carreira</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <p>"Estava passando por um momento difícil no relacionamento. A leitura da Maria me ajudou a entender os padrões que estava criando e como mudar minha abordagem. Recomendo demais!"</p>
+                    <div class="testimonial-author">
+                        <div style="background-color: #ddd; width: 50px; height: 50px; border-radius: 50%;"></div>
+                        <div>
+                            <h4>Juliana Mendes</h4>
+                            <p class="small">Leitura de Relacionamento</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <p>"Como iniciante em tarô, pensei que seria complicado entender as cartas, mas a leitura foi clara e informativa. A leitora explicou cada carta com muito carinho e respeito."</p>
+                    <div class="testimonial-author">
+                        <div style="background-color: #ddd; width: 50px; height: 50px; border-radius: 50%;"></div>
+                        <div>
+                            <h4>Roberto Almeida</h4>
+                            <p class="small">Leitura Iniciante</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq">
+        <div class="container">
+            <h2 class="section-title">Perguntas Frequentes</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Como funciona a leitura de Tarô? <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Nossas leituras são realizadas por leitores profissionais qualificados. Durante a consulta, o leitor utiliza as cartas do Tarô para fornecer insights sobre questões específicas ou gerais da sua vida. A leitura é conduzida com respeito, ética e profissionalismo, sempre mantendo o sigilo e a confidencialidade.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Quanto tempo dura uma consulta? <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        O tempo de duração da consulta varia conforme o plano escolhido: 
+                        <ul>
+                            <li>Consulta Rápida: 15 minutos</li>
+                            <li>Leitura Completa: 30 minutos</li>
+                            <li>Plano Premium: 3 consultas de 30 minutos cada</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Como posso garantir a credibilidade dos leitores? <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Todos os nossos leitores passam por um rigoroso processo de seleção, incluindo treinamento em ética profissional, avaliação de conhecimentos e referências verificadas. Além disso, contamos com avaliações dos nossos clientes para garantir a qualidade do serviço.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        As leituras são seguras e éticas? <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Sim, absolutamente. Nossas leituras são conduzidas com total respeito e ética. Jamais realizamos previsões negativas ou manipulamos nossos clientes. O Tarô é uma ferramenta de autoconhecimento e reflexão, não para substituir a tomada de decisões pessoais.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Posso cancelar ou reembolsar minha compra? <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Oferecemos reembolso garantido nos primeiros 14 dias para qualquer consulta. Após esse período, você pode cancelar seu plano a qualquer momento, mas não será reembolsado. Consultas individuais não são reembolsáveis após a realização.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" class="contact">
+        <div class="container">
+            <h2 class="section-title">Entre em Contato</h2>
+            <div class="contact-form">
+                <form>
+                    <div class="form-group">
+                        <label for="name">Nome completo</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Mensagem</label>
+                        <textarea id="message" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Tipo de consulta</label>
+                        <select id="type">
+                            <option value="">Selecione o tipo de consulta</option>
+                            <option value="relacionamento">Relacionamento</option>
+                            <option value="carreira">Carreira</option>
+                            <option value="pessoal">Pessoal</option>
+                            <option value="espiritual">Espiritual</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Enviar mensagem</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Cartas do Destino</h3>
+                    <p>Descubra o poder do Tarô para orientar sua vida pessoal e profissional. Consultas online com leitores profissionais.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#como-funciona">Como Funciona</a></li>
+                        <li><a href="#precos">Preços</a></li>
+                        <li><a href="#contato">Contato</a></li>
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">Termos de Serviço</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li>contato@cartasdo destino.com.br</li>
+                        <li>+55 (11) 9999-9999</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Cartas do Destino. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle FAQ answers
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                answer.classList.toggle('show');
+                question.querySelector('span').textContent = answer.classList.contains('show') ? '-' : '+';
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Obrigado por entrar em contato! Responderemos em breve.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

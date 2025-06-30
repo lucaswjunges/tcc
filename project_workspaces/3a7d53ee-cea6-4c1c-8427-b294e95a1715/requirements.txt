@@ -1,0 +1,12 @@
+Flask==2.3.2
+Jinja2==3.1.2
+Werkzeug==2.2.2
+SQLAlchemy==2.0.15
+Flask-SQLAlchemy==3.0.1
+Flask-Migrate==4.4.0
+Flask-Login==0.6.0
+Flask-WTF==1.0.8
+stripe==2.36.0
+python-multipart==2.0.3
+requests==2.31.0
+PyYAML==6.0

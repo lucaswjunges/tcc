@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VaporStore - Vapes e Atomizadores Premium</title>
+    <style>
+        /* Reset e estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Cabeçalho */
+        header {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00b4d8;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #00b4d8;
+        }
+
+        /* Banner */
+        .banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://via.placeholder.com/1200x400') center/cover no-repeat;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+        }
+
+        .banner-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .banner-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #00b4d8;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0096c7;
+        }
+
+        /* Produtos */
+        .products {
+            padding: 50px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+            color: #1a1a1a;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-img {
+            height: 200px;
+            background-color: #f1f1f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-img img {
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 22px;
+            font-weight: bold;
+            color: #00b4d8;
+            margin-bottom: 15px;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .add-to-cart {
+            background-color: #00b4d8;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background-color: #0096c7;
+        }
+
+        /* Categorias */
+        .categories {
+            padding: 50px 0;
+            background-color: #e9ecef;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 30px 20px;
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .category-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #00b4d8;
+        }
+
+        .category-name {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Newsletter */
+        .newsletter {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 50px 0;
+            text-align: center;
+        }
+
+        .newsletter-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .newsletter h2 {
+            margin-bottom: 20px;
+        }
+
+        .newsletter p {
+            margin-bottom: 30px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 30px 0 0 30px;
+            font-size: 16px;
+        }
+
+        .newsletter-form button {
+            background-color: #00b4d8;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .newsletter-form button:hover {
+            background-color: #0096c7;
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 50px 0 20px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: #00b4d8;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 15px;
+            }
+
+            .banner {
+                height: 300px;
+            }
+
+            .banner-content h1 {
+                font-size: 36px;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-form input {
+                border-radius: 30px;
+                margin-bottom: 10px;
+            }
+
+            .newsletter-form button {
+                border-radius: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">VaporStore</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#products">Produtos</a></li>
+                    <li><a href="#categories">Categorias</a></li>
+                    <li><a href="#about">Sobre</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Banner Principal -->
+    <section class="banner">
+        <div class="banner-content">
+            <h1>Explore o Mundo dos Vapes Premium</h1>
+            <p>Descubra nossa linha exclusiva de atomizadores e e-liquids de óleo canábico de alta qualidade</p>
+            <a href="#products" class="btn">Comprar Agora</a>
+        </div>
+    </section>
+
+    <!-- Produtos -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2 class="section-title">Nossos Produtos</h2>
+            <div class="product-grid">
+                <!-- Produto 1 -->
+                <div class="product-card">
+                    <div class="product-img">
+                        <img src="https://via.placeholder.com/300x200" alt="Vape Premium X300">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Vape Premium X300</h3>
+                        <p class="product-price">R$ 299,90</p>
+                        <p class="product-description">Dispositivo de vape com resistência de última geração e bateria de longa duração.</p>
+                        <button class="add-to-cart">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+
+                <!-- Produto 2 -->
+                <div class="product-card">
+                    <div class="product-img">
+                        <img src="https://via.placeholder.com/300x200" alt="Atomizador Pro Max">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Atomizador Pro Max</h3>
+                        <p class="product-price">R$ 89,90</p>
+                        <p class="product-description">Atomizador de cerâmica de alta qualidade para óleos canábicos.</p>
+                        <button class="add-to-cart">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+
+                <!-- Produto 3 -->
+                <div class="product-card">
+                    <div class="product-img">
+                        <img src="https://via.placeholder.com/300x200" alt="Kit Vape Completo">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Kit Vape Completo</h3>
+                        <p class="product-price">R$ 199,90</p>
+                        <p class="product-description">Kit completo com dispositivo, atomizador e cartuchos para óleo canábico.</p>
+                        <button class="add-to-cart">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+
+                <!-- Produto 4 -->
+                <div class="product-card">
+                    <div class="product-img">
+                        <img src="https://via.placeholder.com/300x200" alt="Atomizador Ceramic">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Atomizador Ceramic</h3>
+                        <p class="product-price">R$ 59,90</p>
+                        <p class="product-description">Atomizador com resistência de cerâmica para sabores mais autênticos.</p>
+                        <button class="add-to-cart">Adicionar ao Carrinho</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categorias -->
+    <section id="categories" class="categories">
+        <div class="container">
+            <h2 class="section-title">Nossas Categorias</h2>
+            <div class="category-grid">
+                <!-- Categoria 1 -->
+                <div class="category-card">
+                    <div class="category-icon">📱</div>
+                    <h3 class="category-name">Vapes</h3>
+                    <p>Dispositivos de vape de alta qualidade</p>
+                </div>
+
+                <!-- Categoria 2 -->
+                <div class="category-card">
+                    <div class="category-icon">⚙️</div>
+                    <h3 class="category-name">Atomizadores</h3>
+                    <p>Atomizadores para óleos canábicos</p>
+                </div>
+
+                <!-- Categoria 3 -->
+                <div class="category-card">
+                    <div class="category-icon">🧴</div>
+                    <h3 class="category-name">Óleos</h3>
+                    <p>Óleos canábicos premium</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Fique por dentro das novidades</h2>
+                <p>Inscreva-se em nossa newsletter para receber promoções exclusivas e novidades sobre produtos.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Seu e-mail" required>
+                    <button type="submit">Inscrever</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h3>VaporStore</h3>
+                    <p>Seu marketplace premium para vapes e atomizadores de óleo canábico.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#products">Produtos</a></li>
+                        <li><a href="#categories">Categorias</a></li>
+                        <li><a href="#about">Sobre Nós</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Suporte</h3>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contato</a></li>
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">Termos de Uso</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 VaporStore. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

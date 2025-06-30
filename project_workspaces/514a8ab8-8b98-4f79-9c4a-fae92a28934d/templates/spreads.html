@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarot Spreads</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('spreads') }}">Spreads</a>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('contact') }}">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>Tarot Spreads</h1>
+
+        <section class="spreads">
+
+            <div class="spread">
+                <h2>Three-Card Spread</h2>
+                <p>Past, Present, Future</p>
+                <a href="{{ url_for('reading', spread='three-card') }}" class="button">Get a Reading</a>
+            </div>
+
+            <div class="spread">
+                <h2>Celtic Cross Spread</h2>
+                <p>A comprehensive spread providing in-depth insights.</p>
+                <a href="{{ url_for('reading', spread='celtic-cross') }}" class="button">Get a Reading</a>
+            </div>
+
+            <div class="spread">
+                <h2>Relationship Spread</h2>
+                <p>Explore the dynamics of a relationship.</p>
+                <a href="{{ url_for('reading', spread='relationship') }}" class="button">Get a Reading</a>
+            </div>
+            
+             <div class="spread">
+                <h2>Career Path Spread</h2>
+                <p>Gain clarity on your career path and potential.</p>
+                <a href="{{ url_for('reading', spread='career-path') }}" class="button">Get a Reading</a>
+            </div>
+
+            <!-- Add more spreads as needed -->
+
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; {{year}} Tarot Website. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

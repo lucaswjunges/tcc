@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitura de Tarot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Bem-vindo(a) à sua Leitura de Tarot</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li><a href="/about">Sobre</a></li>
+                <li><a href="/contact">Contato</a></li>
+                <!-- Outros links de navegação, se necessário -->
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Escolha sua tiragem</h2>
+
+        <section class="spread-options">
+            <!-- Exemplo de opções de tiragem -->
+            <div class="spread-option">
+                <h3>Tiragem da Cruz Celta</h3>
+                <p>Uma tiragem completa e detalhada para responder a uma pergunta específica.</p>
+                <p>Valor: R$ XX,XX</p>
+                <button onclick="location.href='/cruz_celta'">Comprar</button>
+            </div>
+
+            <div class="spread-option">
+                <h3>Tiragem de 3 Cartas</h3>
+                <p>Uma tiragem rápida para insights sobre passado, presente e futuro.</p>
+                <p>Valor: R$ XX,XX</p>
+                <button onclick="location.href='/tres_cartas'">Comprar</button>
+            </div>
+
+            <!-- Adicione mais opções de tiragem aqui -->
+        </section>
+
+
+        {% if reading %}
+            <h2>Sua Leitura</h2>
+
+            <div class="reading-results">
+                {% for card in reading %}
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='images/' + card.image) }}" alt="{{ card.name }}">
+                        <h3>{{ card.name }}</h3>
+                        <p>{{ card.meaning }}</p>
+                        {% if card.reversed %}
+                            <p>(Invertida)</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <p class="interpretation">{{ interpretation }}</p>
+
+            </div>
+        {% endif %}
+
+    </main>
+
+    <footer>
+        <p>&copy; {{ year }} - Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>

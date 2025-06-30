@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira de Tarô - Portal de Adivinhações</title>
+    <style>
+        :root {
+            --primary-color: #8a6d3b;
+            --secondary-color: #e6d2b5;
+            --dark-color: #3a2c24;
+            --light-color: #f5f2e9;
+            --accent-color: #d4a569;
+            --text-color: #333333;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .hero {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 800 400"><rect fill="%238a6d3b" width="800" height="400"/><path fill="%23e6d2b5" fill-opacity="0.2" d="M0,192L48,192C96,192,192,128,288,128C384,128,480,192,576,192C672,192,768,128,864,128C960,128,1056,192,1152,192L1152,384L960,384C864,384,768,320,672,320C576,320,480,384,384,384C288,384,192,320,96,320C0,320,0,192,0,192Z" /></svg>');
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: var(--dark-color);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .cta-button:hover {
+            background-color: var(--dark-color);
+            transform: translateY(-3px);
+        }
+
+        .features {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--primary-color);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .services {
+            padding: 80px 0;
+            background-color: var(--light-color);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-image {
+            height: 200px;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+
+        .service-content {
+            padding: 20px;
+        }
+
+        .service-content h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .testimonials {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: var(--accent-color);
+            opacity: 0.2;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .author-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .author-info p {
+            color: var(--dark-color);
+            opacity: 0.7;
+        }
+
+        .about {
+            padding: 80px 0;
+            background-color: var(--light-color);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-image {
+            height: 400px;
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: var(--primary-color);
+        }
+
+        .about-text h2 {
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .about-text p {
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--accent-color);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 20px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .about-image {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <span class="logo-icon">🃏</span>
+                <span>Carteira de Tarô</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Início</a></li>
+                    <li><a href="#">Sobre</a></li>
+                    <li><a href="#">Serviços</a></li>
+                    <li><a href="#">Tarots</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Descubra o Caminho com as Cartas</h1>
+            <p>Um portal de sabedoria e orientação através do tarot. Descubra respostas para suas questões mais profundas e encontre o caminho para uma vida mais alinhada com seu potencial.</p>
+            <a href="#" class="cta-button">Agendar uma Sessão</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Nossos Serviços</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔮</div>
+                    <h3>Leitura Iniciante</h3>
+                    <p>Uma introdução ao tarot para iniciantes, onde você aprenderá os fundamentos e terá sua primeira experiência com as cartas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Leitura Especializada</h3>
+                    <p>Uma análise detalhada de seus desafios específicos, com interpretações profundas e orientações personalizadas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">❤️</div>
+                    <h3>Leitura de Casal</h3>
+                    <p>Descubra o equilíbrio e harmonia no seu relacionamento com uma leitura conjunta especialmente desenvolvida para casais.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="container">
+            <h2 class="section-title">Tipos de Tarô</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-image">🃏</div>
+                    <div class="service-content">
+                        <h3>Tarô de Marseille</h3>
+                        <p>O tarô clássico com 78 cartas, baseado nas tradições medievais, ideal para iniciados que buscam a simplicidade e profundidade original.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="service-image">🃏</div>
+                    <div class="service-content">
+                        <h3>Tarô de Smith-Waite</h3>
+                        <p>O tarô mais completo e versátil, com desenhos elaborados que permitem interpretações mais detalhadas e complexas.</p>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="service-image">🃏</div>
+                    <div class="service-content">
+                        <h3>Tarô Espiritual</h3>
+                        <p>Um tarô desenvolvido para focar em questões espirituais, relacionamento com o plano espiritual e desenvolvimento pessoal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">O Que Nossos Clientes Dizem</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">A leitura que fiz com a Carteira de Tarô mudou minha perspectiva sobre minha carreira. As orientações foram tão claras e precisas que me senti empoderada para fazer mudanças importantes.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">S</div>
+                        <div class="author-info">
+                            <h4>Sofia Mendes</h4>
+                            <p>Cliente há 1 ano</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">Finalmente entendi o padrão no meu relacionamento após a leitura de casal. As cartas mostraram exatamente o que precisávamos trabalhar e como fazer isso.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">M</div>
+                        <div class="author-info">
+                            <h4>Marcos Silva</h4>
+                            <p>Cliente há 6 meses</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">Como iniciante no tarot, a leitura iniciante me deu toda a confiança que precisava para continuar meus estudos. As cartas realmente falam comigo.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">A</div>
+                        <div class="author-info">
+                            <h4>Ana Clara</h4>
+                            <p>Cliente há 3 meses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">🃏</div>
+                <div class="about-text">
+                    <h2>Sobre Nós</h2>
+                    <p>A Carteira de Tarô nasceu da paixão por astrologia e tarot, combinadas com anos de estudo e prática. Nosso objetivo é oferecer leituras precisas, éticas e inspiradoras para todos os que buscam orientação.</p>
+                    <p>Estamos comprometidos com a credibilidade e justiça em nossas práticas, sempre respeitando a liberdade de cada cliente para interpretar e agir sobre as orientações recebidas.</p>
+                    <p>Nossa equipe é formada por leitoras tarot experientes e altamente qualificadas, todas dedicadas a ajudar você em sua jornada pessoal.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Carteira de Tarô</h3>
+                    <p>Seu portal de sabedoria e orientação através do tarot.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="#">Início</a></li>
+                        <li><a href="#">Sobre</a></li>
+                        <li><a href="#">Serviços</a></li>
+                        <li><a href="#">Tarots</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contato</h3>
+                    <ul>
+                        <li>Email: contato@carteirataro.com</li>
+                        <li>WhatsApp: (11) 9999-9999</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Carteira de Tarô. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
