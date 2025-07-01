@@ -22,11 +22,12 @@ from evolux_engine.schemas.contracts import (
 
 class PlannerAgent:
     """Classe responsável por gerenciar a criação e o fluxo de tarefas"""
-    def __init__(self, context_manager, task_db, artifact_store, project_context=None):
+    def __init__(self, context_manager, task_db, artifact_store, project_context=None, llm_client=None):
         self.context_manager = context_manager
         self.task_db = task_db
         self.artifact_store = artifact_store
         self.project_context = project_context
+        self.llm_client = llm_client  # Para análise semântica
         self.active_tasks = {}
         self.next_task_id = self._generate_next_id()
         self.failure_history = {}  # Track failures for recovery
@@ -69,8 +70,8 @@ class PlannerAgent:
     async def _generate_dynamic_plan(self, project_goal: str) -> List[Task]:
         """Gera um plano dinâmico de tarefas baseado no objetivo do projeto"""
         
-        # Análise básica do objetivo para determinar o tipo de projeto
-        goal_lower = project_goal.lower()
+        # Realizar análise semântica do projeto
+        project_analysis = await self._analyze_project_semantically(project_goal)
         
         # Tarefas básicas que todo projeto precisa
         tasks = []
@@ -103,24 +104,477 @@ class PlannerAgent:
             acceptance_criteria="requirements.txt com dependências específicas do projeto"
         ))
         
-        # Adicionar tarefas específicas baseadas no tipo de projeto
-        if any(keyword in goal_lower for keyword in ["blog", "cms", "artigo", "post", "conteúdo"]):
-            tasks.extend(self._get_blog_tasks())
-        elif any(keyword in goal_lower for keyword in ["api", "rest", "microserviço", "microservice"]):
-            tasks.extend(self._get_api_tasks())
-        elif any(keyword in goal_lower for keyword in ["ecommerce", "loja", "vendas", "produto", "cart"]):
-            tasks.extend(self._get_ecommerce_tasks())
-        elif any(keyword in goal_lower for keyword in ["dashboard", "admin", "gestão", "gerenciamento"]):
-            tasks.extend(self._get_dashboard_tasks())
-        elif any(keyword in goal_lower for keyword in ["chatbot", "chat", "bot", "assistente"]):
-            tasks.extend(self._get_chatbot_tasks())
-        elif any(keyword in goal_lower for keyword in ["análise", "data", "dados", "relatório", "gráfico"]):
-            tasks.extend(self._get_analytics_tasks())
-        else:
-            # Projeto genérico - estrutura básica
-            tasks.extend(self._get_generic_tasks())
+        # Gerar tarefas específicas baseadas na análise semântica
+        domain_tasks = await self._generate_domain_specific_tasks(
+            project_analysis['project_type'], 
+            project_goal,
+            project_analysis['complexity']
+        )
+        tasks.extend(domain_tasks)
+        
+        # Adicionar tarefas de qualidade baseadas na complexidade
+        if project_analysis['complexity'] >= 7:
+            tasks.extend(self._get_enterprise_quality_tasks())
+        elif project_analysis['complexity'] >= 5:
+            tasks.extend(self._get_professional_quality_tasks())
         
         return tasks
+
+    async def _analyze_project_semantically(self, goal: str) -> Dict[str, Any]:
+        """Analisa semanticamente o objetivo do projeto usando LLM"""
+        try:
+            # Se tiver LLM client disponível, usar análise semântica
+            if hasattr(self, 'llm_client') and self.llm_client:
+                analysis_prompt = f"""
+                Analise este objetivo de projeto e determine:
+                1. Tipo de aplicação (web_app, api, desktop, mobile, data_science, game, etc.)
+                2. Complexidade (1-10 onde 1=simples, 10=enterprise)
+                3. Tecnologias necessárias
+                4. Componentes principais
+                5. Funcionalidades essenciais
+
+                Objetivo: {goal}
+
+                Retorne JSON estruturado:
+                {{
+                    "project_type": "tipo",
+                    "complexity": número,
+                    "technologies": ["tech1", "tech2"],
+                    "components": ["comp1", "comp2"],
+                    "features": ["feat1", "feat2"]
+                }}
+                """
+                
+                try:
+                    response = await self.llm_client.generate_response(analysis_prompt)
+                    import json
+                    return json.loads(response)
+                except Exception as e:
+                    logger.warning(f"Erro na análise semântica: {e}. Usando fallback.")
+            
+            # Fallback para análise básica por palavras-chave
+            return self._analyze_project_basic(goal)
+            
+        except Exception as e:
+            logger.error(f"Erro na análise semântica: {e}")
+            return self._analyze_project_basic(goal)
+
+    def _analyze_project_basic(self, goal: str) -> Dict[str, Any]:
+        """Análise básica por palavras-chave como fallback"""
+        goal_lower = goal.lower()
+        
+        # Determinar tipo de projeto
+        if any(keyword in goal_lower for keyword in ["blog", "cms", "artigo", "post", "conteúdo"]):
+            project_type = "blog"
+            complexity = 6
+        elif any(keyword in goal_lower for keyword in ["api", "rest", "microserviço", "microservice"]):
+            project_type = "api"
+            complexity = 5
+        elif any(keyword in goal_lower for keyword in ["ecommerce", "loja", "vendas", "produto", "cart"]):
+            project_type = "ecommerce"
+            complexity = 8
+        elif any(keyword in goal_lower for keyword in ["dashboard", "admin", "gestão", "gerenciamento"]):
+            project_type = "dashboard"
+            complexity = 7
+        elif any(keyword in goal_lower for keyword in ["chatbot", "chat", "bot", "assistente"]):
+            project_type = "chatbot"
+            complexity = 6
+        elif any(keyword in goal_lower for keyword in ["análise", "data", "dados", "relatório", "gráfico"]):
+            project_type = "data_science"
+            complexity = 7
+        elif any(keyword in goal_lower for keyword in ["flask", "django", "web", "site"]):
+            project_type = "web_app"
+            complexity = 5
+        else:
+            project_type = "generic"
+            complexity = 4
+            
+        # Ajustar complexidade baseada em palavras-chave adicionais
+        if any(keyword in goal_lower for keyword in ["autenticação", "login", "usuário", "auth"]):
+            complexity += 1
+        if any(keyword in goal_lower for keyword in ["banco", "database", "db", "dados"]):
+            complexity += 1
+        if any(keyword in goal_lower for keyword in ["testes", "test", "ci", "deploy"]):
+            complexity += 1
+        if any(keyword in goal_lower for keyword in ["docker", "kubernetes", "cloud"]):
+            complexity += 2
+            
+        complexity = min(complexity, 10)  # Máximo 10
+        
+        return {
+            "project_type": project_type,
+            "complexity": complexity,
+            "technologies": ["python", "flask"],
+            "components": ["main", "config", "requirements"],
+            "features": ["basic_functionality"]
+        }
+
+    async def _generate_domain_specific_tasks(self, project_type: str, goal: str, complexity: int) -> List[Task]:
+        """Gera tarefas específicas baseadas no domínio e complexidade"""
+        
+        # Calcular número de tarefas baseado na complexidade
+        base_tasks = 3  # README, requirements, main
+        complexity_factor = max(1, complexity / 3)
+        
+        type_multipliers = {
+            'blog': 2.0,
+            'api': 1.5,
+            'ecommerce': 2.5,
+            'dashboard': 2.0,
+            'chatbot': 1.8,
+            'data_science': 2.2,
+            'web_app': 1.6,
+            'generic': 1.0
+        }
+        
+        multiplier = type_multipliers.get(project_type, 1.0)
+        target_tasks = int(base_tasks * complexity_factor * multiplier)
+        target_tasks = max(4, min(target_tasks, 20))  # Entre 4 e 20 tarefas
+        
+        logger.info(f"Gerando {target_tasks} tarefas para projeto {project_type} (complexidade {complexity})")
+        
+        # Gerar tarefas específicas por tipo
+        if project_type == "blog":
+            return self._get_blog_tasks()
+        elif project_type == "api":
+            return self._get_enhanced_api_tasks(complexity)
+        elif project_type == "ecommerce":
+            return self._get_enhanced_ecommerce_tasks(complexity)
+        elif project_type == "dashboard":
+            return self._get_enhanced_dashboard_tasks(complexity)
+        elif project_type == "web_app":
+            return self._get_enhanced_web_app_tasks(complexity)
+        else:
+            return self._get_enhanced_generic_tasks(complexity)
+
+    def _get_enhanced_api_tasks(self, complexity: int) -> List[Task]:
+        """Tarefas aprimoradas para APIs baseadas na complexidade"""
+        tasks = []
+        
+        # Tarefas básicas
+        tasks.extend([
+            Task(
+                task_id=self._generate_next_id(),
+                description="Criar modelos de dados da API",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="models.py",
+                    content_guideline="Modelos SQLAlchemy com relacionamentos, validações e métodos de serialização"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Modelos de dados implementados com relacionamentos corretos"
+            ),
+            Task(
+                task_id=self._generate_next_id(),
+                description="Criar schemas de validação",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="schemas.py",
+                    content_guideline="Schemas Marshmallow para validação e serialização de dados da API"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Schemas de validação implementados"
+            ),
+            Task(
+                task_id=self._generate_next_id(),
+                description="Implementar API REST principal",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="api.py",
+                    content_guideline="API REST com Flask-RESTX, endpoints CRUD, documentação Swagger automática"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="API REST com documentação implementada"
+            )
+        ])
+        
+        # Tarefas adicionais baseadas na complexidade
+        if complexity >= 5:
+            tasks.append(Task(
+                task_id=self._generate_next_id(),
+                description="Implementar autenticação JWT",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="auth.py",
+                    content_guideline="Sistema de autenticação com JWT, registro e login de usuários"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Sistema de autenticação JWT implementado"
+            ))
+            
+        if complexity >= 6:
+            tasks.append(Task(
+                task_id=self._generate_next_id(),
+                description="Criar testes automatizados",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="test_api.py",
+                    content_guideline="Testes pytest para todos os endpoints da API com cobertura de casos de uso"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Suite de testes automatizados implementada"
+            ))
+            
+        if complexity >= 7:
+            tasks.extend([
+                Task(
+                    task_id=self._generate_next_id(),
+                    description="Configurar containerização Docker",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="Dockerfile",
+                        content_guideline="Dockerfile multi-stage para produção com otimizações de segurança e performance"
+                    ),
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria="Dockerfile de produção criado"
+                ),
+                Task(
+                    task_id=self._generate_next_id(),
+                    description="Configurar docker-compose",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="docker-compose.yml",
+                        content_guideline="Docker-compose com API, banco de dados, Redis e proxy reverso"
+                    ),
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria="Orquestração Docker configurada"
+                )
+            ])
+            
+        return tasks
+
+    def _get_enhanced_web_app_tasks(self, complexity: int) -> List[Task]:
+        """Tarefas aprimoradas para aplicações web"""
+        tasks = []
+        
+        # Tarefas básicas sempre incluídas
+        tasks.extend([
+            Task(
+                task_id=self._generate_next_id(),
+                description="Criar aplicação Flask principal",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="app.py",
+                    content_guideline="Aplicação Flask com estrutura MVC, rotas organizadas e configuração adequada"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Aplicação Flask estruturada implementada"
+            ),
+            Task(
+                task_id=self._generate_next_id(),
+                description="Criar templates base",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="templates/base.html",
+                    content_guideline="Template base com Bootstrap, navbar responsiva e sistema de mensagens"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Sistema de templates base criado"
+            )
+        ])
+        
+        # Tarefas baseadas na complexidade
+        if complexity >= 5:
+            tasks.extend([
+                Task(
+                    task_id=self._generate_next_id(),
+                    description="Implementar sistema de usuários",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="models.py",
+                        content_guideline="Modelos User com autenticação, perfis e sistema de permissões"
+                    ),
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria="Sistema de usuários implementado"
+                ),
+                Task(
+                    task_id=self._generate_next_id(),
+                    description="Criar formulários de autenticação",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="forms.py",
+                        content_guideline="Formulários WTF para login, registro e edição de perfil com validações"
+                    ),
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria="Formulários de autenticação criados"
+                )
+            ])
+            
+        if complexity >= 7:
+            tasks.extend([
+                Task(
+                    task_id=self._generate_next_id(),
+                    description="Implementar painel administrativo",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="admin.py",
+                        content_guideline="Painel administrativo com gestão de usuários, conteúdo e métricas"
+                    ),
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria="Painel administrativo implementado"
+                ),
+                Task(
+                    task_id=self._generate_next_id(),
+                    description="Configurar deployment",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="deploy.py",
+                        content_guideline="Script de deployment com configurações de produção e CI/CD"
+                    ),
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria="Sistema de deployment configurado"
+                )
+            ])
+            
+        return tasks
+
+    def _get_enhanced_generic_tasks(self, complexity: int) -> List[Task]:
+        """Tarefas aprimoradas para projetos genéricos"""
+        tasks = []
+        
+        # Tarefas básicas
+        tasks.extend([
+            Task(
+                task_id=self._generate_next_id(),
+                description="Criar aplicação principal",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="main.py",
+                    content_guideline="Aplicação principal com arquitetura limpa, logging e tratamento de erros"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Aplicação principal implementada"
+            )
+        ])
+        
+        # Tarefas baseadas na complexidade
+        if complexity >= 5:
+            tasks.extend([
+                Task(
+                    task_id=self._generate_next_id(),
+                    description="Criar sistema de configuração",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="config.py",
+                        content_guideline="Sistema de configuração com variáveis de ambiente e validações"
+                    ),
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria="Sistema de configuração implementado"
+                ),
+                Task(
+                    task_id=self._generate_next_id(),
+                    description="Implementar sistema de logging",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="logger.py",
+                        content_guideline="Sistema de logging estruturado com diferentes níveis e outputs"
+                    ),
+                    status=TaskStatus.PENDING,
+                    dependencies=[],
+                    acceptance_criteria="Sistema de logging implementado"
+                )
+            ])
+            
+        if complexity >= 7:
+            tasks.append(Task(
+                task_id=self._generate_next_id(),
+                description="Criar testes unitários",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="tests.py",
+                    content_guideline="Suite de testes unitários com pytest e cobertura adequada"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Testes unitários implementados"
+            ))
+            
+        return tasks
+
+    def _get_professional_quality_tasks(self) -> List[Task]:
+        """Tarefas para elevar o projeto a nível profissional"""
+        return [
+            Task(
+                task_id=self._generate_next_id(),
+                description="Configurar linting e formatação",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path=".pre-commit-config.yaml",
+                    content_guideline="Configuração pre-commit com black, flake8, isort e mypy"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Linting e formatação configurados"
+            ),
+            Task(
+                task_id=self._generate_next_id(),
+                description="Criar documentação técnica",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="docs/ARCHITECTURE.md",
+                    content_guideline="Documentação da arquitetura, decisões técnicas e guias de desenvolvimento"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Documentação técnica criada"
+            )
+        ]
+
+    def _get_enterprise_quality_tasks(self) -> List[Task]:
+        """Tarefas para elevar o projeto a nível enterprise"""
+        return [
+            Task(
+                task_id=self._generate_next_id(),
+                description="Implementar monitoramento e métricas",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="monitoring.py",
+                    content_guideline="Sistema de monitoramento com Prometheus, health checks e alertas"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Sistema de monitoramento implementado"
+            ),
+            Task(
+                task_id=self._generate_next_id(),
+                description="Configurar pipeline CI/CD",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path=".github/workflows/ci.yml",
+                    content_guideline="Pipeline CI/CD com testes, build, security scan e deploy automático"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Pipeline CI/CD configurado"
+            ),
+            Task(
+                task_id=self._generate_next_id(),
+                description="Implementar configuração de segurança",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="security.py",
+                    content_guideline="Configurações de segurança com HTTPS, CORS, rate limiting e validações"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[],
+                acceptance_criteria="Configurações de segurança implementadas"
+            )
+        ]
 
     def _get_blog_tasks(self) -> List[Task]:
         """Tarefas específicas para sistemas de blog com dependências inteligentes"""
