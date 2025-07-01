@@ -13,6 +13,7 @@ from functools import wraps
 
 from ..schemas.contracts import LLMProvider
 from ..utils.logging_utils import get_structured_logger
+from ..utils.circuit_breaker import get_circuit_breaker, CircuitBreakerConfig
 
 logger = get_structured_logger("async_llm_client")
 
@@ -151,10 +152,19 @@ class AsyncLLMClient:
         self.semaphore = asyncio.Semaphore(max_concurrent)
         self.rate_limiter = asyncio.Semaphore(10)  # 10 requests per second
         
-        # Circuit breaker
-        self.circuit_breaker = CircuitBreaker(
+        # Circuit breaker avançado
+        circuit_config = CircuitBreakerConfig(
             failure_threshold=5,
-            recovery_timeout=60
+            recovery_timeout=60,
+            success_threshold=2,
+            failure_rate_threshold=0.5,
+            minimum_requests=10,
+            slow_call_threshold=10.0,
+            slow_call_rate_threshold=0.3
+        )
+        self.advanced_circuit_breaker = get_circuit_breaker(
+            f"llm_{provider.value}_{model_name}", 
+            circuit_config
         )
         
         # Cache
@@ -356,12 +366,19 @@ class AsyncLLMClient:
             async with self.semaphore:  # Controle de concorrência
                 async with self.rate_limiter:  # Rate limiting
                     
+                    # Usar circuit breaker avançado
                     if self.provider == LLMProvider.GOOGLE:
-                        response = await self._call_google_api(request)
+                        response = await self.advanced_circuit_breaker.call(
+                            self._call_google_api, request
+                        )
                     elif self.provider == LLMProvider.OPENAI:
-                        response = await self._call_openai_api(request)
+                        response = await self.advanced_circuit_breaker.call(
+                            self._call_openai_api, request
+                        )
                     elif self.provider == LLMProvider.OPENROUTER:
-                        response = await self._call_openrouter_api(request)
+                        response = await self.advanced_circuit_breaker.call(
+                            self._call_openrouter_api, request
+                        )
                     else:
                         raise ValueError(f"Unsupported provider: {self.provider}")
                     
@@ -650,8 +667,7 @@ class AsyncLLMClient:
         return {
             **self.metrics.__dict__,
             'cache_size': len(self.cache),
-            'circuit_state': self.circuit_breaker.state.value,
-            'circuit_failures': self.circuit_breaker.failure_count
+            'circuit_breaker': self.advanced_circuit_breaker.get_metrics()
         }
 
     async def health_check(self) -> Dict[str, Any]:
@@ -673,7 +689,7 @@ class AsyncLLMClient:
             return {
                 'healthy': response.success,
                 'latency_ms': latency,
-                'circuit_state': self.circuit_breaker.state.value,
+                'circuit_breaker': self.advanced_circuit_breaker.get_metrics(),
                 'success_rate': self.metrics.success_rate,
                 'concurrent_requests': self.metrics.concurrent_requests,
                 'error': response.error if not response.success else None
@@ -683,5 +699,5 @@ class AsyncLLMClient:
             return {
                 'healthy': False,
                 'error': str(e),
-                'circuit_state': self.circuit_breaker.state.value
+                'circuit_breaker': self.advanced_circuit_breaker.get_metrics()
             }

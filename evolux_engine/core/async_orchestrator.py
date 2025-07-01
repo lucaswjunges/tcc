@@ -16,6 +16,7 @@ from evolux_engine.llms.model_router import ModelRouter, TaskCategory
 from evolux_engine.prompts.prompt_engine import PromptEngine
 from evolux_engine.services.async_file_service import AsyncFileService
 from evolux_engine.services.shell_service import ShellService
+from evolux_engine.utils.resource_manager import get_resource_manager
 from evolux_engine.services.backup_system import BackupSystem
 from evolux_engine.services.criteria_engine import CriteriaEngine
 from evolux_engine.security.security_gateway import SecurityGateway, SecurityLevel
@@ -132,12 +133,27 @@ class AsyncOrchestrator:
         self.max_llm_concurrent = config_manager.get_global_setting("max_llm_concurrent", 10)
         self.enable_adaptive_batching = config_manager.get_global_setting("adaptive_batching", True)
         
-        # Controle de concorrência
+        # Controle de concorrência com fair scheduling
         self.task_semaphore = asyncio.Semaphore(self.max_parallel_tasks)
         self.llm_semaphore = asyncio.Semaphore(self.max_llm_concurrent)
         
+        # Queue de prioridades para tarefas
+        self.priority_queue = asyncio.PriorityQueue()
+        self.high_priority_tasks = set()
+        
+        # Pool de conexões reutilizáveis
+        self.connection_pool = {}
+        
+        # Cache de resultados de dependências
+        self.dependency_cache = {}
+        self.cache_hits = 0
+        self.cache_misses = 0
+        
         # Métricas
         self.parallel_metrics = ParallelExecutionMetrics()
+        
+        # Resource manager para prevenir vazamentos
+        self.resource_manager = None  # Será inicializado no start()
         
         # Inicializar componentes
         self._initialize_async_components()
@@ -236,6 +252,9 @@ class AsyncOrchestrator:
         await self.planner_llm.start()
         await self.executor_llm.start()
         await self.validator_llm.start()
+        
+        # Iniciar resource manager
+        self.resource_manager = await get_resource_manager()
         
         # Iniciar observabilidade
         if hasattr(self.observability, 'start_monitoring'):
@@ -379,48 +398,55 @@ class AsyncOrchestrator:
         async def execute_single_task(task: Task) -> tuple[str, tuple[ExecutionResult, ValidationResult]]:
             async with self.task_semaphore:  # Controle de concorrência
                 
-                # Observabilidade - início
-                start_time = time.time()
-                await self.observability.record_task_start(task.task_id, task.type.value)
-                
-                try:
-                    # Marcar como em progresso
-                    task.status = TaskStatus.IN_PROGRESS
+                # Gerenciar recursos da tarefa
+                async with self.resource_manager.manage_resource(
+                    resource_id=f"task_{task.task_id}",
+                    resource_type="task_execution",
+                    task_type=task.type.value,
+                    priority=getattr(task, 'priority', 'normal')
+                ):
+                    # Observabilidade - início
+                    start_time = time.time()
+                    await self.observability.record_task_start(task.task_id, task.type.value)
                     
-                    # Executar tarefa
-                    execution_result = await self.async_executor_agent.execute_task_async(task)
-                    
-                    # Validar resultado
-                    validation_result = await self.semantic_validator_agent.validate_task_output(task, execution_result)
-                    
-                    # Observabilidade - fim
-                    duration = time.time() - start_time
-                    await self.observability.record_task_completion(
-                        task.task_id,
-                        validation_result.validation_passed,
-                        duration,
-                        execution_result.exit_code
-                    )
-                    
-                    return task.task_id, (execution_result, validation_result)
-                    
-                except Exception as e:
-                    logger.error(f"Erro na execução da tarefa {task.task_id}", error=str(e))
-                    
-                    # Criar resultado de erro
-                    error_result = ExecutionResult(
-                        exit_code=1,
-                        stderr=f"Erro na execução: {str(e)}"
-                    )
-                    
-                    error_validation = ValidationResult(
-                        validation_passed=False,
-                        confidence_score=0.0,
-                        identified_issues=[str(e)],
-                        suggested_improvements=["Verificar logs de erro"]
-                    )
-                    
-                    return task.task_id, (error_result, error_validation)
+                    try:
+                        # Marcar como em progresso
+                        task.status = TaskStatus.IN_PROGRESS
+                        
+                        # Executar tarefa
+                        execution_result = await self.async_executor_agent.execute_task_async(task)
+                        
+                        # Validar resultado
+                        validation_result = await self.semantic_validator_agent.validate_task_output(task, execution_result)
+                        
+                        # Observabilidade - fim
+                        duration = time.time() - start_time
+                        await self.observability.record_task_completion(
+                            task.task_id,
+                            validation_result.validation_passed,
+                            duration,
+                            execution_result.exit_code
+                        )
+                        
+                        return task.task_id, (execution_result, validation_result)
+                        
+                    except Exception as e:
+                        logger.error(f"Erro na execução da tarefa {task.task_id}", error=str(e))
+                        
+                        # Criar resultado de erro
+                        error_result = ExecutionResult(
+                            exit_code=1,
+                            stderr=f"Erro na execução: {str(e)}"
+                        )
+                        
+                        error_validation = ValidationResult(
+                            validation_passed=False,
+                            confidence_score=0.0,
+                            identified_issues=[str(e)],
+                            suggested_improvements=["Verificar logs de erro"]
+                        )
+                        
+                        return task.task_id, (error_result, error_validation)
         
         # Executar todas as tarefas do batch concorrentemente
         batch_results = await asyncio.gather(
@@ -448,6 +474,89 @@ class AsyncOrchestrator:
                    duration_seconds=(batch.completed_at - batch.started_at).total_seconds())
         
         return results_dict
+
+    async def _execute_with_dependency_cache(self, task: Task) -> tuple:
+        """Executa tarefa com cache de dependências"""
+        
+        # Verificar se dependências estão em cache
+        dependency_key = self._get_dependency_cache_key(task)
+        
+        if dependency_key in self.dependency_cache:
+            self.cache_hits += 1
+            cached_result = self.dependency_cache[dependency_key]
+            logger.debug("Dependency cache hit", task_id=task.task_id, key=dependency_key)
+            
+            # Ainda precisa executar a tarefa, mas com contexto otimizado
+            return await self._execute_task_with_context(task, cached_result)
+        
+        # Cache miss - executar normalmente e salvar resultado
+        self.cache_misses += 1
+        result = await self.executor.execute_task_async(task)
+        validation = await self.validator.validate_task_output(task, result)
+        
+        # Salvar no cache se execução foi bem-sucedida
+        if validation.validation_passed:
+            self.dependency_cache[dependency_key] = {
+                'result': result,
+                'validation': validation,
+                'cached_at': datetime.now()
+            }
+            
+            # Limitar tamanho do cache
+            if len(self.dependency_cache) > 100:
+                await self._evict_oldest_cache_entries()
+        
+        return result, validation
+    
+    def _get_dependency_cache_key(self, task: Task) -> str:
+        """Gera chave de cache baseada nas dependências da tarefa"""
+        import hashlib
+        
+        # Combinar task type, dependencies e parâmetros críticos
+        cache_data = {
+            'type': task.task_type.value,
+            'dependencies': sorted(task.dependencies),
+            'critical_params': {
+                'description': task.description[:100],  # Primeiros 100 chars
+                'expected_output': task.expected_output
+            }
+        }
+        
+        cache_str = str(cache_data)
+        return hashlib.md5(cache_str.encode()).hexdigest()
+    
+    async def _execute_task_with_context(self, task: Task, cached_context: dict) -> tuple:
+        """Executa tarefa usando contexto em cache"""
+        
+        # Usar resultado cached como contexto para otimizar execução
+        task.execution_context = task.execution_context or {}
+        task.execution_context['cached_dependencies'] = cached_context
+        
+        result = await self.executor.execute_task_async(task)
+        validation = await self.validator.validate_task_output(task, result)
+        
+        return result, validation
+    
+    async def _evict_oldest_cache_entries(self, keep_count: int = 50):
+        """Remove entradas mais antigas do cache"""
+        
+        if len(self.dependency_cache) <= keep_count:
+            return
+        
+        # Ordenar por data de cache
+        cache_items = list(self.dependency_cache.items())
+        cache_items.sort(key=lambda x: x[1]['cached_at'])
+        
+        # Manter apenas as mais recentes
+        entries_to_keep = cache_items[-keep_count:]
+        
+        self.dependency_cache = {
+            key: value for key, value in entries_to_keep
+        }
+        
+        logger.debug("Cache evicted old entries", 
+                    kept=len(self.dependency_cache),
+                    evicted=len(cache_items) - keep_count)
 
     async def _handle_task_failure(self, task: Task, validation_result: ValidationResult):
         """Gerencia falha de tarefa com replanejamento"""
@@ -559,5 +668,12 @@ class AsyncOrchestrator:
             'parallel_execution': self.parallel_metrics.__dict__,
             'llm_clients': llm_metrics,
             'file_service': file_metrics,
+            'resource_manager': self.resource_manager.get_stats() if self.resource_manager else {},
+            'dependency_cache': {
+                'hits': self.cache_hits,
+                'misses': self.cache_misses,
+                'hit_rate': self.cache_hits / max(1, self.cache_hits + self.cache_misses),
+                'size': len(self.dependency_cache)
+            },
             'observability': self.observability.get_performance_metrics().__dict__ if hasattr(self.observability, 'get_performance_metrics') else {}
         }
