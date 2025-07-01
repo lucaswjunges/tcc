@@ -47,9 +47,7 @@ class SecurityGateway:
         self.validation_count = 0
         self.blocked_count = 0
         
-        logger.info("SecurityGateway initialized", 
-                   security_level=security_level.value,
-                   whitelist_size=len(self.command_whitelist))
+        logger.info(f"SecurityGateway initialized with security_level: {security_level.value}, whitelist_size: {len(self.command_whitelist)}")
     
     def _get_default_whitelist(self) -> Set[str]:
         """Comandos permitidos por padrão (whitelist)"""
@@ -183,7 +181,7 @@ class SecurityGateway:
             
             # Validar se não há tentativas de path traversal
             if '..' in base_command or base_command.startswith('/'):
-                logger.warning("Path traversal attempt detected", command=command)
+                logger.warning(f"Path traversal attempt detected in command: {command}")
                 return False
             
             # Remove path se presente (depois de validar)
@@ -192,14 +190,14 @@ class SecurityGateway:
             
             # Verificar se o comando base não contém caracteres suspeitos
             if not re.match(r'^[a-zA-Z0-9_.-]+$', base_command):
-                logger.warning("Invalid characters in command", command=base_command)
+                logger.warning(f"Invalid characters in command: {base_command}")
                 return False
             
             return base_command in self.command_whitelist
             
         except ValueError:
             # Erro de parsing (aspas não fechadas, etc)
-            logger.warning("Command parsing failed", command=command)
+            logger.warning(f"Command parsing failed for command: {command}")
             return False
     
     def _normalize_command(self, command: str) -> str:
@@ -266,9 +264,7 @@ class SecurityGateway:
         """
         self.validation_count += 1
         
-        logger.debug("Validating command", 
-                    command=command[:100], 
-                    validation_count=self.validation_count)
+        logger.debug(f"Validating command: {command[:100]}, validation_count: {self.validation_count}")
         
         # 1. Sanitização
         sanitized = self._sanitize_command(command)
@@ -284,10 +280,7 @@ class SecurityGateway:
         danger_match = self._check_danger_patterns(sanitized)
         if danger_match:
             self.blocked_count += 1
-            logger.warning("Dangerous pattern detected",
-                          pattern=danger_match['pattern'],
-                          reason=danger_match['reason'],
-                          command=sanitized[:50])
+            logger.warning(f"Dangerous pattern detected. Pattern: {danger_match['pattern']}, Reason: {danger_match['reason']}, Command: {sanitized[:50]}")
             
             return SecurityValidationResult(
                 is_safe=False,
@@ -300,13 +293,11 @@ class SecurityGateway:
         if not self._check_whitelist(sanitized):
             # Em modo permissivo, apenas avisa
             if self.security_level == SecurityLevel.PERMISSIVE:
-                logger.warning("Command not in whitelist (permissive mode)",
-                              command=sanitized[:50])
+                logger.warning(f"Command not in whitelist (permissive mode): {sanitized[:50]}")
                 warnings = ["Comando não está na whitelist (modo permissivo)"]
             else:
                 self.blocked_count += 1
-                logger.warning("Command not in whitelist (blocked)",
-                              command=sanitized[:50])
+                logger.warning(f"Command not in whitelist (blocked): {sanitized[:50]}")
                 return SecurityValidationResult(
                     is_safe=False,
                     risk_level=RiskLevel.MEDIUM,
@@ -325,10 +316,7 @@ class SecurityGateway:
         if warnings:
             risk_level = RiskLevel.MEDIUM if len(warnings) > 2 else RiskLevel.LOW
         
-        logger.info("Command validated successfully",
-                   command=sanitized[:50],
-                   risk_level=risk_level.value,
-                   warnings_count=len(warnings))
+        logger.info(f"Command validated successfully: {sanitized[:50]}, risk_level: {risk_level.value}, warnings_count: {len(warnings)}")
         
         return SecurityValidationResult(
             is_safe=True,
@@ -340,12 +328,12 @@ class SecurityGateway:
     def add_whitelist_command(self, command: str) -> None:
         """Adiciona comando à whitelist"""
         self.command_whitelist.add(command)
-        logger.info("Command added to whitelist", command=command)
+        logger.info(f"Command added to whitelist: {command}")
     
     def remove_whitelist_command(self, command: str) -> None:
         """Remove comando da whitelist"""
         self.command_whitelist.discard(command)
-        logger.info("Command removed from whitelist", command=command)
+        logger.info(f"Command removed from whitelist: {command}")
     
     async def is_command_safe(
         self, 

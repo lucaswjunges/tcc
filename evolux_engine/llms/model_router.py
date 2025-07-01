@@ -75,8 +75,7 @@ class ModelRouter:
         self._initialize_default_models()
         self._initialize_fallback_chains()
         
-        logger.info("ModelRouter initialized", 
-                   available_models=len(self.available_models))
+        logger.info(f"ModelRouter initialized with {len(self.available_models)} available models")
     
     def _initialize_default_models(self):
         """Inicializa modelos disponíveis com configurações padrão"""
@@ -224,9 +223,7 @@ class ModelRouter:
                 compatible_models.append((model_name, model_info))
         
         if not compatible_models:
-            logger.warning("No compatible models found", 
-                          task_category=task_category.value,
-                          required_tokens=required_tokens)
+            logger.warning(f"No compatible models found for task_category: {task_category.value}, required_tokens: {required_tokens}")
             return None
         
         # Aplicar estratégia de seleção
@@ -235,10 +232,7 @@ class ModelRouter:
         else:
             selected = self._select_by_quality(compatible_models, task_category)
         
-        logger.info("Model selected", 
-                   model=selected,
-                   task_category=task_category.value,
-                   strategy="cost_optimization" if prefer_cost_optimization else "quality")
+        logger.info(f"Model selected: {selected} for task_category: {task_category.value} with strategy: {'cost_optimization' if prefer_cost_optimization else 'quality'}")
         
         return selected
     
@@ -338,11 +332,7 @@ class ModelRouter:
         perf = self._get_performance(model_name, category)
         perf.update_metrics(success, latency_ms, cost)
         
-        logger.debug("Model performance updated",
-                    model=model_name,
-                    category=category.value,
-                    success=success,
-                    new_success_rate=round(perf.success_rate, 3))
+        logger.debug(f"Model performance updated for model: {model_name}, category: {category.value}, success: {success}, new_success_rate: {round(perf.success_rate, 3)}")
     
     def get_fallback_model(self, 
                           primary_model: str, 
@@ -355,10 +345,7 @@ class ModelRouter:
             primary_index = fallback_list.index(primary_model)
             if primary_index + 1 < len(fallback_list):
                 fallback = fallback_list[primary_index + 1]
-                logger.info("Fallback model selected",
-                           primary=primary_model,
-                           fallback=fallback,
-                           category=category.value)
+                logger.info(f"Fallback model selected. Primary: {primary_model}, Fallback: {fallback}, Category: {category.value}")
                 return fallback
         except ValueError:
             # Modelo primário não está na lista, usa primeiro da lista
@@ -371,13 +358,13 @@ class ModelRouter:
         """Marca modelo como indisponível temporariamente"""
         if model_name in self.available_models:
             self.available_models[model_name].is_available = False
-            logger.warning("Model marked as unavailable", model=model_name)
+            logger.warning(f"Model marked as unavailable: {model_name}")
     
     def mark_model_available(self, model_name: str):
         """Marca modelo como disponível novamente"""
         if model_name in self.available_models:
             self.available_models[model_name].is_available = True
-            logger.info("Model marked as available", model=model_name)
+            logger.info(f"Model marked as available: {model_name}")
     
     def get_routing_stats(self) -> Dict[str, Any]:
         """Retorna estatísticas de roteamento de modelos"""

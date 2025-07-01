@@ -46,7 +46,9 @@ async def main():
     args = parser.parse_args()
 
     # 4. Cria ou carrega o contexto do projeto usando AdvancedContextManager
-    advanced_config = AdvancedSystemConfig()
+    advanced_config = AdvancedSystemConfig(
+        project_base_directory=config.get_global_setting("project_base_directory", "./project_workspaces")
+    )
     context_manager = AdvancedContextManager(config=advanced_config)
     project_context = None
 

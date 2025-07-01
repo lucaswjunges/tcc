@@ -1,0 +1,76 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  reverse-proxy:
+    image: traefik:v2.11
+    container_name: traefik
+    command:
+      - "--api.insecure=true" # Para o dashboard
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false" # Apenas expõe containers com label
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080" # Dashboard do Traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Permite que o Traefik ouça os eventos do Docker
+    networks:
+      - evolux_net
+
+  evolux-core:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: evolux-core
+    volumes:
+      - ./project_workspaces:/home/app/evolux/project_workspaces
+      - ./logs:/home/app/evolux/logs
+      # Monta o socket do docker para que o core possa gerenciar os AEDs
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - evolux_net
+    env_file:
+      - .env
+    command: ["python", "run.py", "--goal", "create a simple portfolio website"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.evolux-core.rule=Host(`evolux.localhost`)"
+      - "traefik.http.services.evolux-core.loadbalancer.server.port=8000"
+    depends_on:
+      - reverse-proxy
+
+  jupyter-lab:
+    image: jupyter/scipy-notebook:latest
+    container_name: jupyter-lab
+    volumes:
+      - ./project_workspaces:/home/jovyan/work/project_workspaces
+    networks:
+      - evolux_net
+    environment:
+      - JUPYTER_TOKEN=evolux-secret-token
+      - JUPYTER_ENABLE_LAB=yes
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jupyter.rule=Host(`jupyter.localhost`)"
+      - "traefik.http.services.jupyter.loadbalancer.server.port=8888"
+
+  testing-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: testing-runner
+    # O comando é sobrescrito para rodar os testes e sair
+    command: ["pytest", "."]
+    volumes:
+      - ./project_workspaces:/home/app/evolux/project_workspaces
+    networks:
+      - evolux_net
+
+volumes:
+  project_workspaces:
+  evolux_logs:
+
+networks:
+  evolux_net:
+    name: evolux_bridge_network

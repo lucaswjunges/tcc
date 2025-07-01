@@ -45,7 +45,7 @@ class PlannerAgent(A2ACapableMixin):
         self.delegated_tasks = {}  # Tarefas delegadas para outros agentes
         self.received_contexts = {}  # Contextos recebidos de outros agentes
         
-        logger.info("PlannerAgent inicializado com componentes necessários e capacidades A2A")
+        logger.info("PlannerAgent initialized with necessary components and A2A capabilities")
 
     def _generate_next_id(self) -> str:
         """Gera um ID sequencial único"""
@@ -54,9 +54,9 @@ class PlannerAgent(A2ACapableMixin):
     async def generate_initial_plan(self) -> bool:
         """Gera o plano inicial de tarefas para o projeto e o estrutura como um DependencyGraph."""
         try:
-            logger.info("Gerando plano inicial de tarefas...")
-            project_goal = self.project_context.project_goal if self.project_context else "projeto genérico"
-            logger.info(f"Planejando para objetivo: {project_goal}")
+            logger.info("Generating initial task plan...")
+            project_goal = self.project_context.project_goal if self.project_context else "generic project"
+            logger.info(f"Planning for goal: {project_goal}")
 
             # O DependencyGraph será a fonte da verdade para a estrutura do plano
             dependency_graph = await self._generate_dynamic_plan(project_goal)
@@ -66,9 +66,9 @@ class PlannerAgent(A2ACapableMixin):
                 all_tasks = dependency_graph.get_all_tasks()
                 self.project_context.task_queue = all_tasks
                 await self.project_context.save_context()
-                logger.info(f"Plano inicial criado com {len(all_tasks)} tarefas e salvo no contexto.")
+                logger.info(f"Initial plan created with {len(all_tasks)} tasks and saved to context.")
                 # Opcional: Logar a estrutura do grafo para depuração
-                # logger.debug(f"Grafo de dependências gerado:\n{dependency_graph.to_mermaid()}")
+                # logger.debug(f"Dependency graph generated:\n{dependency_graph.to_mermaid()}")
             else:
                 # Fallback para ambientes sem project_context
                 self.active_tasks = {task.task_id: task for task in dependency_graph.get_all_tasks()}
@@ -76,91 +76,109 @@ class PlannerAgent(A2ACapableMixin):
             return True
             
         except Exception as e:
-            logger.opt(exception=True).error("Erro ao gerar plano inicial")
+            logger.error(f"Error generating initial plan: {e}", exc_info=True)
             return False
+
+    async def _get_project_type(self, goal: str) -> str:
+        """
+        Usa um prompt focado para determinar o tipo de projeto.
+        """
+        # Se não houver cliente LLM, recorra à análise básica.
+        if not hasattr(self, 'llm_client') or not self.llm_client:
+            logger.warning("LLM client not available for project type analysis. Falling back to basic analysis.")
+            analysis = self._analyze_project_basic(goal)
+            return analysis.get("project_type", "generic")
+
+        try:
+            # Prompt focado para classificação
+            classification_prompt = f"""
+            Analise o seguinte objetivo de projeto e classifique-o em UMA das seguintes categorias:
+            'web_app', 'api_service', 'cli_tool', 'static_website', 'data_science', 'mobile_app', 'desktop_app', 'documentation'.
+
+            Baseie-se estritamente nas palavras-chave do objetivo. Por exemplo:
+            - 'servidor web', 'site', 'flask', 'react' -> 'web_app'
+            - 'script', 'ferramenta de linha de comando' -> 'cli_tool'
+            - 'análise de dados', 'jupyter' -> 'data_science'
+
+            Objetivo: "{goal}"
+
+            Retorne APENAS a string da categoria (ex: "web_app"). Não inclua JSON ou qualquer outra formatação.
+            """
+            
+            # O LLMClient precisa ser inicializado no __init__ do PlannerAgent
+            # Supondo que self.llm_client foi passado durante a inicialização do PlannerAgent
+            response = await self.llm_client.generate_response(classification_prompt)
+            
+            # Limpar a resposta para garantir que seja apenas a string
+            project_type = response.strip().replace('"', '').replace("'", "")
+            
+            # Validação para garantir que o tipo retornado é um dos tipos esperados
+            valid_types = ['web_app', 'api_service', 'cli_tool', 'static_website', 'data_science', 'mobile_app', 'desktop_app', 'documentation', 'generic']
+            if project_type not in valid_types:
+                logger.warning(f"LLM returned an invalid project type: '{project_type}'. Falling back to basic analysis.")
+                analysis = self._analyze_project_basic(goal)
+                return analysis.get("project_type", "generic")
+
+            logger.info(f"Project classified as '{project_type}' by LLM.")
+            return project_type
+
+        except Exception as e:
+            logger.error(f"Error during LLM-based project type classification: {e}. Falling back to basic analysis.")
+            analysis = self._analyze_project_basic(goal)
+            return analysis.get("project_type", "generic")
+
 
     async def _generate_dynamic_plan(self, project_goal: str) -> DependencyGraph:
         """Gera um plano dinâmico de tarefas e o retorna como um DependencyGraph."""
         graph = DependencyGraph()
-        project_analysis = await self._analyze_project_semantically(project_goal)
         
+        # Passo 1: Classificar o tipo de projeto de forma robusta.
+        project_type = await self._get_project_type(project_goal)
+        logger.info(f"Determined project type: {project_type}")
+
+        # Passo 2: Usar a análise básica para determinar a complexidade.
+        project_analysis = self._analyze_project_basic(project_goal)
+        complexity = project_analysis['complexity']
+        logger.info(f"Determined project complexity: {complexity}")
+
         # Tarefas básicas que todo projeto precisa (sem dependências)
         readme_task = Task(
             task_id=self._generate_next_id(),
-            description="Criar documentação do projeto",
+            description="Criar documentação do projeto (README.md)",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(file_path="README.md", content_guideline=f"Criar documentação completa para: {project_goal}."),
+            details=TaskDetailsCreateFile(file_path="README.md", content_guideline=f"Criar um README.md claro e conciso para o projeto: {project_goal}."),
             status=TaskStatus.PENDING,
             dependencies=[],
-            acceptance_criteria="README.md específico e completo para o projeto"
+            acceptance_criteria="README.md criado com as informações essenciais do projeto."
         )
         graph.add_task(readme_task)
 
         reqs_task = Task(
             task_id=self._generate_next_id(),
-            description="Criar arquivo de dependências",
+            description="Criar arquivo de dependências (requirements.txt)",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(file_path="requirements.txt", content_guideline=f"Listar dependências Python para: {project_goal}."),
+            details=TaskDetailsCreateFile(file_path="requirements.txt", content_guideline=f"Listar as dependências Python mínimas para o projeto: {project_goal}."),
             status=TaskStatus.PENDING,
             dependencies=[],
-            acceptance_criteria="requirements.txt com dependências específicas do projeto"
+            acceptance_criteria="requirements.txt criado com as dependências essenciais."
         )
         graph.add_task(reqs_task)
         
         # Gerar tarefas específicas do domínio e adicioná-las ao grafo
         await self._generate_domain_specific_tasks(
             graph,
-            project_analysis['project_type'], 
+            project_type, 
             project_goal,
-            project_analysis['complexity']
+            complexity
         )
         
         # Adicionar tarefas de qualidade (que podem depender de outras)
-        if project_analysis['complexity'] >= 7:
+        if complexity >= 7:
             self._get_enterprise_quality_tasks(graph)
-        elif project_analysis['complexity'] >= 5:
+        elif complexity >= 5:
             self._get_professional_quality_tasks(graph)
         
         return graph
-
-    async def _analyze_project_semantically(self, goal: str) -> Dict[str, Any]:
-        """Analisa semanticamente o objetivo do projeto usando LLM"""
-        try:
-            # Se tiver LLM client disponível, usar análise semântica
-            if hasattr(self, 'llm_client') and self.llm_client:
-                analysis_prompt = f"""
-                Analise este objetivo de projeto e determine:
-                1. Tipo de aplicação (web_app, api, desktop, mobile, data_science, game, etc.)
-                2. Complexidade (1-10 onde 1=simples, 10=enterprise)
-                3. Tecnologias necessárias
-                4. Componentes principais
-                5. Funcionalidades essenciais
-
-                Objetivo: {goal}
-
-                Retorne JSON estruturado:
-                {{
-                    "project_type": "tipo",
-                    "complexity": número,
-                    "technologies": ["tech1", "tech2"],
-                    "components": ["comp1", "comp2"],
-                    "features": ["feat1", "feat2"]
-                }}
-                """
-                
-                try:
-                    response = await self.llm_client.generate_response(analysis_prompt)
-                    import json
-                    return json.loads(response)
-                except Exception as e:
-                    logger.warning(f"Erro na análise semântica: {e}. Usando fallback.")
-            
-            # Fallback para análise básica por palavras-chave
-            return self._analyze_project_basic(goal)
-            
-        except Exception as e:
-            logger.error(f"Erro na análise semântica: {e}")
-            return self._analyze_project_basic(goal)
 
     def _analyze_project_basic(self, goal: str) -> Dict[str, Any]:
         """Análise básica por palavras-chave como fallback"""
@@ -216,7 +234,7 @@ class PlannerAgent(A2ACapableMixin):
         """Gera tarefas específicas do domínio e as adiciona diretamente ao grafo."""
         
         # A lógica de contagem de tarefas pode ser mantida para guiar a geração
-        logger.info(f"Gerando tarefas de domínio para projeto tipo '{project_type}' com complexidade {complexity}")
+        logger.info(f"Generating domain-specific tasks for project type '{project_type}' with complexity {complexity}")
         
         # Gerar tarefas específicas por tipo e adicioná-las ao grafo
         if project_type == "blog":
@@ -310,148 +328,154 @@ class PlannerAgent(A2ACapableMixin):
             )
             graph.add_task(compose_task)
 
-    def _get_enhanced_web_app_tasks(self, complexity: int) -> List[Task]:
+    def _get_enhanced_web_app_tasks(self, graph: DependencyGraph, complexity: int):
         """Tarefas aprimoradas para aplicações web"""
-        tasks = []
         
         # Tarefas básicas sempre incluídas
-        tasks.extend([
-            Task(
-                task_id=self._generate_next_id(),
-                description="Criar aplicação Flask principal",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="app.py",
-                    content_guideline="Aplicação Flask com estrutura MVC, rotas organizadas e configuração adequada"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Aplicação Flask estruturada implementada"
+        app_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar aplicação Flask principal",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="app.py",
+                content_guideline="Aplicação Flask com estrutura MVC, rotas organizadas e configuração adequada"
             ),
-            Task(
-                task_id=self._generate_next_id(),
-                description="Criar templates base",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="templates/base.html",
-                    content_guideline="Template base com Bootstrap, navbar responsiva e sistema de mensagens"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Sistema de templates base criado"
-            )
-        ])
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Aplicação Flask estruturada implementada"
+        )
+        graph.add_task(app_task)
+
+        base_template_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar templates base",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="templates/base.html",
+                content_guideline="Template base com Bootstrap, navbar responsiva e sistema de mensagens"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Sistema de templates base criado"
+        )
+        graph.add_task(base_template_task)
         
+        last_task_id = app_task.task_id
         # Tarefas baseadas na complexidade
         if complexity >= 5:
-            tasks.extend([
-                Task(
-                    task_id=self._generate_next_id(),
-                    description="Implementar sistema de usuários",
-                    type=TaskType.CREATE_FILE,
-                    details=TaskDetailsCreateFile(
-                        file_path="models.py",
-                        content_guideline="Modelos User com autenticação, perfis e sistema de permissões"
-                    ),
-                    status=TaskStatus.PENDING,
-                    dependencies=[],
-                    acceptance_criteria="Sistema de usuários implementado"
+            models_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar sistema de usuários",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="models.py",
+                    content_guideline="Modelos User com autenticação, perfis e sistema de permissões"
                 ),
-                Task(
-                    task_id=self._generate_next_id(),
-                    description="Criar formulários de autenticação",
-                    type=TaskType.CREATE_FILE,
-                    details=TaskDetailsCreateFile(
-                        file_path="forms.py",
-                        content_guideline="Formulários WTF para login, registro e edição de perfil com validações"
-                    ),
-                    status=TaskStatus.PENDING,
-                    dependencies=[],
-                    acceptance_criteria="Formulários de autenticação criados"
-                )
-            ])
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Sistema de usuários implementado"
+            )
+            graph.add_task(models_task)
+            last_task_id = models_task.task_id
+
+            forms_task = Task(
+                task_id=self._generate_next_id(),
+                description="Criar formulários de autenticação",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="forms.py",
+                    content_guideline="Formulários WTF para login, registro e edição de perfil com validações"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Formulários de autenticação criados"
+            )
+            graph.add_task(forms_task)
+            last_task_id = forms_task.task_id
             
         if complexity >= 7:
-            tasks.extend([
-                Task(
-                    task_id=self._generate_next_id(),
-                    description="Implementar painel administrativo",
-                    type=TaskType.CREATE_FILE,
-                    details=TaskDetailsCreateFile(
-                        file_path="admin.py",
-                        content_guideline="Painel administrativo com gestão de usuários, conteúdo e métricas"
-                    ),
-                    status=TaskStatus.PENDING,
-                    dependencies=[],
-                    acceptance_criteria="Painel administrativo implementado"
+            admin_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar painel administrativo",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="admin.py",
+                    content_guideline="Painel administrativo com gestão de usuários, conteúdo e métricas"
                 ),
-                Task(
-                    task_id=self._generate_next_id(),
-                    description="Configurar deployment",
-                    type=TaskType.CREATE_FILE,
-                    details=TaskDetailsCreateFile(
-                        file_path="deploy.py",
-                        content_guideline="Script de deployment com configurações de produção e CI/CD"
-                    ),
-                    status=TaskStatus.PENDING,
-                    dependencies=[],
-                    acceptance_criteria="Sistema de deployment configurado"
-                )
-            ])
-            
-        return tasks
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Painel administrativo implementado"
+            )
+            graph.add_task(admin_task)
+            last_task_id = admin_task.task_id
 
-    def _get_enhanced_generic_tasks(self, complexity: int) -> List[Task]:
+            deploy_task = Task(
+                task_id=self._generate_next_id(),
+                description="Configurar deployment",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="deploy.py",
+                    content_guideline="Script de deployment com configurações de produção e CI/CD"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Sistema de deployment configurado"
+            )
+            graph.add_task(deploy_task)
+
+    def _get_enhanced_generic_tasks(self, graph: DependencyGraph, complexity: int):
         """Tarefas aprimoradas para projetos genéricos"""
-        tasks = []
         
         # Tarefas básicas
-        tasks.extend([
-            Task(
-                task_id=self._generate_next_id(),
-                description="Criar aplicação principal",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="main.py",
-                    content_guideline="Aplicação principal com arquitetura limpa, logging e tratamento de erros"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Aplicação principal implementada"
-            )
-        ])
+        main_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar aplicação principal",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="main.py",
+                content_guideline="Aplicação principal com arquitetura limpa, logging e tratamento de erros"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Aplicação principal implementada"
+        )
+        graph.add_task(main_task)
+        last_task_id = main_task.task_id
         
         # Tarefas baseadas na complexidade
         if complexity >= 5:
-            tasks.extend([
-                Task(
-                    task_id=self._generate_next_id(),
-                    description="Criar sistema de configuração",
-                    type=TaskType.CREATE_FILE,
-                    details=TaskDetailsCreateFile(
-                        file_path="config.py",
-                        content_guideline="Sistema de configuração com variáveis de ambiente e validações"
-                    ),
-                    status=TaskStatus.PENDING,
-                    dependencies=[],
-                    acceptance_criteria="Sistema de configuração implementado"
+            config_task = Task(
+                task_id=self._generate_next_id(),
+                description="Criar sistema de configuração",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="config.py",
+                    content_guideline="Sistema de configuração com variáveis de ambiente e validações"
                 ),
-                Task(
-                    task_id=self._generate_next_id(),
-                    description="Implementar sistema de logging",
-                    type=TaskType.CREATE_FILE,
-                    details=TaskDetailsCreateFile(
-                        file_path="logger.py",
-                        content_guideline="Sistema de logging estruturado com diferentes níveis e outputs"
-                    ),
-                    status=TaskStatus.PENDING,
-                    dependencies=[],
-                    acceptance_criteria="Sistema de logging implementado"
-                )
-            ])
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Sistema de configuração implementado"
+            )
+            graph.add_task(config_task)
+            last_task_id = config_task.task_id
+
+            logger_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar sistema de logging",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="logger.py",
+                    content_guideline="Sistema de logging estruturado com diferentes níveis e outputs"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Sistema de logging implementado"
+            )
+            graph.add_task(logger_task)
+            last_task_id = logger_task.task_id
             
         if complexity >= 7:
-            tasks.append(Task(
+            tests_task = Task(
                 task_id=self._generate_next_id(),
                 description="Criar testes unitários",
                 type=TaskType.CREATE_FILE,
@@ -460,11 +484,10 @@ class PlannerAgent(A2ACapableMixin):
                     content_guideline="Suite de testes unitários com pytest e cobertura adequada"
                 ),
                 status=TaskStatus.PENDING,
-                dependencies=[],
+                dependencies=[last_task_id],
                 acceptance_criteria="Testes unitários implementados"
-            ))
-            
-        return tasks
+            )
+            graph.add_task(tests_task)
 
     def _get_professional_quality_tasks(self, graph: DependencyGraph):
         """Adiciona tarefas de qualidade profissional diretamente ao grafo."""
@@ -761,7 +784,7 @@ class PlannerAgent(A2ACapableMixin):
         try:
             # Detectar loop infinito de correção
             if "Corrigir erro na tarefa:" in failed_task.description:
-                logger.warning(f"Detectado loop de correção para tarefa {failed_task.task_id}. Tentando abordagem alternativa.")
+                logger.warning(f"Correction loop detected for task {failed_task.task_id}. Trying alternative approach.")
                 
                 # Extrair descrição original removendo prefixos de correção
                 original_description = failed_task.description
@@ -770,7 +793,7 @@ class PlannerAgent(A2ACapableMixin):
                 
                 # Se ainda está vazio, falhar graciosamente
                 if not original_description:
-                    logger.error("Não foi possível extrair descrição original da tarefa. Cancelando replanejamento.")
+                    logger.error("Could not extract original task description. Cancelling replanning.")
                     return []
                 
                 # Criar tarefa alternativa com abordagem diferente
@@ -788,7 +811,7 @@ class PlannerAgent(A2ACapableMixin):
                 return [alternative_task]
             
             # Analisar tipo de erro para replanejamento inteligente
-            logger.info(f"Replanejando tarefa {failed_task.task_id} devido a erro: {error_feedback[:200]}...")
+            logger.info(f"Replanning task {failed_task.task_id} due to error: {error_feedback[:200]}...")
             
             # Determinar estratégia baseada no tipo de erro
             if "validação semântica" in error_feedback.lower():
@@ -847,13 +870,13 @@ class PlannerAgent(A2ACapableMixin):
                 return [adjusted_task]
             
         except Exception as e:
-            logger.error(f"Erro ao replanejar tarefa: {e}")
+            logger.error(f"Error replanning task: {e}")
             return []
 
     async def generate_tasks_from_blueprint(self, blueprint_name: str) -> List[Task]:
         """Baseado em um blueprint, gera um conjunto de tarefas"""
         if not self.context_manager:
-            logger.warning("Context manager não disponível para blueprint")
+            logger.warning("Context manager not available for blueprint")
             return []
             
         # Exemplo simplificado
@@ -900,9 +923,9 @@ class PlannerAgent(A2ACapableMixin):
         """Executa uma tarefa específica e atualiza seu status"""
         task = self.active_tasks.get(task_id)
         if not task:
-            return False, ValueError("Tarefa não encontrada")
+            return False, ValueError("Task not found")
 
-        logger.info(f"Executando tarefa {task_id}: {task.description}")
+        logger.info(f"Executing task {task_id}: {task.description}")
         task.start_time = datetime.now()
 
         try:
@@ -915,7 +938,7 @@ class PlannerAgent(A2ACapableMixin):
             task.status = TaskStatus.COMPLETED
             return True, None
         except Exception as e:
-            logger.error(f"Erro ao executar tarefa {task_id}: {str(e)}")
+            logger.error(f"Error executing task {task_id}: {str(e)}")
             task.status = TaskStatus.FAILED
             return False, e
 
@@ -923,13 +946,13 @@ class PlannerAgent(A2ACapableMixin):
         """Gera e gerencia o fluxo de trabalho através das tarefas"""
         active_context = self.context_manager.get_active_context()
         if not active_context:
-            logger.error("Nenhum contexto ativo encontrado para planejamento")
-            return False, "Contexto não configurado"
+            logger.error("No active context found for planning")
+            return False, "Context not configured"
 
         tasks_to_run = self.get_pending_tasks()
         if not tasks_to_run:
-            logger.info("Nenhuma tarefa pendente disponível")
-            return False, "Nenhuma tarefa para executar"
+            logger.info("No pending tasks available")
+            return False, "No tasks to execute"
 
         # Executa todas as tarefas pendentes
         success_count = 0
@@ -937,13 +960,13 @@ class PlannerAgent(A2ACapableMixin):
             task_id = task.task_id
             success, error = await self.execute_task(task_id)
             if not success:
-                logger.error(f"Falha na execução de {task_id}: {str(error)}")
+                logger.error(f"Failed to execute task {task_id}: {str(error)}")
                 # Gera tarefa de fallback
                 await self.recover_problematic_task(task, str(error))
             else:
                 success_count += 1
 
-        return True, f"{success_count}/{len(tasks_to_run)} tarefas concluídas"
+        return True, f"{success_count}/{len(tasks_to_run)} tasks completed"
 
     async def recover_problematic_task(self, original_task: Task, error_details: str) -> bool:
         """Recupera problemas identificados durante a execução de uma tarefa"""
@@ -994,7 +1017,7 @@ class PlannerAgent(A2ACapableMixin):
         )
         
         self.active_tasks[task_id] = recovery_task
-        logger.info(f"Tarefa de recuperação criada: {recovery_task.task_id}")
+        logger.info(f"Recovery task created: {recovery_task.task_id}")
         return True
 
     def _identify_task_type_from_suggestion(self, suggestion: str) -> TaskType:
@@ -1051,7 +1074,7 @@ class PlannerAgent(A2ACapableMixin):
             recovery_strategy = self._generate_recovery_strategy(patterns)
             self.recovery_strategies[task_id] = recovery_strategy
             
-            logger.warning(f"Padrão de falha detectado para tarefa {task_id}: {patterns}")
+            logger.warning(f"Failure pattern detected for task {task_id}: {patterns}")
             return {
                 'pattern_detected': True,
                 'patterns': patterns,
@@ -1135,8 +1158,8 @@ class PlannerAgent(A2ACapableMixin):
         Aplica estratégia de recuperação específica para uma tarefa falha
         """
         if task_id not in self.recovery_strategies:
-            logger.info(f"Nenhuma estratégia específica para {task_id}, usando abordagem padrão")
-            return await self.replan_task(failed_task, "Falha genérica")
+            logger.info(f"No specific strategy for {task_id}, using default approach")
+            return await self.replan_task(failed_task, "Generic failure")
         
         strategy = self.recovery_strategies[task_id]
         recovery_tasks = []
@@ -1146,7 +1169,7 @@ class PlannerAgent(A2ACapableMixin):
             if recovery_task:
                 recovery_tasks.append(recovery_task)
         
-        logger.info(f"Aplicando estratégia de recuperação para {task_id}: {len(recovery_tasks)} tarefas criadas")
+        logger.info(f"Applying recovery strategy for {task_id}: {len(recovery_tasks)} tasks created")
         return recovery_tasks
 
     def _create_recovery_task_from_action(self, action: dict, original_task: Task) -> Optional[Task]:
@@ -1266,13 +1289,13 @@ class PlannerAgent(A2ACapableMixin):
         elif request.handoff_type == HandoffType.KNOWLEDGE_SHARE:
             await self._handle_knowledge_share(request)
         else:
-            logger.warning(f"PlannerAgent: Tipo de handoff não suportado: {request.handoff_type}")
+            logger.warning(f"PlannerAgent: Unsupported handoff type: {request.handoff_type}")
     
     async def _handle_context_transfer(self, request):
         """Processa transferência de contexto de outro agente"""
         context_data = request.data_payload.get('project_context', {})
         
-        logger.info(f"PlannerAgent: Recebendo contexto do projeto {context_data.get('project_id')}")
+        logger.info(f"PlannerAgent: Receiving context for project {context_data.get('project_id')}")
         
         # Armazenar contexto recebido
         self.received_contexts[request.handoff_id] = {
@@ -1284,7 +1307,7 @@ class PlannerAgent(A2ACapableMixin):
         # Se incluir task_queue, mesclar com tarefas existentes
         if 'task_queue' in request.data_payload:
             received_tasks = request.data_payload['task_queue']
-            logger.info(f"PlannerAgent: Recebendo {len(received_tasks)} tarefas do agente {request.sender_agent_id}")
+            logger.info(f"PlannerAgent: Receiving {len(received_tasks)} tasks from agent {request.sender_agent_id}")
             
             # Converter de dict para Task objects se necessário
             for task_dict in received_tasks:
@@ -1303,14 +1326,14 @@ class PlannerAgent(A2ACapableMixin):
                     # Adicionar à fila se não existe
                     if not any(t.task_id == task.task_id for t in self.project_context.task_queue):
                         self.project_context.task_queue.append(task)
-                        logger.info(f"PlannerAgent: Tarefa {task.task_id} adicionada à fila local")
+                        logger.info(f"PlannerAgent: Task {task.task_id} added to local queue")
     
     async def _handle_task_delegation(self, request):
         """Processa delegação de tarefa de outro agente"""
         task_data = request.data_payload.get('task', {})
         execution_context = request.data_payload.get('execution_context', {})
         
-        logger.info(f"PlannerAgent: Recebendo delegação da tarefa {task_data.get('task_id')}")
+        logger.info(f"PlannerAgent: Receiving task delegation for task {task_data.get('task_id')}")
         
         # Reconstruir objeto Task
         delegated_task = Task(
@@ -1338,7 +1361,7 @@ class PlannerAgent(A2ACapableMixin):
             'handoff_id': request.handoff_id
         }
         
-        logger.info(f"PlannerAgent: Tarefa {delegated_task.task_id} aceita para execução")
+        logger.info(f"PlannerAgent: Task {delegated_task.task_id} accepted for execution")
     
     async def _handle_knowledge_share(self, request):
         """Processa compartilhamento de conhecimento de outro agente"""
@@ -1346,7 +1369,7 @@ class PlannerAgent(A2ACapableMixin):
         knowledge_type = request.data_payload.get('knowledge_type', 'general')
         source_agent = request.data_payload.get('source_agent')
         
-        logger.info(f"PlannerAgent: Recebendo conhecimento '{knowledge_type}' do agente {source_agent}")
+        logger.info(f"PlannerAgent: Receiving knowledge '{knowledge_type}' from agent {source_agent}")
         
         # Processar conhecimento baseado no tipo
         if knowledge_type == 'planning_patterns':
@@ -1365,14 +1388,14 @@ class PlannerAgent(A2ACapableMixin):
                 'received_at': datetime.utcnow()
             }
         
-        logger.info(f"PlannerAgent: Conhecimento '{knowledge_type}' integrado com sucesso")
+        logger.info(f"PlannerAgent: Knowledge '{knowledge_type}' integrated successfully")
     
     async def _integrate_planning_patterns(self, patterns_data):
         """Integra padrões de planejamento recebidos"""
         # Exemplo: integrar novos templates de tarefas ou estratégias de planejamento
         if 'task_generation_strategies' in patterns_data:
             strategies = patterns_data['task_generation_strategies']
-            logger.info(f"PlannerAgent: Integrando {len(strategies)} estratégias de geração de tarefas")
+            logger.info(f"PlannerAgent: Integrating {len(strategies)} task generation strategies")
             # Implementar integração específica
     
     async def _integrate_failure_patterns(self, failure_data):
@@ -1384,13 +1407,13 @@ class PlannerAgent(A2ACapableMixin):
                 pattern_id = failure_pattern.get('pattern_id', 'unknown')
                 if pattern_id not in self.recovery_strategies:
                     self.recovery_strategies[pattern_id] = failure_pattern.get('recovery_strategy', {})
-                    logger.info(f"PlannerAgent: Nova estratégia de recuperação adicionada: {pattern_id}")
+                    logger.info(f"PlannerAgent: New recovery strategy added: {pattern_id}")
     
     async def _integrate_task_templates(self, templates_data):
         """Integra templates de tarefas recebidos"""
         if 'templates' in templates_data:
             templates = templates_data['templates']
-            logger.info(f"PlannerAgent: Integrando {len(templates)} templates de tarefas")
+            logger.info(f"PlannerAgent: Integrating {len(templates)} task templates")
             # Implementar integração de templates
     
     async def delegate_complex_planning(self, target_agent: str, planning_context: dict) -> bool:
@@ -1415,7 +1438,7 @@ class PlannerAgent(A2ACapableMixin):
             return response.status.value == "completed"
             
         except Exception:
-            logger.exception("Erro ao gerar plano inicial")
+            logger.exception("Error generating initial plan")
             return False
     
     async def share_planning_knowledge(self, target_agents: List[str]):
@@ -1435,10 +1458,10 @@ class PlannerAgent(A2ACapableMixin):
             )
             
             successful_shares = sum(1 for r in responses if hasattr(r, 'status') and r.status.value == "completed")
-            logger.info(f"PlannerAgent: Conhecimento compartilhado com {successful_shares}/{len(target_agents)} agentes")
+            logger.info(f"PlannerAgent: Knowledge shared with {successful_shares}/{len(target_agents)} agents")
             
         except Exception as e:
-            logger.error(f"Erro no compartilhamento de conhecimento: {e}")
+            logger.error(f"Error sharing knowledge: {e}")
     
     def _extract_successful_patterns(self) -> dict:
         """Extrai padrões de planejamento bem-sucedidos"""

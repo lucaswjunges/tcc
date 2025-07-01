@@ -6327,3 +6327,364 @@ Using AsyncIOEngine.POLLER as I/O engine
 {"event": "\ud83e\udde0 Iniciando an\u00e1lise para especializa\u00e7\u00e3o din\u00e2mica de agentes", "level": "info", "service": "evolux_engine", "timestamp": "2025-07-01T15:24:56.835044Z", "version": "2.0"}
 {"event": "\ud83c\udfaf Agente planner_proj_20250701_122456_8781428b especializado em: ['architecture_guru', 'performance_optimizer']", "level": "info", "service": "evolux_engine", "timestamp": "2025-07-01T15:24:56.835253Z", "version": "2.0"}
 {"event": "Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes", "level": "info", "service": "evolux_engine", "timestamp": "2025-07-01T15:24:56.835505Z", "version": "2.0"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-01T20:08:57.843167Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-01T20:08:57.843383Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-01T20:08:57.843523Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-01T20:08:57.849343Z"}
+Project context saved for project_id: proj_20250701_170857_4ca65a83, snapshot_created: False
+New project context created for project_id: proj_20250701_170857_4ca65a83, project_name: Crie Servidor Simples Project, workspace: project_workspaces/proj_20250701_170857_4ca65a83
+{"event": "Trabalhando com o Projeto ID: proj_20250701_170857_4ca65a83", "level": "info", "timestamp": "2025-07-01T20:08:57.851384Z"}
+{"event": "Objetivo: Crie um servidor web simples em Python usando Flask que responda com \"Hello, World!\" na porta 5000.", "level": "info", "timestamp": "2025-07-01T20:08:57.851479Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83", "level": "info", "timestamp": "2025-07-01T20:08:57.851971Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Planning for goal: Crie um servidor web simples em Python usando Flask que responda com "Hello, World!" na porta 5000.
+Generating domain-specific tasks for project type 'web_app' with complexity 5
+Initial plan created with 8 tasks and saved to context.
+🎯 Agente inteligente planner_proj_20250701_170857_4ca65a83 registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_170857_4ca65a83 especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Using AsyncIOEngine.POLLER as I/O engine
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_170857_4ca65a83_200857: intelligent_a2a_system -> planner_proj_20250701_170857_4ca65a83
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_170857_4ca65a83 registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_170857_4ca65a83 especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_170857_4ca65a83_200857: intelligent_a2a_system -> executor_proj_20250701_170857_4ca65a83
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_170857_4ca65a83 registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_170857_4ca65a83 especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_170857_4ca65a83_200857: intelligent_a2a_system -> validator_proj_20250701_170857_4ca65a83
+Agente sender intelligent_a2a_system não encontrado
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:08:59.478144Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:08:59.478707Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:08:59.481468Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/templates/base.html", "level": "info", "timestamp": "2025-07-01T20:09:10.742737Z"}
+{"event": "Successfully wrote to artifacts/templates/base.html", "level": "info", "timestamp": "2025-07-01T20:09:10.743363Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/templates/base.html", "level": "info", "timestamp": "2025-07-01T20:09:10.744967Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/app.py", "level": "info", "timestamp": "2025-07-01T20:09:12.686291Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-01T20:09:12.686515Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/app.py", "level": "info", "timestamp": "2025-07-01T20:09:12.687814Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:09:14.120582Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:09:14.120825Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:09:14.122182Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-01T20:09:25.446997Z"}
+{"event": "Successfully wrote to artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-01T20:09:25.447249Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-01T20:09:25.448663Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/models.py", "level": "info", "timestamp": "2025-07-01T20:09:27.534613Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-01T20:09:27.535115Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/models.py", "level": "info", "timestamp": "2025-07-01T20:09:27.537930Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-01T20:09:34.283349Z"}
+{"event": "Successfully wrote to artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-01T20:09:34.283627Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_170857_4ca65a83/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-01T20:09:34.285019Z"}
+Replanning task 1e56b1a1-544b-4f69-83be-5bc2243d7b8c due to error: A tarefa 'Criar formulários de autenticação' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para forms.py....
+Replanning task b84b506b-5f7c-48ac-9e0e-75ae94c01aee due to error: A tarefa 'Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para forms.py....
+Replanning task c6ffddcf-bd5b-4e15-b9e9-c1296b1c68a4 due to error: A tarefa 'Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para forms.py....
+Replanning task 5c6cc762-23ea-42bb-84d3-6bb041de701a due to error: A tarefa 'Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para forms.py....
+Replanning task 0c7eb4b3-ed24-48a1-85ab-c38d66914f87 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para forms.py....
+Replanning task 459943cb-8509-45df-bcc1-7d998fe694df due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para forms.py....
+Replanning task 3c2afee4-a503-49a1-b694-832af937bbcf due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para form...
+Replanning task 2f0968a9-91b3-4287-ae83-075d3dae57e4 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM ...
+Replanning task 7cdb8b42-1998-4f39-8314-9208ee686c2d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúd...
+Replanning task da648aa7-a66a-4467-ad3e-19505564f372 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gera...
+Replanning task 9e9317d0-f765-4edc-98ac-feb0b7cbd399 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falh...
+Replanning task b3f75aef-4236-4645-b03b-39f9fe3cd199 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit code: 1, E...
+Replanning task 91804b35-3a4e-43c1-bfa7-eeb18e585bd4 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erros: Exit c...
+Replanning task e9fd0fc5-cca5-4336-b37c-e45f4b8df791 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últimos erro...
+Replanning task e2e52c65-a6e5-406b-913c-c20f788434ad due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentativas. Últ...
+Replanning task 9e6b2113-9cbe-4e7e-9958-ef750600141f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após 1 tentat...
+Replanning task 45730599-3bbf-4d67-98f9-af9316936d51 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' falhou após...
+Replanning task 26563a01-5b16-4a53-a016-910fc748c7c0 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenticação' fa...
+Replanning task 7ed6593f-9ec2-473b-80db-648f640c25bd due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários de autenti...
+Replanning task 4c2a30de-0fe4-4da7-bcd3-fcf9a0e4d517 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar formulários d...
+Replanning task 603c7c52-0ae6-4752-b3b0-a66d3682ccd5 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar form...
+Replanning task 36f1ed30-68c6-4277-adf0-db9e6980e06e due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: C...
+Replanning task ac58d8e9-f98c-43f3-b048-a700fe4fa13b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task fce47a20-0c72-430f-bbed-9bed46ba10c6 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 28d5dbf9-5a01-49f8-bfc2-a08da23b1655 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task c4dad7b7-2eca-44e3-b0da-635e78de54bb due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 5d57dd4d-4966-439f-9de8-b3ce2a58a978 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 7a69ed07-eec7-4403-9a3d-e0a951cacafa due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 647dbf15-d6ed-4da7-9320-6ae120325491 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 556383f1-bb63-4bc5-b9ea-7913ec898fb1 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 3f9ca3e3-edf9-4e5e-90c5-f50afec0cc20 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 200dcc16-bed6-48b3-a203-f33f6b2980c1 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 2840e2f0-ab85-4d40-9c8e-211e665c971a due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task fecbb261-cdf3-4f94-a55f-c2ebb7142dfc due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task d0d23868-b35e-4cad-aa51-6e5e1e894dfa due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task a78222fe-0b25-4cce-9477-0ee0650a8cf3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 23e8f183-cc9a-40f5-b85d-5b1b91d63d11 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task a6a97ef1-c240-4377-855d-eec6fde78ce0 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 118b4435-8e77-494a-a06f-a432b9b47068 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task ce8eb66b-6c74-42b7-98d8-5432cc7a07e4 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task ac18c4ce-578c-4af4-b899-8ae1613dd9a2 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 55d35416-98d9-43ed-a02f-55a8c5034bfe due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task aabc4615-3f33-4f9d-ab4d-f6bf161aef62 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 0f51e856-705e-4d72-8e01-c164fb39c0f3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task efc6e240-58c5-4d06-a008-5ea7a32d12db due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 4910d5c3-880e-42fd-8698-d6631735bee0 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Checking project completion for project_id: proj_20250701_170857_4ca65a83
+Completion check finished with status: completed, score: 1.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250701_170857_4ca65a83, backup_id: proj_20250701_170857_4ca65a83_20250701_170956
+Snapshot created successfully at: project_workspaces/backups/proj_20250701_170857_4ca65a83_20250701_170956.zip, size_mb: 0.01
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-01T20:09:56.118040Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-01T20:18:04.480710Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-01T20:18:04.480933Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-01T20:18:04.481190Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-01T20:18:04.486670Z"}
+Project context saved for project_id: proj_20250701_171804_7ff3bdfe, snapshot_created: False
+New project context created for project_id: proj_20250701_171804_7ff3bdfe, project_name: Crie Aplicação Lista Project, workspace: project_workspaces/proj_20250701_171804_7ff3bdfe
+{"event": "Trabalhando com o Projeto ID: proj_20250701_171804_7ff3bdfe", "level": "info", "timestamp": "2025-07-01T20:18:04.489297Z"}
+{"event": "Objetivo: Crie uma aplica\u00e7\u00e3o web de lista de tarefas (To-Do List) com as seguintes funcionalidades: 1. Adicionar tarefas. 2. Visualizar todas as tarefas. 3. Marcar tarefas como conclu\u00eddas. 4. As tarefas devem ser armazenadas em um banco de dados SQLite. 5. A interface deve ser limpa e funcional, utilizando um framework CSS como Bootstrap.", "level": "info", "timestamp": "2025-07-01T20:18:04.489394Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe", "level": "info", "timestamp": "2025-07-01T20:18:04.489922Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Planning for goal: Crie uma aplicação web de lista de tarefas (To-Do List) com as seguintes funcionalidades: 1. Adicionar tarefas. 2. Visualizar todas as tarefas. 3. Marcar tarefas como concluídas. 4. As tarefas devem ser armazenadas em um banco de dados SQLite. 5. A interface deve ser limpa e funcional, utilizando um framework CSS como Bootstrap.
+Generating domain-specific tasks for project type 'data_science' with complexity 9
+Initial plan created with 9 tasks and saved to context.
+🎯 Agente inteligente planner_proj_20250701_171804_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_171804_7ff3bdfe especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Using AsyncIOEngine.POLLER as I/O engine
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_171804_7ff3bdfe_201804: intelligent_a2a_system -> planner_proj_20250701_171804_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_171804_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_171804_7ff3bdfe especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_171804_7ff3bdfe_201804: intelligent_a2a_system -> executor_proj_20250701_171804_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_171804_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_171804_7ff3bdfe especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_171804_7ff3bdfe_201804: intelligent_a2a_system -> validator_proj_20250701_171804_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:18:09.174836Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:18:09.175127Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:18:09.176684Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:18:16.958609Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:18:16.958872Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:18:16.960867Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/main.py", "level": "info", "timestamp": "2025-07-01T20:18:40.614306Z"}
+{"event": "Successfully wrote to artifacts/main.py", "level": "info", "timestamp": "2025-07-01T20:18:40.614551Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/main.py", "level": "info", "timestamp": "2025-07-01T20:18:40.615949Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/config.py", "level": "info", "timestamp": "2025-07-01T20:18:57.815818Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-01T20:18:57.816100Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/config.py", "level": "info", "timestamp": "2025-07-01T20:18:57.817745Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/logger.py", "level": "info", "timestamp": "2025-07-01T20:19:16.547218Z"}
+{"event": "Successfully wrote to artifacts/logger.py", "level": "info", "timestamp": "2025-07-01T20:19:16.547501Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/logger.py", "level": "info", "timestamp": "2025-07-01T20:19:16.549271Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/tests.py", "level": "info", "timestamp": "2025-07-01T20:19:49.939186Z"}
+{"event": "Successfully wrote to artifacts/tests.py", "level": "info", "timestamp": "2025-07-01T20:19:49.939644Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/tests.py", "level": "info", "timestamp": "2025-07-01T20:19:49.941074Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-01T20:20:18.918871Z"}
+{"event": "Successfully wrote to artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-01T20:20:18.919093Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-01T20:20:18.920333Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-01T20:20:45.441269Z"}
+{"event": "Successfully wrote to artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-01T20:20:45.441958Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-01T20:20:45.445324Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/security.py", "level": "info", "timestamp": "2025-07-01T20:21:20.975425Z"}
+{"event": "Successfully wrote to artifacts/security.py", "level": "info", "timestamp": "2025-07-01T20:21:20.975675Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_171804_7ff3bdfe/artifacts/security.py", "level": "info", "timestamp": "2025-07-01T20:21:20.977191Z"}
+Checking project completion for project_id: proj_20250701_171804_7ff3bdfe
+Completion check finished with status: completed, score: 1.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250701_171804_7ff3bdfe, backup_id: proj_20250701_171804_7ff3bdfe_20250701_172120
+Snapshot created successfully at: project_workspaces/backups/proj_20250701_171804_7ff3bdfe_20250701_172120.zip, size_mb: 0.02
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-01T20:21:20.985582Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-01T20:25:13.871644Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-01T20:25:13.871898Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-01T20:25:13.872023Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-01T20:25:13.877870Z"}
+Project context saved for project_id: proj_20250701_172513_7ff3bdfe, snapshot_created: False
+New project context created for project_id: proj_20250701_172513_7ff3bdfe, project_name: Crie Aplicação Lista Project, workspace: project_workspaces/proj_20250701_172513_7ff3bdfe
+{"event": "Trabalhando com o Projeto ID: proj_20250701_172513_7ff3bdfe", "level": "info", "timestamp": "2025-07-01T20:25:13.880115Z"}
+{"event": "Objetivo: Crie uma aplica\u00e7\u00e3o web de lista de tarefas (To-Do List) com as seguintes funcionalidades: 1. Adicionar tarefas. 2. Visualizar todas as tarefas. 3. Marcar tarefas como conclu\u00eddas. 4. As tarefas devem ser armazenadas em um banco de dados SQLite. 5. A interface deve ser limpa e funcional, utilizando um framework CSS como Bootstrap.", "level": "info", "timestamp": "2025-07-01T20:25:13.880237Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe", "level": "info", "timestamp": "2025-07-01T20:25:13.880803Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Planning for goal: Crie uma aplicação web de lista de tarefas (To-Do List) com as seguintes funcionalidades: 1. Adicionar tarefas. 2. Visualizar todas as tarefas. 3. Marcar tarefas como concluídas. 4. As tarefas devem ser armazenadas em um banco de dados SQLite. 5. A interface deve ser limpa e funcional, utilizando um framework CSS como Bootstrap.
+Generating domain-specific tasks for project type 'data_science' with complexity 9
+Initial plan created with 9 tasks and saved to context.
+🎯 Agente inteligente planner_proj_20250701_172513_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_172513_7ff3bdfe especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Using AsyncIOEngine.POLLER as I/O engine
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_172513_7ff3bdfe_202513: intelligent_a2a_system -> planner_proj_20250701_172513_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_172513_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_172513_7ff3bdfe especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_172513_7ff3bdfe_202513: intelligent_a2a_system -> executor_proj_20250701_172513_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_172513_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_172513_7ff3bdfe especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_172513_7ff3bdfe_202513: intelligent_a2a_system -> validator_proj_20250701_172513_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:25:20.903245Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:25:20.903471Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-01T20:25:20.904697Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:25:24.897432Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:25:24.897674Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/README.md", "level": "info", "timestamp": "2025-07-01T20:25:24.898968Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/main.py", "level": "info", "timestamp": "2025-07-01T20:25:40.881669Z"}
+{"event": "Successfully wrote to artifacts/main.py", "level": "info", "timestamp": "2025-07-01T20:25:40.881900Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/main.py", "level": "info", "timestamp": "2025-07-01T20:25:40.883404Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/config.py", "level": "info", "timestamp": "2025-07-01T20:26:02.934537Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-01T20:26:02.934781Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/config.py", "level": "info", "timestamp": "2025-07-01T20:26:02.936094Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/logger.py", "level": "info", "timestamp": "2025-07-01T20:26:19.192306Z"}
+{"event": "Successfully wrote to artifacts/logger.py", "level": "info", "timestamp": "2025-07-01T20:26:19.192553Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/logger.py", "level": "info", "timestamp": "2025-07-01T20:26:19.194073Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/tests.py", "level": "info", "timestamp": "2025-07-01T20:26:52.246990Z"}
+{"event": "Successfully wrote to artifacts/tests.py", "level": "info", "timestamp": "2025-07-01T20:26:52.247231Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/tests.py", "level": "info", "timestamp": "2025-07-01T20:26:52.248465Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-01T20:27:09.348493Z"}
+{"event": "Successfully wrote to artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-01T20:27:09.348742Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-01T20:27:09.350061Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-01T20:27:30.545968Z"}
+{"event": "Successfully wrote to artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-01T20:27:30.546336Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-01T20:27:30.547782Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/security.py", "level": "info", "timestamp": "2025-07-01T20:28:06.283792Z"}
+{"event": "Successfully wrote to artifacts/security.py", "level": "info", "timestamp": "2025-07-01T20:28:06.284099Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172513_7ff3bdfe/artifacts/security.py", "level": "info", "timestamp": "2025-07-01T20:28:06.286113Z"}
+Checking project completion for project_id: proj_20250701_172513_7ff3bdfe
+Completion check finished with status: completed, score: 1.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250701_172513_7ff3bdfe, backup_id: proj_20250701_172513_7ff3bdfe_20250701_172806
+Snapshot created successfully at: project_workspaces/backups/proj_20250701_172513_7ff3bdfe_20250701_172806.zip, size_mb: 0.02
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-01T20:28:06.294086Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-01T20:29:10.576805Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-01T20:29:10.577021Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-01T20:29:10.577142Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-01T20:29:10.583136Z"}
+Project context saved for project_id: proj_20250701_172910_7ff3bdfe, snapshot_created: False
+New project context created for project_id: proj_20250701_172910_7ff3bdfe, project_name: Crie Aplicação Lista Project, workspace: project_workspaces/proj_20250701_172910_7ff3bdfe
+{"event": "Trabalhando com o Projeto ID: proj_20250701_172910_7ff3bdfe", "level": "info", "timestamp": "2025-07-01T20:29:10.585292Z"}
+{"event": "Objetivo: Crie uma aplica\u00e7\u00e3o web de lista de tarefas (To-Do List) com as seguintes funcionalidades: 1. Adicionar tarefas. 2. Visualizar todas as tarefas. 3. Marcar tarefas como conclu\u00eddas. 4. As tarefas devem ser armazenadas em um banco de dados SQLite. 5. A interface deve ser limpa e funcional, utilizando um framework CSS como Bootstrap.", "level": "info", "timestamp": "2025-07-01T20:29:10.585383Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_172910_7ff3bdfe", "level": "info", "timestamp": "2025-07-01T20:29:10.585876Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Planning for goal: Crie uma aplicação web de lista de tarefas (To-Do List) com as seguintes funcionalidades: 1. Adicionar tarefas. 2. Visualizar todas as tarefas. 3. Marcar tarefas como concluídas. 4. As tarefas devem ser armazenadas em um banco de dados SQLite. 5. A interface deve ser limpa e funcional, utilizando um framework CSS como Bootstrap.
+Generating domain-specific tasks for project type 'data_science' with complexity 9
+Initial plan created with 9 tasks and saved to context.
+Using AsyncIOEngine.POLLER as I/O engine
+🎯 Agente inteligente planner_proj_20250701_172910_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_172910_7ff3bdfe especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_172910_7ff3bdfe_202910: intelligent_a2a_system -> planner_proj_20250701_172910_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_172910_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_172910_7ff3bdfe especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_172910_7ff3bdfe_202910: intelligent_a2a_system -> executor_proj_20250701_172910_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_172910_7ff3bdfe registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_172910_7ff3bdfe especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_172910_7ff3bdfe_202910: intelligent_a2a_system -> validator_proj_20250701_172910_7ff3bdfe
+Agente sender intelligent_a2a_system não encontrado
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-01T20:29:38.507024Z"}

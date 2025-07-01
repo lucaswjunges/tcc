@@ -99,7 +99,7 @@ class CriteriaEngine:
         Returns:
             Relatório de conclusão
         """
-        logger.info("Checking project completion", project_id=project_context.project_id)
+        logger.info(f"Checking project completion for project_id: {project_context.project_id}")
         
         project_type = project_context.project_type or "generic"
         criteria = self.default_criteria.get(project_type, self.default_criteria["generic"])
@@ -157,10 +157,7 @@ class CriteriaEngine:
             summary=summary
         )
         
-        logger.info("Completion check finished",
-                   status=status.value,
-                   score=overall_score,
-                   total_checks=len(checks))
+        logger.info(f"Completion check finished with status: {status.value}, score: {overall_score}, total_checks: {len(checks)}")
         
         return report
     

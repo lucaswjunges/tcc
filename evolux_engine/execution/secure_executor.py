@@ -62,9 +62,7 @@ class SecureExecutor:
         # Verificar se Docker está disponível
         self.docker_available = self._check_docker_availability()
         
-        logger.info("SecureExecutor initialized",
-                   docker_available=self.docker_available,
-                   security_level=self.security_gateway.security_level.value)
+        logger.info(f"SecureExecutor initialized, docker_available: {self.docker_available}, security_level: {self.security_gateway.security_level.value}")
     
     def _check_docker_availability(self) -> bool:
         """Verifica se Docker está disponível no sistema"""
@@ -101,17 +99,12 @@ class SecureExecutor:
         execution_id = str(uuid.uuid4())
         self.execution_count += 1
         
-        logger.info("Starting secure command execution",
-                   execution_id=execution_id,
-                   command=command[:100],
-                   working_dir=working_directory)
+        logger.info(f"Starting secure command execution for execution_id: {execution_id}, command: {command[:100]}, working_dir: {working_directory}")
         
         # 1. Validação de segurança
         security_result = await self.security_gateway.validate_command(command)
         if not security_result.is_safe:
-            logger.warning("Command blocked by security gateway",
-                          execution_id=execution_id,
-                          reason=security_result.blocked_reason)
+            logger.warning(f"Command blocked by security gateway for execution_id: {execution_id}, reason: {security_result.blocked_reason}")
             return ExecutionResult(
                 command_executed=command,
                 exit_code=1,
@@ -149,10 +142,7 @@ class SecureExecutor:
         # 4. Adicionar warnings de segurança
         result.security_warnings.extend(security_result.security_warnings)
         
-        logger.info("Command execution completed",
-                   execution_id=execution_id,
-                   exit_code=result.exit_code,
-                   execution_time=result.execution_time_ms)
+        logger.info(f"Command execution completed for execution_id: {execution_id}, exit_code: {result.exit_code}, execution_time: {result.execution_time_ms}")
         
         return result
     
@@ -203,9 +193,7 @@ class SecureExecutor:
                         docker_cmd.insert(-4, f'--env={key}={value}')
                 
                 # Executar comando
-                logger.debug("Executing Docker command",
-                           execution_id=execution_id,
-                           docker_cmd=docker_cmd[:5])  # Log apenas início do comando
+                logger.debug(f"Executing Docker command for execution_id: {execution_id}, docker_cmd: {docker_cmd[:5]}")
                 
                 process = await asyncio.create_subprocess_exec(
                     *docker_cmd,
@@ -222,8 +210,7 @@ class SecureExecutor:
                     exit_code = process.returncode
                     
                 except asyncio.TimeoutError:
-                    logger.warning("Docker execution timeout",
-                                 execution_id=execution_id)
+                    logger.warning(f"Docker execution timeout for execution_id: {execution_id}")
                     process.kill()
                     await process.wait()
                     
@@ -260,9 +247,7 @@ class SecureExecutor:
                 )
                 
         except Exception as e:
-            logger.error("Docker execution failed",
-                        execution_id=execution_id,
-                        error=str(e))
+            logger.error(f"Docker execution failed for execution_id: {execution_id}, error: {str(e)}")
             
             execution_time_ms = int((time.time() - start_time) * 1000)
             
@@ -313,8 +298,7 @@ class SecureExecutor:
                 exit_code = process.returncode
                 
             except asyncio.TimeoutError:
-                logger.warning("Local execution timeout",
-                             execution_id=execution_id)
+                logger.warning(f"Local execution timeout for execution_id: {execution_id}")
                 process.kill()
                 await process.wait()
                 
@@ -346,9 +330,7 @@ class SecureExecutor:
             )
             
         except Exception as e:
-            logger.error("Local execution failed",
-                        execution_id=execution_id,
-                        error=str(e))
+            logger.error(f"Local execution failed for execution_id: {execution_id}, error: {str(e)}")
             
             execution_time_ms = int((time.time() - start_time) * 1000)
             
@@ -391,7 +373,7 @@ class SecureExecutor:
                             files_modified.append(rel_path)
             
         except Exception as e:
-            logger.warning("Error detecting file changes", error=str(e))
+            logger.warning(f"Error detecting file changes: {str(e)}")
         
         return files_created, files_modified
     
@@ -427,9 +409,7 @@ class SecureExecutor:
                 try:
                     stdout, stderr = await asyncio.wait_for(stop_proc.communicate(), timeout=15)
                     if stop_proc.returncode != 0:
-                        logger.warning("Docker stop failed, trying force kill",
-                                     execution_id=execution_id,
-                                     stderr=stderr.decode())
+                        logger.warning(f"Docker stop failed, trying force kill for execution_id: {execution_id}, stderr: {stderr.decode()}")
                         
                         # Se falhar, força a remoção
                         kill_proc = await asyncio.create_subprocess_exec(
@@ -440,9 +420,7 @@ class SecureExecutor:
                         await asyncio.wait_for(kill_proc.communicate(), timeout=10)
                         
                 except asyncio.TimeoutError:
-                    logger.error("Container cleanup timeout, forcing removal",
-                               execution_id=execution_id,
-                               container_id=container_id)
+                    logger.error(f"Container cleanup timeout, forcing removal for execution_id: {execution_id}, container_id: {container_id}")
                     
                     # Último recurso: force remove
                     try:
@@ -453,17 +431,12 @@ class SecureExecutor:
                         )
                         await asyncio.wait_for(force_proc.communicate(), timeout=5)
                     except:
-                        logger.error("Failed to force remove container", container_id=container_id)
+                        logger.error(f"Failed to force remove container: {container_id}")
                 
-                logger.info("Container stopped and cleaned up",
-                           execution_id=execution_id,
-                           container_id=container_id)
+                logger.info(f"Container stopped and cleaned up for execution_id: {execution_id}, container_id: {container_id}")
                 
             except Exception as e:
-                logger.error("Failed to cleanup container",
-                           execution_id=execution_id,
-                           container_id=container_id,
-                           error=str(e))
+                logger.error(f"Failed to cleanup container for execution_id: {execution_id}, container_id: {container_id}, error: {str(e)}")
             
             finally:
                 # Sempre remove da lista ativa, mesmo se cleanup falhou
@@ -496,12 +469,12 @@ class SecureExecutor:
                             stderr=asyncio.subprocess.DEVNULL
                         )
                         await rm_proc.communicate()
-                        logger.debug("Cleaned up volume", volume=volume_name)
+                        logger.debug(f"Cleaned up volume: {volume_name}")
                     except Exception as e:
-                        logger.warning("Failed to cleanup volume", volume=volume_name, error=str(e))
+                        logger.warning(f"Failed to cleanup volume: {volume_name}, error: {str(e)}")
                         
         except Exception as e:
-            logger.warning("Error during volume cleanup", execution_id=execution_id, error=str(e))
+            logger.warning(f"Error during volume cleanup for execution_id: {execution_id}, error: {str(e)}")
     
     async def cleanup_all(self):
         """Limpa todos os recursos ativos"""
@@ -513,8 +486,7 @@ class SecureExecutor:
         if cleanup_tasks:
             await asyncio.gather(*cleanup_tasks, return_exceptions=True)
         
-        logger.info("All executions cleaned up",
-                   execution_count=self.execution_count)
+        logger.info(f"All executions cleaned up: {self.execution_count}")
     
     def get_executor_stats(self) -> Dict[str, Any]:
         """Retorna estatísticas do executor"""

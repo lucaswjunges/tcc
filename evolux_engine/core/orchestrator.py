@@ -5,7 +5,7 @@ from loguru import logger
 # --- Imports Corrigidos para a Nova Estrutura ---
 from evolux_engine.core.dependency_graph import DependencyGraph
 from evolux_engine.models.project_context import ProjectContext
-from evolux_engine.schemas.contracts import Task, TaskStatus, ProjectStatus, ExecutionResult, ValidationResult
+from evolux_engine.schemas.contracts import Task, TaskType, TaskStatus, ProjectStatus, ExecutionResult, ValidationResult
 from evolux_engine.services.config_manager import ConfigManager
 from evolux_engine.llms.llm_client import LLMClient
 from evolux_engine.llms.model_router import ModelRouter, TaskCategory
@@ -123,7 +123,7 @@ class Orchestrator:
         if self.a2a_enabled:
             asyncio.create_task(self._initialize_intelligent_a2a())
 
-        logger.info(f"Orchestrator (ID: {self.agent_id}) inicializado para projeto '{self.project_context.project_name}' com A2A Inteligente: {'ATIVADO' if self.a2a_enabled else 'DESATIVADO'} | Metacognição: {'ATIVADA' if self.metacognition_enabled else 'DESATIVADA'}.")
+        logger.info(f"Orchestrator (ID: {self.agent_id}) initialized for project '{self.project_context.project_name}' with Intelligent A2A: {'ENABLED' if self.a2a_enabled else 'DISABLED'} | Metacognition: {'ENABLED' if self.metacognition_enabled else 'DISABLED'}.")
 
     async def _get_runnable_tasks(self) -> List[Task]:
         """
@@ -132,7 +132,7 @@ class Orchestrator:
         """
         runnable_tasks = self.dependency_graph.get_runnable_tasks()
         if runnable_tasks:
-            logger.info(f"Orchestrator: {len(runnable_tasks)} tarefas prontas para execução paralela a partir do grafo.")
+            logger.info(f"Orchestrator: {len(runnable_tasks)} tasks ready for parallel execution from the graph.")
         return runnable_tasks
 
     async def run_project_cycle(self) -> ProjectStatus:
@@ -140,7 +140,7 @@ class Orchestrator:
         Executa o ciclo principal do projeto: planejar (se necessário), executar tarefas, validar.
         🚀 MODO INTELIGENTE A2A + 🧠 METACOGNIÇÃO ATIVADOS
         """
-        logger.info(f"Orchestrator (ID: {self.agent_id}): Iniciando ciclo do projeto '{self.project_context.project_name}'.")
+        logger.info(f"Orchestrator (ID: {self.agent_id}): Starting project cycle for '{self.project_context.project_name}'.")
 
         # 🧠 METACOGNIÇÃO: Auto-reflexão sobre estratégia de execução
         if self.metacognition_enabled:
@@ -153,7 +153,7 @@ class Orchestrator:
             
             # Escolher estratégia de pensamento baseada em auto-reflexão
             thinking_strategy = await self.metacognitive_engine.adapt_thinking_strategy(execution_context)
-            logger.info(f"🤔 METACOGNIÇÃO: Estratégia selecionada: {thinking_strategy.value}")
+            logger.info(f"🤔 METACOGNITION: Selected strategy: {thinking_strategy.value}")
             
             # Questionar próprias suposições sobre abordagem
             self_questions = await self.metacognitive_engine.question_own_assumptions({
@@ -161,34 +161,45 @@ class Orchestrator:
                 "problem_definition": self.project_context.project_goal
             })
             for question in self_questions[:3]:  # Log as 3 primeiras questões
-                logger.info(f"❓ METACOGNIÇÃO: {question}")
+                logger.info(f"❓ METACOGNITION: {question}")
 
         # 🧠 EXECUÇÃO INTELIGENTE A2A - DECISÃO AUTOMÁTICA
         if self.a2a_enabled and len(self.project_context.task_queue) >= 3:
-            logger.info("🚀 MODO A2A INTELIGENTE: Ativando execução colaborativa avançada")
+            logger.info("🚀 INTELLIGENT A2A MODE: Activating advanced collaborative execution")
             return await self._run_intelligent_a2a_cycle()
         else:
-            logger.info("🔄 MODO TRADICIONAL: Executando ciclo P.O.D.A. clássico")
+            logger.info("🔄 TRADITIONAL MODE: Executing classic P.O.D.A. cycle")
             return await self._run_traditional_cycle()
 
     async def _run_traditional_cycle(self) -> ProjectStatus:
         """Executa ciclo tradicional P.O.D.A."""
-        # Fase 1: Planejamento
+        # Fase 1: Planejamento e Revisão Crítica
         if not self.project_context.task_queue:
-            logger.info(f"Orchestrator: Fase de Planejamento Inicial.")
+            logger.info("Orchestrator: Initial Planning Phase.")
             self.project_context.status = ProjectStatus.PLANNING
             await self.project_context.save_context()
-            
+
             plan_successful = await self.planner_agent.generate_initial_plan()
-            if plan_successful:
-                # Disparar a revisão do plano em segundo plano
-                asyncio.create_task(self.run_plan_review())
-            else:
-                logger.error("Falha no planejamento inicial. Encerrando.")
+            if not plan_successful:
+                logger.error("Initial planning failed. Aborting.")
                 self.project_context.status = ProjectStatus.PLANNING_FAILED
                 await self.project_context.save_context()
                 return self.project_context.status
-            
+
+            # A revisão do plano agora é um passo bloqueante e crítico
+            logger.info("Orchestrator: Critical Plan Review Phase.")
+            plan_review_report = await self.critic_agent.review_plan(self.project_context.task_queue)
+            logger.info(f"🕵️ Plan Review Completed: Score={plan_review_report['score']:.2f}, Approved={plan_review_report['is_approved']}")
+
+            if not plan_review_report['is_approved']:
+                logger.error(f"Plan rejected by CriticAgent. Issues: {plan_review_report['potential_issues']}. Aborting execution.")
+                # Idealmente, aqui deveria haver um ciclo de replanejamento com o feedback.
+                # Por agora, vamos falhar para evitar a execução de um plano ruim.
+                self.project_context.status = ProjectStatus.PLANNING_FAILED
+                await self.project_context.save_context()
+                return self.project_context.status
+
+            logger.success("Plan approved by CriticAgent. Proceeding to execution.")
             self.project_context.status = ProjectStatus.PLANNED
             await self.project_context.save_context()
 
@@ -201,13 +212,13 @@ class Orchestrator:
         while not self.dependency_graph.is_completed() and self.project_context.metrics.total_iterations < max_iterations:
             self.project_context.metrics.total_iterations += 1
             iteration = self.project_context.metrics.total_iterations
-            logger.info(f"--- Iniciando Ciclo P.O.D.A. #{iteration} ---")
+            logger.info(f"--- Starting P.O.D.A. Cycle #{iteration} ---")
             
             # P.O.D.A. PHASE 1 & 2: PLAN & ORIENT (Planejar e Orientar)
             # Obter todas as tarefas prontas para execução paralela
             runnable_tasks = await self._get_runnable_tasks()
             if not runnable_tasks:
-                logger.info("Nenhuma tarefa executável encontrada. Verificando conclusão do projeto.")
+                logger.info("No runnable tasks found. Checking for project completion.")
                 break
 
             # Marcar todas as tarefas como IN_PROGRESS no grafo e no contexto
@@ -223,7 +234,7 @@ class Orchestrator:
             # Processar resultados e atualizar o contexto
             for result in results:
                 if isinstance(result, Exception):
-                    logger.error(f"Erro inesperado durante a execução paralela de tarefa: {result}")
+                    logger.error(f"Unexpected error during parallel task execution: {result}")
                     # Aqui, precisaríamos de uma forma de mapear o erro de volta para a tarefa
                     # Por enquanto, vamos logar e continuar. Uma implementação mais robusta
                     # retornaria uma tupla (task_id, result) de _execute_and_process_task.
@@ -232,7 +243,7 @@ class Orchestrator:
             await self.project_context.save_context()
 
         # Fase 3: Conclusão e Entrega conforme especificação
-        logger.info("🏁 CONCLUSÃO: Iniciando verificação final do projeto")
+        logger.info("🏁 CONCLUSION: Starting final project verification")
         
         # 1. Verificação Final (CriteriaEngine)
         completion_report = self.criteria_engine.check_completion(self.project_context)
@@ -246,9 +257,9 @@ class Orchestrator:
                 artifacts_dir, 
                 backup_description
             )
-            logger.info(f"📦 Backup final criado: {backup_path}")
+            logger.info(f"📦 Final backup created: {backup_path}")
         except Exception as e:
-            logger.error(f"Falha ao criar backup final: {e}")
+            logger.error(f"Failed to create final backup: {e}")
 
         # 3. Determinar status final baseado na verificação
         if completion_report.status.value == "completed":
@@ -259,22 +270,18 @@ class Orchestrator:
             final_status = ProjectStatus.COMPLETED_WITH_FAILURES
 
         # Log do relatório final
-        logger.info("📊 Relatório Final de Conclusão", 
-                   status=completion_report.status.value,
-                   score=completion_report.overall_score,
-                   summary=completion_report.summary,
-                   recommendations=completion_report.recommendations)
+        logger.info(f"📊 Final Completion Report: status={completion_report.status.value}, score={completion_report.overall_score}, summary={completion_report.summary}, recommendations={completion_report.recommendations}")
 
         self.project_context.status = final_status
         await self.project_context.save_context()
-        logger.info(f"🎯 Ciclo do projeto finalizado com status: {self.project_context.status.value}")
+        logger.info(f"🎯 Project cycle finished with status: {self.project_context.status.value}")
         return self.project_context.status
 
     async def _execute_and_process_task(self, task: Task):
         """
         Encapsula a lógica completa de execução e processamento de uma única tarefa.
         """
-        logger.info(f"⚡ ACT: Iniciando execução da tarefa {task.task_id}: {task.description}")
+        logger.info(f"⚡ ACT: Starting execution of task {task.task_id}: {task.description}")
         
         # Métricas de observabilidade
         start_time = asyncio.get_event_loop().time()
@@ -300,7 +307,7 @@ class Orchestrator:
 
         # Processar o resultado da validação e decidir o próximo passo para a tarefa
         if validation_result.validation_passed:
-            logger.success(f"Tarefa {task.task_id} concluída e validada com sucesso!")
+            logger.success(f"Task {task.task_id} completed and validated successfully!")
             self.dependency_graph.update_task_status(task.task_id, TaskStatus.COMPLETED)
             task.status = TaskStatus.COMPLETED
             self.project_context.completed_tasks.append(task)
@@ -309,11 +316,11 @@ class Orchestrator:
             if task.type in [TaskType.CREATE_FILE, TaskType.MODIFY_FILE] and hasattr(task.details, 'file_path'):
                 asyncio.create_task(self.run_code_review(task))
         else:
-            issues_str = ', '.join(validation_result.identified_issues) if validation_result.identified_issues else "Motivos não especificados"
-            logger.warning(f"Validação para tarefa {task.task_id} falhou: {issues_str}")
+            issues_str = ', '.join(validation_result.identified_issues) if validation_result.identified_issues else "Unspecified reasons"
+            logger.warning(f"Validation for task {task.task_id} failed: {issues_str}")
             task.retries += 1
             if task.retries >= task.max_retries:
-                logger.error(f"Tarefa {task.task_id} excedeu o máximo de tentativas. Acionando replanejamento.")
+                logger.error(f"Task {task.task_id} exceeded maximum retries. Triggering replanning.")
                 
                 # Coletar feedback de erro para o planejador
                 error_feedback = (
@@ -325,7 +332,7 @@ class Orchestrator:
                 new_tasks = await self.planner_agent.replan_task(task, error_feedback)
                 
                 if new_tasks:
-                    logger.info(f"Replanejamento gerou {len(new_tasks)} nova(s) tarefa(s).")
+                    logger.info(f"Replanning generated {len(new_tasks)} new task(s).")
                     # Marcar a tarefa antiga como falha e removê-la do grafo ativo
                     self.dependency_graph.update_task_status(task.task_id, TaskStatus.FAILED)
                     task.status = TaskStatus.FAILED
@@ -336,12 +343,12 @@ class Orchestrator:
                         self.dependency_graph.add_task(new_task)
                         self.project_context.task_queue.append(new_task)
                 else:
-                    logger.error(f"Replanejamento para a tarefa {task.task_id} falhou. Marcando como falha crítica.")
+                    logger.error(f"Replanning for task {task.task_id} failed. Marking as critical failure.")
                     self.dependency_graph.update_task_status(task.task_id, TaskStatus.FAILED)
                     task.status = TaskStatus.FAILED
                     self.project_context.failed_tasks.append(task)
             else:
-                logger.info(f"Tarefa {task.task_id} será tentada novamente (tentativa {task.retries}/{task.max_retries}).")
+                logger.info(f"Task {task.task_id} will be retried (attempt {task.retries}/{task.max_retries}).")
                 self.dependency_graph.update_task_status(task.task_id, TaskStatus.PENDING)
                 task.status = TaskStatus.PENDING
         
@@ -357,16 +364,16 @@ class Orchestrator:
 
     async def run_plan_review(self):
         """Executa a revisão do plano inicial em segundo plano."""
-        logger.info("🕵️ CriticAgent: Iniciando revisão do plano em segundo plano...")
+        logger.info("🕵️ CriticAgent: Starting plan review in the background...")
         report = await self.critic_agent.review_plan(self.project_context.task_queue)
-        logger.info(f"🕵️ Crítica do Plano Concluída: Score={report['score']:.2f}, Aprovado={report['is_approved']}")
+        logger.info(f"🕵️ Plan Review Completed: Score={report['score']:.2f}, Approved={report['is_approved']}")
         if not report['is_approved']:
-            logger.warning(f"Problemas no plano identificados pelo CriticAgent: {report['potential_issues']}")
+            logger.warning(f"Issues identified in the plan by CriticAgent: {report['potential_issues']}")
         # O feedback poderia ser armazenado no ProjectContext para o Planner usar no futuro.
 
     async def run_code_review(self, task: Task):
         """Executa a revisão de um artefato de código em segundo plano."""
-        logger.info(f"🕵️ CriticAgent: Iniciando revisão do código da tarefa {task.task_id}...")
+        logger.info(f"🕵️ CriticAgent: Starting code review for task {task.task_id}...")
         file_path = task.details.file_path
         relative_file_path = f"artifacts/{file_path}"
         
@@ -375,14 +382,14 @@ class Orchestrator:
             artifact_state = self.project_context.artifacts_state.get(relative_file_path)
             if content and artifact_state:
                 report = await self.critic_agent.review_code_artifact(artifact_state, content)
-                logger.info(f"🕵️ Crítica de Código Concluída ({file_path}): Score={report['score']:.2f}, Aprovado={report['is_approved']}")
+                logger.info(f"🕵️ Code Review Completed ({file_path}): Score={report['score']:.2f}, Approved={report['is_approved']}")
                 if not report['is_approved']:
-                    logger.warning(f"Problemas no código de '{file_path}': {report['potential_issues']}")
+                    logger.warning(f"Issues in the code of '{file_path}': {report['potential_issues']}")
                 # Armazenar o feedback para refinamento futuro
             else:
-                logger.warning(f"Não foi possível ler o conteúdo ou estado do artefato para revisão: {file_path}")
+                logger.warning(f"Could not read content or artifact state for review: {file_path}")
         except Exception as e:
-            logger.error(f"Erro durante a revisão de código para {file_path}: {e}")
+            logger.error(f"Error during code review for {file_path}: {e}")
 
 
     # ============================================================================
@@ -392,7 +399,7 @@ class Orchestrator:
     async def _initialize_intelligent_a2a(self):
         """Inicializa sistema A2A inteligente com os agentes"""
         try:
-            logger.info("🧠 Inicializando sistema A2A inteligente...")
+            logger.info("🧠 Initializing intelligent A2A system...")
             
             # Registrar agentes principais no sistema inteligente
             await self.intelligent_a2a.register_intelligent_agent(
@@ -422,10 +429,10 @@ class Orchestrator:
                 }
             )
             
-            logger.info("✅ Sistema A2A inteligente inicializado com 3 agentes especializados")
+            logger.info("✅ Intelligent A2A system initialized with 3 specialized agents")
             
         except Exception as e:
-            logger.error(f"❌ Erro na inicialização A2A: {e}")
+            logger.error(f"❌ Error in A2A initialization: {e}")
             self.a2a_enabled = False
 
     async def _run_intelligent_a2a_cycle(self) -> ProjectStatus:
@@ -433,19 +440,19 @@ class Orchestrator:
         🚀 EXECUÇÃO INTELIGENTE A2A
         Usa colaboração avançada, especialização dinâmica e fault tolerance
         """
-        logger.info("🚀 INICIANDO EXECUÇÃO INTELIGENTE A2A")
+        logger.info("🚀 STARTING INTELLIGENT A2A EXECUTION")
         
         try:
             # Fase 1: Planejamento Colaborativo (se necessário)
             if not self.project_context.task_queue:
-                logger.info("🧠 Fase de Planejamento Colaborativo A2A")
+                logger.info("🧠 Collaborative Planning Phase A2A")
                 self.project_context.status = ProjectStatus.PLANNING
                 await self.project_context.save_context()
                 
                 # Usar planner especializado
                 plan_successful = await self._execute_collaborative_planning()
                 if not plan_successful:
-                    logger.error("❌ Falha no planejamento colaborativo")
+                    logger.error("❌ Collaborative planning failed")
                     self.project_context.status = ProjectStatus.PLANNING_FAILED
                     await self.project_context.save_context()
                     return self.project_context.status
@@ -454,19 +461,19 @@ class Orchestrator:
                 await self.project_context.save_context()
             
             # Fase 2: Execução Inteligente via Pipeline Colaborativo
-            logger.info("⚡ Iniciando Pipeline Colaborativo Inteligente")
+            logger.info("⚡ Starting Intelligent Collaborative Pipeline")
             self.project_context.status = ProjectStatus.EXECUTING
             await self.project_context.save_context()
             
             # 🧠 METACOGNIÇÃO: Integrar metacognição com sistema A2A
             if self.metacognition_enabled:
-                logger.info("🧠 Integrando metacognição com sistema A2A colaborativo")
+                logger.info("🧠 Integrating metacognition with collaborative A2A system")
                 
                 # Integração bidirecional: metacognição <-> A2A
                 await self.intelligent_a2a.integrate_metacognitive_engine(self.metacognitive_engine)
                 a2a_integration = await self.metacognitive_engine.integrate_with_a2a_system(self.intelligent_a2a)
                 
-                logger.info(f"🤝 Metacognição A2A integrada - Efetividade: {a2a_integration['effectiveness_score']:.2f}")
+                logger.info(f"🤝 A2A metacognition integrated - Effectiveness: {a2a_integration['effectiveness_score']:.2f}")
             
             # Executar projeto via sistema inteligente A2A
             pipeline_id = await self.intelligent_a2a.execute_intelligent_project(
@@ -474,39 +481,37 @@ class Orchestrator:
                 project_name=self.project_context.project_name
             )
             
-            logger.info(f"🎉 Pipeline colaborativo '{pipeline_id}' executado!")
+            logger.info(f"🎉 Collaborative pipeline '{pipeline_id}' executed!")
             
             # Fase 3: Validação Inteligente Distribuída
-            logger.info("🔍 Executando Validação Inteligente Distribuída")
+            logger.info("🔍 Executing Distributed Intelligent Validation")
             validation_success = await self._execute_intelligent_validation()
             
             # Fase 4: Geração de Relatório de Inteligência
             intelligence_report = await self.intelligent_a2a.generate_intelligence_report()
-            logger.info("📊 Relatório de Inteligência A2A gerado", 
-                       agents=intelligence_report["system_overview"]["total_agents"],
-                       pipelines=intelligence_report["system_overview"]["active_pipelines"])
+            logger.info(f"📊 A2A Intelligence Report generated, agents: {intelligence_report['system_overview']['total_agents']}, pipelines: {intelligence_report['system_overview']['active_pipelines']}")
             
             # Determinar status final
             if validation_success:
                 self.project_context.status = ProjectStatus.COMPLETED_SUCCESSFULLY
-                logger.info("🎊 PROJETO CONCLUÍDO COM SUCESSO VIA A2A INTELIGENTE!")
+                logger.info("🎊 PROJECT COMPLETED SUCCESSFULLY VIA INTELLIGENT A2A!")
             else:
                 self.project_context.status = ProjectStatus.COMPLETED_WITH_FAILURES
-                logger.warning("⚠️ Projeto concluído com algumas falhas")
+                logger.warning("⚠️ Project completed with some failures")
             
             await self.project_context.save_context()
             return self.project_context.status
             
         except Exception as e:
-            logger.error(f"❌ Erro na execução A2A inteligente: {e}")
+            logger.error(f"❌ Error in intelligent A2A execution: {e}")
             # Fallback para execução tradicional
-            logger.info("🔄 Fallback: Executando modo tradicional")
+            logger.info("🔄 Fallback: Executing traditional mode")
             return await self._run_traditional_cycle()
 
     async def _execute_collaborative_planning(self) -> bool:
         """Executa planejamento colaborativo com especialização"""
         try:
-            logger.info("🧠 Executando planejamento colaborativo especializado")
+            logger.info("🧠 Executing specialized collaborative planning")
             
             # Verificar se o planner foi especializado
             await self.intelligent_a2a.analyze_and_specialize_agents()
@@ -516,25 +521,25 @@ class Orchestrator:
             
             if plan_successful and len(self.project_context.task_queue) >= 5:
                 # Projeto complexo - aplicar otimizações A2A
-                logger.info("📈 Projeto complexo detectado - aplicando otimizações A2A")
+                logger.info("📈 Complex project detected - applying A2A optimizations")
                 
                 # Distribuir tarefas inteligentemente
                 distribution = await self.intelligent_a2a.intelligent_task_distribution(
                     self.project_context.task_queue
                 )
                 
-                logger.info(f"⚖️ Distribuição inteligente: {len(distribution)} agentes envolvidos")
+                logger.info(f"⚖️ Intelligent distribution: {len(distribution)} agents involved")
             
             return plan_successful
             
         except Exception as e:
-            logger.error(f"Erro no planejamento colaborativo: {e}")
+            logger.error(f"Error in collaborative planning: {e}")
             return False
 
     async def _execute_intelligent_validation(self) -> bool:
         """Executa validação inteligente distribuída"""
         try:
-            logger.info("🔍 Executando validação inteligente distribuída")
+            logger.info("🔍 Executing distributed intelligent validation")
             
             # Simular validação distribuída (implementação completa usaria validação real)
             validation_tasks = []
@@ -552,19 +557,19 @@ class Orchestrator:
             # Calcular taxa de sucesso
             if validation_tasks:
                 success_rate = sum(validation_tasks) / len(validation_tasks)
-                logger.info(f"📊 Validação distribuída: {success_rate:.1%} de sucesso")
+                logger.info(f"📊 Distributed validation: {success_rate:.1%} success rate")
                 return success_rate >= 0.8  # 80% de sucesso mínimo
             
             return True  # Se não há tarefas para validar, considerar sucesso
             
         except Exception as e:
-            logger.error(f"Erro na validação inteligente: {e}")
+            logger.error(f"Error in intelligent validation: {e}")
             return False
 
     async def get_a2a_intelligence_report(self) -> Dict:
         """Obtém relatório completo da inteligência A2A do projeto"""
         if not self.a2a_enabled:
-            return {"error": "Sistema A2A não está habilitado"}
+            return {"error": "A2A system is not enabled"}
         
         try:
             # Gerar relatório de inteligência
@@ -606,7 +611,7 @@ class Orchestrator:
             return intelligence_report
             
         except Exception as e:
-            logger.error(f"Erro ao gerar relatório A2A: {e}")
+            logger.error(f"Error generating A2A report: {e}")
             return {"error": str(e)}
 
     def is_a2a_enabled(self) -> bool:
@@ -618,13 +623,13 @@ class Orchestrator:
         if not self.a2a_enabled:
             self.a2a_enabled = True
             await self._initialize_intelligent_a2a()
-            logger.info("🚀 Modo A2A Inteligente habilitado dinamicamente")
+            logger.info("🚀 Intelligent A2A mode enabled dynamically")
 
     async def disable_a2a_mode(self):
         """Desabilita modo A2A inteligente"""
         if self.a2a_enabled:
             self.a2a_enabled = False
-            logger.info("🔄 Modo A2A desabilitado - usando execução tradicional")
+            logger.info("🔄 A2A mode disabled - using traditional execution")
 
     def is_metacognition_enabled(self) -> bool:
         """Verifica se o sistema metacognitivo está habilitado"""
@@ -634,18 +639,18 @@ class Orchestrator:
         """Habilita metacognição dinamicamente"""
         if not self.metacognition_enabled:
             self.metacognition_enabled = True
-            logger.info("🧠 Metacognição habilitada dinamicamente")
+            logger.info("🧠 Metacognition enabled dynamically")
 
     async def disable_metacognition(self):
         """Desabilita metacognição"""
         if self.metacognition_enabled:
             self.metacognition_enabled = False
-            logger.info("🔄 Metacognição desabilitada")
+            logger.info("🔄 Metacognition disabled")
 
     async def get_metacognitive_insights(self) -> Dict:
         """Obtém insights metacognitivos do sistema"""
         if not self.metacognition_enabled:
-            return {"error": "Metacognição não está habilitada"}
+            return {"error": "Metacognition is not enabled"}
         
         try:
             # Gerar modelo de auto-consciência
@@ -677,5 +682,5 @@ class Orchestrator:
             }
             
         except Exception as e:
-            logger.error(f"Erro ao gerar insights metacognitivos: {e}")
+            logger.error(f"Error generating metacognitive insights: {e}")
             return {"error": str(e)}

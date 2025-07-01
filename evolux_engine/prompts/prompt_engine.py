@@ -56,8 +56,7 @@ class PromptEngine:
         self.global_context: Dict[str, Any] = {}
         self._initialize_default_templates()
         
-        logger.info("PromptEngine initialized", 
-                   template_count=len(self.templates))
+        logger.info(f"PromptEngine initialized with {len(self.templates)} templates")
     
     def _initialize_default_templates(self):
         """Inicializa templates padrão do sistema"""
@@ -385,9 +384,7 @@ Before finalizing, ask yourself:
     def register_template(self, template: PromptTemplate):
         """Registra um novo template"""
         self.templates[template.name] = template
-        logger.debug("Template registered", 
-                    name=template.name,
-                    category=template.task_category.value)
+        logger.debug(f"Template registered: {template.name}, category: {template.task_category.value}")
     
     def build_iterative_prompt(self, 
                               template_name: str,
@@ -422,7 +419,7 @@ Before finalizing, ask yourself:
         
         template = self.templates.get(template_name)
         if not template:
-            logger.error("Template not found", template=template_name)
+            logger.error(f"Template not found: {template_name}")
             return None
         
         # Construir variáveis para substituição
@@ -455,23 +452,15 @@ Before finalizing, ask yourself:
                 examples_text = self._format_examples(template.examples)
                 prompt = f"{prompt}\n\n**Examples:**\n{examples_text}"
             
-            logger.debug("Prompt built successfully",
-                        template=template_name,
-                        length=len(prompt),
-                        variables_used=len(variables))
+            logger.debug(f"Prompt built successfully for template: {template_name}, length: {len(prompt)}, variables_used: {len(variables)}")
             
             return prompt
             
         except KeyError as e:
-            logger.error("Missing variable in template",
-                        template=template_name,
-                        missing_var=str(e),
-                        available_vars=list(variables.keys()))
+            logger.error(f"Missing variable in template: {template_name}, missing_var: {str(e)}, available_vars: {list(variables.keys())}")
             return None
         except Exception as e:
-            logger.error("Error building prompt",
-                        template=template_name,
-                        error=str(e))
+            logger.error(f"Error building prompt for template: {template_name}, error: {str(e)}")
             return None
     
     def _format_examples(self, examples: List[Dict[str, str]]) -> str:
@@ -549,14 +538,14 @@ Before finalizing, ask yourself:
     def set_global_context(self, key: str, value: Any):
         """Define contexto global disponível para todos os templates"""
         self.global_context[key] = value
-        logger.debug("Global context updated", key=key)
+        logger.debug(f"Global context updated for key: {key}")
     
     def load_templates_from_directory(self, directory: Union[str, Path]):
         """Carrega templates de um diretório"""
         directory = Path(directory)
         
         if not directory.exists():
-            logger.warning("Template directory not found", path=str(directory))
+            logger.warning(f"Template directory not found at path: {str(directory)}")
             return
         
         loaded_count = 0
@@ -575,13 +564,9 @@ Before finalizing, ask yourself:
                 loaded_count += 1
                 
             except Exception as e:
-                logger.error("Failed to load template",
-                           file=str(template_file),
-                           error=str(e))
+                logger.error(f"Failed to load template from file: {str(template_file)}, error: {str(e)}")
         
-        logger.info("Templates loaded from directory",
-                   directory=str(directory),
-                   loaded=loaded_count)
+        logger.info(f"Templates loaded from directory: {str(directory)}, loaded: {loaded_count}")
     
     def get_engine_stats(self) -> Dict[str, Any]:
         """Retorna estatísticas do engine"""

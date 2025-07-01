@@ -31,7 +31,7 @@ class BackupSystem:
     def __init__(self, base_backup_dir: str = "./project_workspaces/backups"):
         self.backup_dir = Path(base_backup_dir)
         self.backup_dir.mkdir(parents=True, exist_ok=True)
-        logger.info("BackupSystem initialized", backup_dir=str(self.backup_dir))
+        logger.info(f"BackupSystem initialized at: {str(self.backup_dir)}")
     
     def create_snapshot(self, project_context, artifacts_dir: str, description: str = None) -> str:
         """
@@ -49,9 +49,7 @@ class BackupSystem:
         backup_id = f"{project_context.project_id}_{timestamp}"
         backup_file = self.backup_dir / f"{backup_id}.zip"
         
-        logger.info("Creating project snapshot", 
-                   project_id=project_context.project_id,
-                   backup_id=backup_id)
+        logger.info(f"Creating project snapshot for project_id: {project_context.project_id}, backup_id: {backup_id}")
         
         try:
             with zipfile.ZipFile(backup_file, 'w', zipfile.ZIP_DEFLATED) as backup_zip:
@@ -91,14 +89,12 @@ class BackupSystem:
             backup_size = backup_file.stat().st_size
             manifest.backup_size_bytes = backup_size
             
-            logger.info("Snapshot created successfully",
-                       backup_file=str(backup_file),
-                       size_mb=round(backup_size / 1024 / 1024, 2))
+            logger.info(f"Snapshot created successfully at: {str(backup_file)}, size_mb: {round(backup_size / 1024 / 1024, 2)}")
             
             return str(backup_file)
             
         except Exception as e:
-            logger.error("Failed to create snapshot", error=str(e), exc_info=True)
+            logger.error(f"Failed to create snapshot: {str(e)}", exc_info=True)
             if backup_file.exists():
                 backup_file.unlink()  # Cleanup on failure
             raise
@@ -120,7 +116,7 @@ class BackupSystem:
         if not backup_path.exists():
             raise FileNotFoundError(f"Backup file not found: {backup_file}")
         
-        logger.info("Restoring snapshot", backup_file=backup_file, restore_dir=restore_dir)
+        logger.info(f"Restoring snapshot from: {backup_file} to: {restore_dir}")
         
         try:
             # Criar diretório de restauração
@@ -138,9 +134,7 @@ class BackupSystem:
             
             restored_files = list(restore_path.rglob("*"))
             
-            logger.info("Snapshot restored successfully",
-                       restored_files=len(restored_files),
-                       restore_path=str(restore_path))
+            logger.info(f"Snapshot restored successfully with {len(restored_files)} files to: {str(restore_path)}")
             
             return {
                 "success": True,
@@ -150,7 +144,7 @@ class BackupSystem:
             }
             
         except Exception as e:
-            logger.error("Failed to restore snapshot", error=str(e), exc_info=True)
+            logger.error(f"Failed to restore snapshot: {str(e)}", exc_info=True)
             raise
     
     def list_backups(self, project_id: Optional[str] = None) -> list[Dict[str, Any]]:
@@ -180,9 +174,7 @@ class BackupSystem:
                         })
                         
             except Exception as e:
-                logger.warning("Could not read backup manifest", 
-                              backup_file=str(backup_file), 
-                              error=str(e))
+                logger.warning(f"Could not read backup manifest for backup_file: {str(backup_file)}, error: {str(e)}")
         
         # Ordenar por data de criação (mais recente primeiro)
         backups.sort(key=lambda x: x.get("created_at", ""), reverse=True)
@@ -214,10 +206,8 @@ class BackupSystem:
                 if backup_path.exists():
                     backup_path.unlink()
                     removed_count += 1
-                    logger.info("Old backup removed", backup_file=str(backup_path))
+                    logger.info(f"Old backup removed: {str(backup_path)}")
             except Exception as e:
-                logger.error("Failed to remove old backup", 
-                           backup_file=backup.get("backup_file"), 
-                           error=str(e))
+                logger.error(f"Failed to remove old backup: {backup.get('backup_file')}, error: {str(e)}")
         
         return removed_count

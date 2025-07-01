@@ -23,20 +23,7 @@ def init_logging(log_dir: str, console_level: str = "INFO", file_level: str = "D
         log_path.mkdir(parents=True, exist_ok=True)
         log_file = log_path / "events.log"
 
-        # Clear any existing handlers
-        logging.getLogger().handlers.clear()
-
-        # Configure Python's built-in logging
-        logging.basicConfig(
-            level=console_level,
-            format="%(message)s",
-            handlers=[
-                logging.StreamHandler(sys.stdout),  # Console output
-                logging.FileHandler(log_file)        # File output
-            ]
-        )
-
-        # Enhanced structlog configuration
+        # Configure structlog first
         structlog.configure(
             processors=[
                 structlog.contextvars.merge_contextvars,
@@ -44,43 +31,40 @@ def init_logging(log_dir: str, console_level: str = "INFO", file_level: str = "D
                 structlog.processors.StackInfoRenderer(),
                 structlog.processors.TimeStamper(fmt="iso", utc=True),
                 structlog.processors.dict_tracebacks,
-                structlog.processors.JSONRenderer(sort_keys=True)
+                structlog.processors.JSONRenderer(sort_keys=True),
             ],
-            wrapper_class=structlog.make_filtering_bound_logger(
-                getattr(logging, file_level)
-            ),
             logger_factory=structlog.stdlib.LoggerFactory(),
+            wrapper_class=structlog.stdlib.BoundLogger,
             cache_logger_on_first_use=True,
         )
 
-        # Verificar se já tem handlers para evitar duplicação
+        # Configure Python's built-in logging
         root_logger = logging.getLogger()
         
-        # Limpar handlers existentes para evitar duplicação
-        if root_logger.handlers:
-            # Não usar logger antes da inicialização completa
-            print("Handlers já existem, limpando para evitar duplicação")
+        # Clear any existing handlers to prevent duplication
+        if root_logger.hasHandlers():
             root_logger.handlers.clear()
-        
-        # Configurar nível do root logger
-        root_logger.setLevel(min(
-            getattr(logging, console_level),
-            getattr(logging, file_level)
-        ))
-        
-        # Configurar handler de console apenas se necessário
+
+        # Set the overall minimum level for the root logger
+        min_level = min(getattr(logging, console_level.upper()), getattr(logging, file_level.upper()))
+        root_logger.setLevel(min_level)
+
+        # Create and configure console handler
         console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setLevel(console_level)
-        console_handler.setFormatter(logging.Formatter("%(message)s"))
+        console_handler.setLevel(console_level.upper())
+        console_formatter = logging.Formatter('%(message)s')
+        console_handler.setFormatter(console_formatter)
         root_logger.addHandler(console_handler)
         
-        # Configurar handler de arquivo apenas se necessário
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setLevel(file_level)
-        file_handler.setFormatter(logging.Formatter("%(message)s"))
+        # Create and configure file handler for JSON logs
+        file_handler = logging.FileHandler(log_file, mode='a')
+        file_handler.setLevel(file_level.upper())
+        # The JSONRenderer from structlog will format the file logs, so no formatter is needed here.
         root_logger.addHandler(file_handler)
 
-        log.info(
+        # Get a logger instance after configuration
+        logger = structlog.get_logger("evolux_engine.init")
+        logger.info(
             "Logging system initialized",
             log_file=str(log_file),
             console_level=console_level,
@@ -88,6 +72,7 @@ def init_logging(log_dir: str, console_level: str = "INFO", file_level: str = "D
         )
 
     except Exception as e:
+        # Use a basic print for critical errors during logging setup
         print(f"Failed to initialize logging: {str(e)}", file=sys.stderr)
         raise
 

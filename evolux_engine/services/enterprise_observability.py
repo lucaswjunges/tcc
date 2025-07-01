@@ -129,9 +129,7 @@ class EnterpriseObservabilityService:
         # Configurar alertas padrão
         self._setup_default_alerts()
         
-        logger.info("EnterpriseObservabilityService initialized",
-                   metrics_enabled=config.enable_metrics_collection,
-                   structured_logging=config.enable_structured_logging)
+        logger.info(f"EnterpriseObservabilityService initialized, metrics_enabled: {config.enable_metrics_collection}, structured_logging: {config.enable_structured_logging}")
     
     def _setup_default_alerts(self):
         """Configura alertas padrão do sistema"""
@@ -175,14 +173,14 @@ class EnterpriseObservabilityService:
     def start_monitoring(self):
         """Inicia monitoramento em background"""
         if self.is_running:
-            logger.warning("Monitoring already running")
+            logger.warning("Monitoring is already running")
             return
             
         self.is_running = True
         self._monitor_thread = threading.Thread(target=self._monitoring_loop, daemon=True)
         self._monitor_thread.start()
         
-        logger.info("Background monitoring started")
+        logger.info("Background monitoring has started")
     
     def stop_monitoring(self):
         """Para monitoramento em background"""
@@ -190,7 +188,7 @@ class EnterpriseObservabilityService:
         if self._monitor_thread and self._monitor_thread.is_alive():
             self._monitor_thread.join(timeout=5.0)
         
-        logger.info("Background monitoring stopped")
+        logger.info("Background monitoring has stopped")
     
     def _monitoring_loop(self):
         """Loop principal de monitoramento"""
@@ -211,7 +209,7 @@ class EnterpriseObservabilityService:
                 time.sleep(30)  # Coletar métricas a cada 30 segundos
                 
             except Exception as e:
-                logger.error("Error in monitoring loop", error=str(e))
+                logger.error(f"Error in monitoring loop: {str(e)}")
                 time.sleep(60)  # Wait longer on error
     
     def _collect_system_metrics(self):
@@ -237,7 +235,7 @@ class EnterpriseObservabilityService:
             self.record_metric("process.memory_mb", process.memory_info().rss / 1024 / 1024, MetricType.GAUGE)
             
         except Exception as e:
-            logger.error("Failed to collect system metrics", error=str(e))
+            logger.error(f"Failed to collect system metrics: {str(e)}")
     
     async def _check_health_status(self):
         """Verifica status de saúde dos componentes"""
@@ -364,7 +362,7 @@ class EnterpriseObservabilityService:
                     self._last_alerts[rule.name] = current_time
                     
             except Exception as e:
-                logger.error("Error checking alert rule", rule=rule.name, error=str(e))
+                logger.error(f"Error checking alert rule {rule.name}: {str(e)}")
     
     def _evaluate_alert_condition(self, value: float, condition: str, threshold: float) -> bool:
         """Avalia condição de alerta"""
@@ -401,13 +399,13 @@ class EnterpriseObservabilityService:
         
         # Log based on severity
         if rule.level == AlertLevel.CRITICAL:
-            logger.critical("ALERT TRIGGERED", **alert_data)
+            logger.critical(f"ALERT TRIGGERED: {alert_data}")
         elif rule.level == AlertLevel.ERROR:
-            logger.error("ALERT TRIGGERED", **alert_data)
+            logger.error(f"ALERT TRIGGERED: {alert_data}")
         elif rule.level == AlertLevel.WARNING:
-            logger.warning("ALERT TRIGGERED", **alert_data)
+            logger.warning(f"ALERT TRIGGERED: {alert_data}")
         else:
-            logger.info("ALERT TRIGGERED", **alert_data)
+            logger.info(f"ALERT TRIGGERED: {alert_data}")
     
     def _cleanup_old_data(self):
         """Limpa dados antigos"""
@@ -436,8 +434,7 @@ class EnterpriseObservabilityService:
             
             # Log para métricas importantes
             if metric_type in [MetricType.COUNTER, MetricType.TIMER]:
-                logger.debug("Metric recorded", 
-                           name=name, value=value, type=metric_type.value)
+                logger.debug(f"Metric recorded: {name}, value: {value}, type: {metric_type.value}")
     
     def increment_counter(self, name: str, value: int = 1, tags: Optional[Dict[str, str]] = None):
         """Incrementa um contador"""
@@ -477,10 +474,7 @@ class EnterpriseObservabilityService:
         
         self._traces[span_id] = span
         
-        logger.debug("Trace started", 
-                    trace_id=trace_id, 
-                    span_id=span_id,
-                    operation=operation_name)
+        logger.debug(f"Trace started for trace_id: {trace_id}, span_id: {span_id}, operation: {operation_name}")
         
         return span_id
     
@@ -488,7 +482,7 @@ class EnterpriseObservabilityService:
                     tags: Optional[Dict[str, Any]] = None):
         """Finaliza um trace span"""
         if span_id not in self._traces:
-            logger.warning("Trace span not found", span_id=span_id)
+            logger.warning(f"Trace span not found: {span_id}")
             return
         
         span = self._traces[span_id]
@@ -499,11 +493,7 @@ class EnterpriseObservabilityService:
         if tags:
             span.tags.update(tags)
         
-        logger.debug("Trace finished",
-                    trace_id=span.trace_id,
-                    span_id=span_id,
-                    duration_ms=span.duration_ms,
-                    status=status)
+        logger.debug(f"Trace finished for trace_id: {span.trace_id}, span_id: {span_id}, duration_ms: {span.duration_ms}, status: {status}")
     
     def add_trace_log(self, span_id: str, message: str, level: str = "info", 
                      fields: Optional[Dict[str, Any]] = None):
@@ -721,7 +711,7 @@ class EnterpriseObservabilityService:
         """Registra início de execução de tarefa"""
         self._task_metrics['total_tasks'] += 1
         self.record_metric(f"task.started.{task_type}", 1, MetricType.COUNTER, {"task_id": task_id})
-        logger.debug("Task started", task_id=task_id, task_type=task_type)
+        logger.debug(f"Task started: {task_id}, task_type: {task_type}")
     
     async def record_task_completion(
         self, 
@@ -743,8 +733,4 @@ class EnterpriseObservabilityService:
         self._task_metrics['task_durations'].append(duration_ms)
         self.record_metric("task.duration_ms", duration_ms, MetricType.TIMER, {"task_id": task_id})
         
-        logger.debug("Task completed", 
-                    task_id=task_id, 
-                    success=success, 
-                    duration_ms=duration_ms, 
-                    exit_code=exit_code)
+        logger.debug(f"Task completed: {task_id}, success: {success}, duration_ms: {duration_ms}, exit_code: {exit_code}")

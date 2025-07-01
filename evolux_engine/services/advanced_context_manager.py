@@ -127,10 +127,7 @@ class AdvancedContextManager:
         if config.backup_enabled:
             self._start_background_tasks()
         
-        logger.info("AdvancedContextManager initialized",
-                   base_dir=str(self.base_dir),
-                   cache_size=self.cache_size,
-                   backup_enabled=config.backup_enabled)
+        logger.info("AdvancedContextManager initialized")
     
     def _start_background_tasks(self):
         """Inicia tarefas em background"""
@@ -158,10 +155,10 @@ class AdvancedContextManager:
                 self._save_index()
                 
             except Exception as e:
-                logger.error("Error in background loop", error=str(e))
+                logger.error(f"Error in background loop: {str(e)}")
             
             # Wait before next iteration
-            self._shutdown_event.wait(300)  # 5 minutes
+            self._shutdown_event.wait(300)
     
     def create_new_project_context(self, 
                                  goal: str,
@@ -224,10 +221,7 @@ class AdvancedContextManager:
             # Update metrics
             self.metrics['contexts_created'] += 1
             
-            logger.info("New project context created",
-                       project_id=project_id,
-                       project_name=project_name,
-                       workspace=str(workspace_path))
+            logger.info(f"New project context created for project_id: {project_id}, project_name: {project_name}, workspace: {str(workspace_path)}")
             
             return context
     
@@ -245,7 +239,7 @@ class AdvancedContextManager:
                 self._update_cache_order(project_id)
                 self.metrics['cache_hits'] += 1
                 
-                logger.debug("Context loaded from cache", project_id=project_id)
+                logger.debug(f"Context loaded from cache for project_id: {project_id}")
                 return cache_entry.context
             
             # Load from disk
@@ -269,9 +263,7 @@ class AdvancedContextManager:
             if project_id in self.context_index:
                 self.context_index[project_id].last_modified = datetime.now()
             
-            logger.info("Project context loaded",
-                       project_id=project_id,
-                       version=version)
+            logger.info(f"Project context loaded for project_id: {project_id}, version: {version}")
             
             return context
     
@@ -285,7 +277,7 @@ class AdvancedContextManager:
             with self._lock:
                 # Validate context
                 if not self._validate_context(context):
-                    logger.error("Context validation failed", project_id=context.project_id)
+                    logger.error(f"Context validation failed for project_id: {context.project_id}")
                     return False
                 
                 # Save to disk
@@ -308,16 +300,12 @@ class AdvancedContextManager:
                 # Update metrics
                 self.metrics['contexts_saved'] += 1
                 
-                logger.info("Project context saved",
-                           project_id=context.project_id,
-                           snapshot_created=create_snapshot)
+                logger.info(f"Project context saved for project_id: {context.project_id}, snapshot_created: {create_snapshot}")
                 
                 return True
                 
         except Exception as e:
-            logger.error("Failed to save project context",
-                        project_id=context.project_id,
-                        error=str(e))
+            logger.error(f"Failed to save project context for project_id: {context.project_id}, error: {str(e)}")
             return False
     
     def _load_context_from_disk(self, project_id: str) -> ProjectContext:
@@ -365,9 +353,7 @@ class AdvancedContextManager:
             return True
             
         except Exception as e:
-            logger.error("Failed to save context to disk",
-                        project_id=context.project_id,
-                        error=str(e))
+            logger.error(f"Failed to save context to disk for project_id: {context.project_id}, error: {str(e)}")
             return False
     
     def _create_snapshot(self, 
@@ -412,10 +398,7 @@ class AdvancedContextManager:
         # Update metrics
         self.metrics['snapshots_created'] += 1
         
-        logger.debug("Context snapshot created",
-                    project_id=context.project_id,
-                    version=version,
-                    message=message)
+        logger.debug(f"Context snapshot created for project_id: {context.project_id}, version: {version}, message: {message}")
         
         return snapshot
     
@@ -570,13 +553,11 @@ class AdvancedContextManager:
                 if project_id in self.context_index:
                     del self.context_index[project_id]
                 
-                logger.info("Project context deleted", project_id=project_id)
+                logger.info(f"Project context deleted for project_id: {project_id}")
                 return True
                 
         except Exception as e:
-            logger.error("Failed to delete project context",
-                        project_id=project_id,
-                        error=str(e))
+            logger.error(f"Failed to delete project context for project_id: {project_id}, error: {str(e)}")
             return False
     
     def archive_project_context(self, project_id: str) -> bool:
@@ -598,15 +579,11 @@ class AdvancedContextManager:
                     workspace_path
                 )
             
-            logger.info("Project context archived",
-                       project_id=project_id,
-                       archive_path=str(archive_path))
+            logger.info(f"Project context archived for project_id: {project_id}, archive_path: {str(archive_path)}")
             return True
             
         except Exception as e:
-            logger.error("Failed to archive project context",
-                        project_id=project_id,
-                        error=str(e))
+            logger.error(f"Failed to archive project context for project_id: {project_id}, error: {str(e)}")
             return False
     
     def get_context_history(self, project_id: str) -> List[ContextSnapshot]:
@@ -625,17 +602,12 @@ class AdvancedContextManager:
                                               snapshot_message=f"Restored from version {version}")
             
             if success:
-                logger.info("Context restored from snapshot",
-                           project_id=project_id,
-                           version=version)
+                logger.info(f"Context restored from snapshot for project_id: {project_id}, version: {version}")
             
             return success
             
         except Exception as e:
-            logger.error("Failed to restore context from snapshot",
-                        project_id=project_id,
-                        version=version,
-                        error=str(e))
+            logger.error(f"Failed to restore context from snapshot for project_id: {project_id}, version: {version}, error: {str(e)}")
             return False
     
     def _create_workspace_structure(self, workspace_path: Path):
@@ -659,9 +631,7 @@ class AdvancedContextManager:
     def _apply_context_template(self, context: ProjectContext, template_id: str):
         """Aplica template ao contexto"""
         # Implementation would load and apply template
-        logger.debug("Template applied to context",
-                    project_id=context.project_id,
-                    template_id=template_id)
+        logger.debug(f"Template applied to context for project_id: {context.project_id}, template_id: {template_id}")
     
     def _auto_save_dirty_cache(self):
         """Salva automaticamente contextos modificados no cache"""
@@ -694,10 +664,10 @@ class AdvancedContextManager:
             self.last_backup = datetime.now()
             self.metrics['backups_created'] += 1
             
-            logger.info("Automatic backup created", backup_path=str(backup_path))
+            logger.info(f"Automatic backup created at: {str(backup_path)}")
             
         except Exception as e:
-            logger.error("Failed to create automatic backup", error=str(e))
+            logger.error(f"Failed to create automatic backup: {str(e)}")
     
     def _cleanup_old_snapshots(self):
         """Limpa snapshots antigos"""
@@ -732,10 +702,10 @@ class AdvancedContextManager:
                     
                     self.context_index[context_id] = ContextIndex(**index_data)
                 
-                logger.debug("Context index loaded", contexts=len(self.context_index))
+                logger.debug(f"Context index loaded with {len(self.context_index)} contexts")
                 
             except Exception as e:
-                logger.error("Failed to load context index", error=str(e))
+                logger.error(f"Failed to load context index: {str(e)}")
     
     def _save_index(self):
         """Salva índice de contextos"""
@@ -759,7 +729,7 @@ class AdvancedContextManager:
                 json.dump(data, f, indent=2)
                 
         except Exception as e:
-            logger.error("Failed to save context index", error=str(e))
+            logger.error(f"Failed to save context index: {str(e)}")
     
     def get_manager_stats(self) -> Dict[str, Any]:
         """Retorna estatísticas do manager"""

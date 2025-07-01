@@ -276,7 +276,8 @@ class ProjectContext(BaseModel):
     last_updated: datetime = Field(default_factory=datetime.utcnow)
 
     task_queue: List[Task] = Field(default_factory=list)
-    completed_tasks: List[Task] = Field(default_factory=list) # Poderia ser uma lista de task_ids ou os objetos Task completos
+    completed_tasks: List[Task] = Field(default_factory=list)
+    failed_tasks: List[Task] = Field(default_factory=list)
     failed_tasks: List[Task] = Field(default_factory=list) # Tarefas que falharam definitivamente
     
     iteration_history: List[IterationLog] = Field(default_factory=list)
