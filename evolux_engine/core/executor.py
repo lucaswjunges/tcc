@@ -330,7 +330,8 @@ class TaskExecutorAgent:
         action_desc = f"geração de conteúdo para {details.file_path}"
         logger.info(f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): {action_desc}")
 
-        full_file_path = self.project_context.get_artifact_path(details.file_path)
+        # Use relative path for FileService (which handles workspace internally)
+        relative_file_path = os.path.join("artifacts", details.file_path)
         
         # Construir contexto rico do projeto
         project_context_str = self._build_project_context(task)
@@ -351,17 +352,17 @@ class TaskExecutorAgent:
             return ExecutionResult(exit_code=1, stderr=f"Falha ao gerar conteúdo da LLM para {details.file_path}.")
 
         try:
-            self.file_service.save_file(full_file_path, str(file_content)) # Garantir que é string
-            artifact_change = ArtifactChange(path=details.file_path, change_type=ArtifactChangeType.CREATED)
-            file_hash = self.file_service.get_file_hash(full_file_path)
+            self.file_service.save_file(relative_file_path, str(file_content)) # Garantir que é string
+            artifact_change = ArtifactChange(path=relative_file_path, change_type=ArtifactChangeType.CREATED)
+            file_hash = self.file_service.get_file_hash(relative_file_path)
             self.project_context.update_artifact_state(
-                details.file_path,
-                ArtifactState(path=details.file_path, hash=file_hash, summary=f"Arquivo criado/sobrescrito: {details.file_path}")
+                relative_file_path,
+                ArtifactState(path=relative_file_path, hash=file_hash, summary=f"Arquivo criado/sobrescrito: {details.file_path}")
             )
             await self.project_context.save_context()
             return ExecutionResult(exit_code=0, stdout=f"Arquivo {details.file_path} criado/atualizado.", artifacts_changed=[artifact_change])
         except Exception as e:
-            logger.opt(exception=True).error(f"TaskExecutor (ID: {self.agent_id}): Erro ao salvar {full_file_path}: {e}")
+            logger.opt(exception=True).error(f"TaskExecutor (ID: {self.agent_id}): Erro ao salvar {relative_file_path}: {e}")
             return ExecutionResult(exit_code=1, stderr=f"Erro ao salvar arquivo {details.file_path}: {e}")
 
     async def _execute_modify_file(self, task: Task) -> ExecutionResult:
@@ -372,13 +373,15 @@ class TaskExecutorAgent:
         action_desc = f"modificação de conteúdo para {details.file_path}"
         logger.info(f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): {action_desc}")
         
+        # Use relative path for FileService (which handles workspace internally)
+        relative_file_path = os.path.join("artifacts", details.file_path)
         full_file_path = self.project_context.get_artifact_path(details.file_path)
 
         if not os.path.exists(full_file_path):
             return ExecutionResult(exit_code=1, stderr=f"Arquivo a ser modificado não encontrado: {details.file_path}")
 
         try:
-            current_content = self.file_service.read_file(full_file_path)
+            current_content = self.file_service.read_file(relative_file_path)
         except Exception as e:
             return ExecutionResult(exit_code=1, stderr=f"Erro ao ler arquivo {details.file_path} para modificação: {e}")
 
@@ -397,14 +400,14 @@ class TaskExecutorAgent:
             return ExecutionResult(exit_code=1, stderr=f"Falha ao gerar conteúdo modificado da LLM para {details.file_path}.")
 
         try:
-            old_hash = self.file_service.get_file_hash(full_file_path)
-            self.file_service.save_file(full_file_path, str(modified_content))
-            new_hash = self.file_service.get_file_hash(full_file_path)
-            artifact_change = ArtifactChange(path=details.file_path, change_type=ArtifactChangeType.MODIFIED, old_hash=old_hash, new_hash=new_hash)
+            old_hash = self.file_service.get_file_hash(relative_file_path)
+            self.file_service.save_file(relative_file_path, str(modified_content))
+            new_hash = self.file_service.get_file_hash(relative_file_path)
+            artifact_change = ArtifactChange(path=relative_file_path, change_type=ArtifactChangeType.MODIFIED, old_hash=old_hash, new_hash=new_hash)
             
             self.project_context.update_artifact_state(
-                details.file_path,
-                ArtifactState(path=details.file_path, hash=new_hash, summary=f"Arquivo modificado: {details.file_path}")
+                relative_file_path,
+                ArtifactState(path=relative_file_path, hash=new_hash, summary=f"Arquivo modificado: {details.file_path}")
             )
             await self.project_context.save_context()
             return ExecutionResult(exit_code=0, stdout=f"Arquivo {details.file_path} modificado.", artifacts_changed=[artifact_change])
@@ -420,21 +423,23 @@ class TaskExecutorAgent:
         action_desc = f"deleção do arquivo {details.file_path}"
         logger.info(f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): {action_desc}")
 
+        # Use relative path for FileService (which handles workspace internally)
+        relative_file_path = os.path.join("artifacts", details.file_path)
         full_file_path = self.project_context.get_artifact_path(details.file_path)
         if not os.path.exists(full_file_path):
             logger.warning(f"TaskExecutor (ID: {self.agent_id}): Arquivo a ser deletado não existe: {full_file_path}. Considerando sucesso.")
             return ExecutionResult(exit_code=0, stdout=f"Arquivo {details.file_path} já não existia.")
         
         try:
-            old_hash = self.project_context.artifacts_state.get(details.file_path, ArtifactState(path=details.file_path)).hash
-            self.file_service.delete_file(full_file_path)
-            artifact_change = ArtifactChange(path=details.file_path, change_type=ArtifactChangeType.DELETED, old_hash=old_hash)
+            old_hash = self.project_context.artifacts_state.get(relative_file_path, ArtifactState(path=relative_file_path)).hash
+            self.file_service.delete_file(relative_file_path)
+            artifact_change = ArtifactChange(path=relative_file_path, change_type=ArtifactChangeType.DELETED, old_hash=old_hash)
             
-            self.project_context.remove_artifact_state(details.file_path)
+            self.project_context.remove_artifact_state(relative_file_path)
             await self.project_context.save_context()
             return ExecutionResult(exit_code=0, stdout=f"Arquivo {details.file_path} deletado.", artifacts_changed=[artifact_change])
         except Exception as e:
-            logger.opt(exception=True).error(f"TaskExecutor (ID: {self.agent_id}): Erro ao deletar arquivo {full_file_path}: {e}")
+            logger.opt(exception=True).error(f"TaskExecutor (ID: {self.agent_id}): Erro ao deletar arquivo {relative_file_path}: {e}")
             return ExecutionResult(exit_code=1, stderr=f"Erro ao deletar arquivo {details.file_path}: {e}")
 
     async def _execute_command(self, task: Task) -> ExecutionResult:
@@ -517,8 +522,9 @@ class TaskExecutorAgent:
             if shell_result["exit_code"] == 0:
                  for artifact_path_rel, artifact_state_obj in list(self.project_context.artifacts_state.items()): # list() para poder modificar
                     full_artifact_path = self.project_context.get_artifact_path(artifact_path_rel)
+                    relative_artifact_path = os.path.join("artifacts", artifact_path_rel)
                     if os.path.exists(full_artifact_path):
-                        new_hash = self.file_service.get_file_hash(full_artifact_path)
+                        new_hash = self.file_service.get_file_hash(relative_artifact_path)
                         if new_hash != artifact_state_obj.hash:
                             artifacts_changed.append(ArtifactChange(
                                 path=artifact_path_rel,
