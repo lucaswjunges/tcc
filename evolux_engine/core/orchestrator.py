@@ -20,6 +20,7 @@ from .planner import PlannerAgent
 from .executor import TaskExecutorAgent
 from .validator import SemanticValidatorAgent
 from .intelligent_a2a_system import get_intelligent_a2a_system, IntelligentA2ASystem
+from .metacognitive_engine import get_metacognitive_engine, MetaCognitiveEngine
 
 class Orchestrator:
     """
@@ -107,11 +108,15 @@ class Orchestrator:
         self.intelligent_a2a = get_intelligent_a2a_system()
         self.a2a_enabled = self.config_manager.get_global_setting("enable_intelligent_a2a", True)
         
+        # 🧠 INICIALIZAR MOTOR METACOGNITIVO
+        self.metacognitive_engine = get_metacognitive_engine()
+        self.metacognition_enabled = self.config_manager.get_global_setting("enable_metacognition", True)
+        
         # Registrar agentes no sistema A2A inteligente
         if self.a2a_enabled:
             asyncio.create_task(self._initialize_intelligent_a2a())
 
-        logger.info(f"Orchestrator (ID: {self.agent_id}) inicializado para projeto '{self.project_context.project_name}' com A2A Inteligente: {'ATIVADO' if self.a2a_enabled else 'DESATIVADO'}.")
+        logger.info(f"Orchestrator (ID: {self.agent_id}) inicializado para projeto '{self.project_context.project_name}' com A2A Inteligente: {'ATIVADO' if self.a2a_enabled else 'DESATIVADO'} | Metacognição: {'ATIVADA' if self.metacognition_enabled else 'DESATIVADA'}.")
 
     async def _get_next_task(self) -> Optional[Task]:
         """
@@ -134,9 +139,30 @@ class Orchestrator:
     async def run_project_cycle(self) -> ProjectStatus:
         """
         Executa o ciclo principal do projeto: planejar (se necessário), executar tarefas, validar.
-        🚀 MODO INTELIGENTE A2A ATIVADO
+        🚀 MODO INTELIGENTE A2A + 🧠 METACOGNIÇÃO ATIVADOS
         """
         logger.info(f"Orchestrator (ID: {self.agent_id}): Iniciando ciclo do projeto '{self.project_context.project_name}'.")
+
+        # 🧠 METACOGNIÇÃO: Auto-reflexão sobre estratégia de execução
+        if self.metacognition_enabled:
+            execution_context = {
+                "project_complexity": len(self.project_context.task_queue),
+                "problem_type": "software_engineering",
+                "available_agents": 3 if self.a2a_enabled else 1,
+                "resources": {"a2a_agents": 3 if self.a2a_enabled else 0}
+            }
+            
+            # Escolher estratégia de pensamento baseada em auto-reflexão
+            thinking_strategy = await self.metacognitive_engine.adapt_thinking_strategy(execution_context)
+            logger.info(f"🤔 METACOGNIÇÃO: Estratégia selecionada: {thinking_strategy.value}")
+            
+            # Questionar próprias suposições sobre abordagem
+            self_questions = await self.metacognitive_engine.question_own_assumptions({
+                "chosen_strategy": thinking_strategy.value,
+                "problem_definition": self.project_context.project_goal
+            })
+            for question in self_questions[:3]:  # Log as 3 primeiras questões
+                logger.info(f"❓ METACOGNIÇÃO: {question}")
 
         # 🧠 EXECUÇÃO INTELIGENTE A2A - DECISÃO AUTOMÁTICA
         if self.a2a_enabled and len(self.project_context.task_queue) >= 3:
@@ -185,6 +211,19 @@ class Orchestrator:
             # P.O.D.A. PHASE 3: DECIDE (Decidir) - Select optimal approach and tools
             logger.info(f"🎯 DECIDE: Preparando execução para {current_task.description}")
 
+            # 🧠 METACOGNIÇÃO: Reflexão sobre processo de execução
+            if self.metacognition_enabled:
+                process_context = {
+                    "strategy": "analytical",
+                    "task_type": current_task.type.value,
+                    "complexity": "medium",
+                    "steps": [f"Executando tarefa {current_task.task_id}"],
+                    "execution_time": 0.0
+                }
+                
+                thinking_analysis = await self.metacognitive_engine.reflect_on_thinking_process(process_context)
+                logger.info(f"🤔 METACOGNIÇÃO: Efetividade {thinking_analysis.effectiveness_score:.2f}")
+
             # P.O.D.A. PHASE 4: ACT (Agir) - Execute, validate and learn
             logger.info(f"⚡ ACT: Executando tarefa {current_task.task_id}")
             
@@ -209,6 +248,19 @@ class Orchestrator:
                     execution_result.exit_code
                 )
             
+            # 🧠 METACOGNIÇÃO: Meta-aprendizado com experiência
+            if self.metacognition_enabled:
+                learning_experience = {
+                    "task_type": current_task.type.value,
+                    "success": validation_result.validation_passed,
+                    "execution_time": execution_time,
+                    "learning_effectiveness": 0.8 if validation_result.validation_passed else 0.3,
+                    "learning_speed": 1.0 / max(execution_time, 0.1)
+                }
+                
+                meta_insight = await self.metacognitive_engine.meta_learn_from_experience(learning_experience)
+                logger.info(f"📚 META-APRENDIZADO: {meta_insight.description}")
+
             # 3. Decidir Próximo Passo
             if validation_result.validation_passed:
                 logger.success(f"Tarefa {current_task.task_id} concluída e validada com sucesso!")
@@ -369,6 +421,16 @@ class Orchestrator:
             self.project_context.status = ProjectStatus.EXECUTING
             await self.project_context.save_context()
             
+            # 🧠 METACOGNIÇÃO: Integrar metacognição com sistema A2A
+            if self.metacognition_enabled:
+                logger.info("🧠 Integrando metacognição com sistema A2A colaborativo")
+                
+                # Integração bidirecional: metacognição <-> A2A
+                await self.intelligent_a2a.integrate_metacognitive_engine(self.metacognitive_engine)
+                a2a_integration = await self.metacognitive_engine.integrate_with_a2a_system(self.intelligent_a2a)
+                
+                logger.info(f"🤝 Metacognição A2A integrada - Efetividade: {a2a_integration['effectiveness_score']:.2f}")
+            
             # Executar projeto via sistema inteligente A2A
             pipeline_id = await self.intelligent_a2a.execute_intelligent_project(
                 tasks=self.project_context.task_queue,
@@ -471,6 +533,27 @@ class Orchestrator:
             # Gerar relatório de inteligência
             intelligence_report = await self.intelligent_a2a.generate_intelligence_report()
             
+            # 🧠 ADICIONAR INSIGHTS METACOGNITIVOS AO RELATÓRIO
+            if self.metacognition_enabled:
+                # Gerar modelo de auto-consciência
+                self_model = await self.metacognitive_engine.generate_self_model()
+                
+                # Avaliar capacidades cognitivas
+                cognitive_profile = await self.metacognitive_engine.evaluate_own_capabilities()
+                
+                intelligence_report["metacognitive_insights"] = {
+                    "self_awareness_model": self_model,
+                    "cognitive_capabilities": {
+                        "analytical_strength": cognitive_profile.analytical_strength,
+                        "creative_strength": cognitive_profile.creative_strength,
+                        "collaborative_ability": cognitive_profile.collaborative_ability,
+                        "meta_awareness": cognitive_profile.meta_awareness
+                    },
+                    "identified_limitations": [limit.value for limit in cognitive_profile.identified_limits],
+                    "strength_areas": cognitive_profile.strength_areas,
+                    "improvement_areas": cognitive_profile.improvement_areas
+                }
+            
             # Adicionar métricas específicas do projeto
             project_metrics = {
                 "project_id": self.project_context.project_id,
@@ -478,7 +561,7 @@ class Orchestrator:
                 "total_tasks": len(self.project_context.task_queue) + len(self.project_context.completed_tasks),
                 "completed_tasks": len(self.project_context.completed_tasks),
                 "project_status": self.project_context.status.value,
-                "execution_mode": "INTELLIGENT_A2A"
+                "execution_mode": "INTELLIGENT_A2A" + (" + METACOGNITION" if self.metacognition_enabled else "")
             }
             
             intelligence_report["project_metrics"] = project_metrics
@@ -505,3 +588,57 @@ class Orchestrator:
         if self.a2a_enabled:
             self.a2a_enabled = False
             logger.info("🔄 Modo A2A desabilitado - usando execução tradicional")
+
+    def is_metacognition_enabled(self) -> bool:
+        """Verifica se o sistema metacognitivo está habilitado"""
+        return self.metacognition_enabled
+
+    async def enable_metacognition(self):
+        """Habilita metacognição dinamicamente"""
+        if not self.metacognition_enabled:
+            self.metacognition_enabled = True
+            logger.info("🧠 Metacognição habilitada dinamicamente")
+
+    async def disable_metacognition(self):
+        """Desabilita metacognição"""
+        if self.metacognition_enabled:
+            self.metacognition_enabled = False
+            logger.info("🔄 Metacognição desabilitada")
+
+    async def get_metacognitive_insights(self) -> Dict:
+        """Obtém insights metacognitivos do sistema"""
+        if not self.metacognition_enabled:
+            return {"error": "Metacognição não está habilitada"}
+        
+        try:
+            # Gerar modelo de auto-consciência
+            self_model = await self.metacognitive_engine.generate_self_model()
+            
+            # Avaliar capacidades cognitivas
+            cognitive_profile = await self.metacognitive_engine.evaluate_own_capabilities()
+            
+            # Questionar próprias suposições sobre projeto atual
+            project_questions = await self.metacognitive_engine.question_own_assumptions({
+                "problem_definition": self.project_context.project_goal,
+                "current_approach": "software_development"
+            })
+            
+            return {
+                "self_awareness_model": self_model,
+                "cognitive_profile": {
+                    "analytical_strength": cognitive_profile.analytical_strength,
+                    "creative_strength": cognitive_profile.creative_strength,
+                    "collaborative_ability": cognitive_profile.collaborative_ability,
+                    "meta_awareness": cognitive_profile.meta_awareness,
+                    "identified_limits": [limit.value for limit in cognitive_profile.identified_limits],
+                    "strength_areas": cognitive_profile.strength_areas,
+                    "improvement_areas": cognitive_profile.improvement_areas
+                },
+                "self_reflection_questions": project_questions,
+                "thinking_process_analyses": len(self.metacognitive_engine.process_analyses),
+                "meta_insights_count": len(self.metacognitive_engine.insights)
+            }
+            
+        except Exception as e:
+            logger.error(f"Erro ao gerar insights metacognitivos: {e}")
+            return {"error": str(e)}

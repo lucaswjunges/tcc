@@ -105,6 +105,10 @@ class IntelligentA2ASystem:
         self.adaptive_learning_enabled = True
         self.fault_tolerance_enabled = True
         
+        # Integração metacognitiva
+        self.metacognitive_integration: Optional[Any] = None
+        self.metacognitive_enabled = False
+        
         logger.info("IntelligentA2ASystem inicializado - Modo GENIUS ativado")
     
     # ============================================================================
@@ -966,6 +970,190 @@ class IntelligentA2ASystem:
         logger.info(f"🎉 Projeto inteligente concluído! Relatório: {intelligence_report['system_overview']}")
         
         return pipeline_id
+
+    # ============================================================================
+    # 🧠 INTEGRAÇÃO METACOGNITIVA
+    # ============================================================================
+
+    async def integrate_metacognitive_engine(self, metacognitive_engine):
+        """Integra motor metacognitivo com sistema A2A"""
+        logger.info("🧠 Integrando motor metacognitivo com sistema A2A inteligente")
+        
+        self.metacognitive_integration = metacognitive_engine
+        self.metacognitive_enabled = True
+        
+        # Auto-reflexão sobre arquitetura colaborativa
+        if self.metacognitive_integration:
+            logger.info("🤔 Iniciando auto-reflexão sobre arquitetura colaborativa")
+            
+            collaboration_context = {
+                "strategy": "collaborative",
+                "agents_count": len(self.agent_profiles),
+                "specializations": list(set().union(*[profile.specializations for profile in self.agent_profiles.values()])),
+                "complexity": "high" if len(self.agent_profiles) > 3 else "medium"
+            }
+            
+            # Refletir sobre processo de colaboração
+            collaboration_analysis = await self.metacognitive_integration.reflect_on_thinking_process(collaboration_context)
+            logger.info(f"🧠 Análise de colaboração: Efetividade {collaboration_analysis.effectiveness_score:.2f}")
+            
+            # Questionar suposições sobre colaboração
+            collaboration_questions = await self.metacognitive_integration.question_own_assumptions({
+                "chosen_strategy": "agent_collaboration",
+                "problem_definition": "multi_agent_coordination"
+            })
+            
+            for question in collaboration_questions[:2]:
+                logger.info(f"❓ METACOGNIÇÃO A2A: {question}")
+
+    async def metacognitive_agent_analysis(self, agent_id: str) -> Dict[str, Any]:
+        """Análise metacognitiva de um agente específico"""
+        if not self.metacognitive_enabled or not self.metacognitive_integration:
+            return {"error": "Metacognição não habilitada"}
+        
+        if agent_id not in self.agent_profiles:
+            return {"error": f"Agente {agent_id} não encontrado"}
+        
+        profile = self.agent_profiles[agent_id]
+        
+        # Contexto metacognitivo do agente
+        agent_context = {
+            "agent_specializations": [spec.value for spec in profile.specializations],
+            "performance_metrics": profile.performance_metrics,
+            "current_load": profile.current_load,
+            "success_rate": profile.success_rate,
+            "expertise_areas": list(profile.expertise_level.keys())
+        }
+        
+        # Auto-reflexão sobre capacidades do agente
+        agent_analysis = await self.metacognitive_integration.reflect_on_thinking_process({
+            "strategy": "analytical",
+            "agent_context": agent_context,
+            "complexity": "medium"
+        })
+        
+        return {
+            "agent_id": agent_id,
+            "metacognitive_analysis": {
+                "effectiveness_score": agent_analysis.effectiveness_score,
+                "efficiency_score": agent_analysis.efficiency_score,
+                "identified_issues": agent_analysis.identified_issues,
+                "improvement_suggestions": agent_analysis.improvement_suggestions
+            },
+            "specialization_recommendations": await self._metacognitive_specialization_analysis(profile),
+            "collaboration_potential": await self._assess_collaboration_potential(agent_id)
+        }
+
+    async def _metacognitive_specialization_analysis(self, profile: AgentCapabilityProfile) -> List[str]:
+        """Análise metacognitiva de especializações"""
+        recommendations = []
+        
+        # Analisar especialização atual vs performance
+        for spec in profile.specializations:
+            if spec == AgentSpecialization.CODE_GENERATOR and profile.success_rate > 0.9:
+                recommendations.append("Excelente em geração de código - considerar especialização avançada")
+            elif spec == AgentSpecialization.PLANNING_EXPERT and profile.performance_metrics.get("planning_speed", 0) > 1.0:
+                recommendations.append("Boa velocidade de planejamento - otimizar qualidade")
+        
+        return recommendations
+
+    async def _assess_collaboration_potential(self, agent_id: str) -> float:
+        """Avalia potencial de colaboração do agente"""
+        if agent_id not in self.agent_profiles:
+            return 0.0
+        
+        profile = self.agent_profiles[agent_id]
+        
+        # Calcular potencial baseado em métricas
+        collaboration_score = (
+            profile.success_rate * 0.4 +
+            (1.0 - profile.current_load) * 0.3 +
+            len(profile.specializations) * 0.1 +
+            profile.performance_metrics.get("collaboration_score", 0.5) * 0.2
+        )
+        
+        return min(1.0, collaboration_score)
+
+    async def metacognitive_pipeline_optimization(self, pipeline_id: str) -> Dict[str, Any]:
+        """Otimização metacognitiva de pipeline"""
+        if not self.metacognitive_enabled or not self.metacognitive_integration:
+            return {"error": "Metacognição não habilitada"}
+        
+        logger.info(f"🧠 Iniciando otimização metacognitiva do pipeline {pipeline_id}")
+        
+        # Analisar pipeline atual
+        pipeline_tasks = self.active_pipelines.get(pipeline_id, [])
+        
+        optimization_context = {
+            "strategy": "optimization",
+            "pipeline_complexity": len(pipeline_tasks),
+            "agent_count": len(self.agent_profiles),
+            "specialization_diversity": len(set().union(*[profile.specializations for profile in self.agent_profiles.values()]))
+        }
+        
+        # Reflexão sobre estratégia de otimização
+        optimization_analysis = await self.metacognitive_integration.reflect_on_thinking_process(optimization_context)
+        
+        # Gerar sugestões de melhoria
+        optimization_suggestions = []
+        
+        if optimization_analysis.effectiveness_score < 0.7:
+            optimization_suggestions.append("Redistribuir tarefas baseado em especializações")
+        
+        if len(pipeline_tasks) > 10:
+            optimization_suggestions.append("Considerar paralelização adicional")
+        
+        # Meta-aprendizado sobre colaboração
+        collaboration_experience = {
+            "pipeline_size": len(pipeline_tasks),
+            "agent_utilization": sum(p.current_load for p in self.agent_profiles.values()) / len(self.agent_profiles),
+            "learning_effectiveness": optimization_analysis.effectiveness_score
+        }
+        
+        meta_insight = await self.metacognitive_integration.meta_learn_from_experience(collaboration_experience)
+        
+        return {
+            "pipeline_id": pipeline_id,
+            "optimization_analysis": {
+                "effectiveness": optimization_analysis.effectiveness_score,
+                "efficiency": optimization_analysis.efficiency_score,
+                "suggestions": optimization_suggestions
+            },
+            "meta_learning_insight": meta_insight.description,
+            "recommended_actions": optimization_analysis.improvement_suggestions
+        }
+
+    async def get_metacognitive_collaboration_report(self) -> Dict[str, Any]:
+        """Gera relatório metacognitivo sobre colaboração"""
+        if not self.metacognitive_enabled or not self.metacognitive_integration:
+            return {"error": "Metacognição não habilitada"}
+        
+        # Gerar modelo de auto-consciência colaborativa
+        self_model = await self.metacognitive_integration.generate_self_model()
+        
+        # Analisar capacidades cognitivas colaborativas
+        cognitive_profile = await self.metacognitive_integration.evaluate_own_capabilities()
+        
+        # Análise metacognitiva de cada agente
+        agent_analyses = {}
+        for agent_id in self.agent_profiles.keys():
+            agent_analyses[agent_id] = await self.metacognitive_agent_analysis(agent_id)
+        
+        return {
+            "system_self_awareness": self_model,
+            "collaborative_cognitive_profile": {
+                "collaborative_ability": cognitive_profile.collaborative_ability,
+                "analytical_strength": cognitive_profile.analytical_strength,
+                "meta_awareness": cognitive_profile.meta_awareness
+            },
+            "agent_metacognitive_analyses": agent_analyses,
+            "collaboration_patterns": self.collaboration_patterns,
+            "meta_insights": {
+                "total_insights": len(self.metacognitive_integration.insights),
+                "thinking_analyses": len(self.metacognitive_integration.process_analyses)
+            },
+            "system_recommendations": cognitive_profile.improvement_areas
+        }
 
 
 # Singleton global do sistema inteligente
