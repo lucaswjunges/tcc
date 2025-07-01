@@ -32,6 +32,8 @@ from evolux_engine.services.shell_service import ShellService # Assumindo que el
 from evolux_engine.security.security_gateway import SecurityGateway
 from evolux_engine.execution.secure_executor import SecureExecutor
 from evolux_engine.llms.model_router import ModelRouter
+from evolux_engine.cache.cognitive_cache import get_cognitive_cache
+from evolux_engine.core.simulation import SimulationEngine
 
 # Prompts do executor_prompts.py
 from .executor_prompts import (
@@ -74,7 +76,14 @@ class TaskExecutorAgent:
         self.model_router = model_router
         self.agent_id = agent_id
         self.enable_refinement = enable_iterative_refinement
+        self.cache = get_cognitive_cache()
         
+        # Inicializar o SimulationEngine (usando um LLM mais rápido, como o do validador)
+        self.simulation_engine = SimulationEngine(
+            simulation_llm_client=validator_llm_client, # Reutiliza um cliente LLM existente
+            project_context=project_context
+        )
+
         # Inicializar refinador iterativo se habilitado
         if enable_iterative_refinement and reviewer_llm_client and validator_llm_client:
             from evolux_engine.prompts.prompt_engine import PromptEngine
@@ -346,7 +355,19 @@ class TaskExecutorAgent:
         )
         messages = [{"role": "system", "content": FILE_MANIPULATION_SYSTEM_PROMPT}, {"role": "user", "content": user_prompt}]
 
-        file_content = await self._invoke_llm_for_json_output(messages, "file_content", action_desc)
+        # 1. Tentar obter do cache
+        cached_solution = self.cache.get(task)
+        if cached_solution:
+            file_content = cached_solution.get("file_content")
+        else:
+            # 2. Se não estiver no cache, invocar LLM
+            llm_output = await self._invoke_llm_for_json_output(messages, "file_content", action_desc)
+            if llm_output is not None:
+                # 3. Armazenar a nova solução no cache
+                self.cache.put(task, {"file_content": llm_output})
+                file_content = llm_output
+            else:
+                file_content = None
 
         if file_content is None:
             return ExecutionResult(exit_code=1, stderr=f"Falha ao gerar conteúdo da LLM para {details.file_path}.")
@@ -394,7 +415,19 @@ class TaskExecutorAgent:
         )
         messages = [{"role": "system", "content": FILE_MANIPULATION_SYSTEM_PROMPT}, {"role": "user", "content": user_prompt}]
         
-        modified_content = await self._invoke_llm_for_json_output(messages, "modified_content", action_desc)
+        # 1. Tentar obter do cache
+        cached_solution = self.cache.get(task)
+        if cached_solution:
+            modified_content = cached_solution.get("modified_content")
+        else:
+            # 2. Se não estiver no cache, invocar LLM
+            llm_output = await self._invoke_llm_for_json_output(messages, "modified_content", action_desc)
+            if llm_output is not None:
+                # 3. Armazenar a nova solução no cache
+                self.cache.put(task, {"modified_content": llm_output})
+                modified_content = llm_output
+            else:
+                modified_content = None
 
         if modified_content is None:
             return ExecutionResult(exit_code=1, stderr=f"Falha ao gerar conteúdo modificado da LLM para {details.file_path}.")
@@ -457,12 +490,40 @@ class TaskExecutorAgent:
         )
         messages = [{"role": "system", "content": COMMAND_GENERATION_SYSTEM_PROMPT}, {"role": "user", "content": user_prompt}]
 
-        command_to_execute = await self._invoke_llm_for_json_output(messages, "command_to_execute", action_desc)
+        # 1. Tentar obter do cache
+        cached_solution = self.cache.get(task)
+        if cached_solution:
+            command_to_execute = cached_solution.get("command_to_execute")
+        else:
+            # 2. Se não estiver no cache, invocar LLM
+            llm_output = await self._invoke_llm_for_json_output(messages, "command_to_execute", action_desc)
+            if llm_output and isinstance(llm_output, str):
+                # 3. Armazenar a nova solução no cache
+                self.cache.put(task, {"command_to_execute": llm_output})
+                command_to_execute = llm_output
+            else:
+                command_to_execute = None
 
         if not command_to_execute or not isinstance(command_to_execute, str):
             return ExecutionResult(exit_code=1, stderr="Falha ao gerar comando da LLM.", command_executed=details.command_description)
         
         logger.info(f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): Comando gerado pela LLM: '{command_to_execute}'")
+
+        # >>> ETAPA DE SIMULAÇÃO PREDITIVA <<<
+        logger.info(f"TaskExecutor: Iniciando simulação preditiva para o comando.")
+        simulation_report = await self.simulation_engine.simulate_command_execution(
+            command=command_to_execute,
+            task_context=task.description
+        )
+
+        if not simulation_report["is_safe_to_proceed"]:
+            error_msg = f"Execução abortada pela simulação. Motivo: {simulation_report['predicted_outcome']}. Efeitos colaterais: {simulation_report['potential_side_effects']}"
+            logger.error(f"TaskExecutor: {error_msg}")
+            return ExecutionResult(exit_code=1, stderr=error_msg, command_executed=command_to_execute)
+        
+        logger.success(f"TaskExecutor: Simulação aprovada. Previsão: {simulation_report['predicted_outcome']}")
+        if simulation_report['potential_side_effects']:
+            logger.warning(f"TaskExecutor: Efeitos colaterais previstos: {simulation_report['potential_side_effects']}")
 
         # Integração com SecurityGateway para validação de comando
         if self.security_gateway:
@@ -678,4 +739,3 @@ class TaskExecutorAgent:
                 exit_code=1,
                 stderr=f"Tipo de tarefa não suportado: {task.type.value}"
             )
-

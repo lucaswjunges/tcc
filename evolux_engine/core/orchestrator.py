@@ -3,6 +3,7 @@ from typing import Optional, List, Dict
 from loguru import logger
 
 # --- Imports Corrigidos para a Nova Estrutura ---
+from evolux_engine.core.dependency_graph import DependencyGraph
 from evolux_engine.models.project_context import ProjectContext
 from evolux_engine.schemas.contracts import Task, TaskStatus, ProjectStatus, ExecutionResult, ValidationResult
 from evolux_engine.services.config_manager import ConfigManager
@@ -19,6 +20,7 @@ from evolux_engine.services.enterprise_observability import EnterpriseObservabil
 from .planner import PlannerAgent
 from .executor import TaskExecutorAgent
 from .validator import SemanticValidatorAgent
+from .critic import CriticAgent
 from .intelligent_a2a_system import get_intelligent_a2a_system, IntelligentA2ASystem
 from .metacognitive_engine import get_metacognitive_engine, MetaCognitiveEngine
 
@@ -33,6 +35,7 @@ class Orchestrator:
         self.project_context = project_context
         self.config_manager = config_manager
         self.agent_id = f"orchestrator-{self.project_context.project_id}"
+        self.dependency_graph = DependencyGraph()
 
         # --- Bloco de Inicialização Corrigido ---
         provider = self.config_manager.get_global_setting("default_llm_provider", "openrouter")
@@ -102,6 +105,10 @@ class Orchestrator:
             project_context=self.project_context,
             file_service=self.file_service
         )
+        self.critic_agent = CriticAgent(
+            critic_llm_client=self.validator_llm_client, # Reutilizando o LLM do validador por eficiência
+            project_context=self.project_context
+        )
         # --- Fim do Bloco de Inicialização Corrigido ---
         
         # 🚀 INICIALIZAR SISTEMA A2A INTELIGENTE
@@ -118,23 +125,15 @@ class Orchestrator:
 
         logger.info(f"Orchestrator (ID: {self.agent_id}) inicializado para projeto '{self.project_context.project_name}' com A2A Inteligente: {'ATIVADO' if self.a2a_enabled else 'DESATIVADO'} | Metacognição: {'ATIVADA' if self.metacognition_enabled else 'DESATIVADA'}.")
 
-    async def _get_next_task(self) -> Optional[Task]:
+    async def _get_runnable_tasks(self) -> List[Task]:
         """
-        Obtém a próxima tarefa PENDING da task_queue que não tenha dependências PENDING ou IN_PROGRESS.
+        Obtém todas as tarefas PENDING cujas dependências foram concluídas,
+        utilizando o grafo de dependências.
         """
-        task_statuses: Dict[str, TaskStatus] = {task.task_id: task.status for task in self.project_context.task_queue}
-        task_statuses.update({task.task_id: task.status for task in self.project_context.completed_tasks})
-
-        for task in self.project_context.task_queue:
-            if task.status == TaskStatus.PENDING:
-                dependencies_met = all(
-                    task_statuses.get(dep_id) == TaskStatus.COMPLETED for dep_id in task.dependencies
-                )
-                
-                if dependencies_met:
-                    logger.info(f"Orchestrator: Próxima tarefa selecionada: {task.task_id} - {task.description}")
-                    return task
-        return None
+        runnable_tasks = self.dependency_graph.get_runnable_tasks()
+        if runnable_tasks:
+            logger.info(f"Orchestrator: {len(runnable_tasks)} tarefas prontas para execução paralela a partir do grafo.")
+        return runnable_tasks
 
     async def run_project_cycle(self) -> ProjectStatus:
         """
@@ -181,7 +180,10 @@ class Orchestrator:
             await self.project_context.save_context()
             
             plan_successful = await self.planner_agent.generate_initial_plan()
-            if not plan_successful:
+            if plan_successful:
+                # Disparar a revisão do plano em segundo plano
+                asyncio.create_task(self.run_plan_review())
+            else:
                 logger.error("Falha no planejamento inicial. Encerrando.")
                 self.project_context.status = ProjectStatus.PLANNING_FAILED
                 await self.project_context.save_context()
@@ -190,123 +192,43 @@ class Orchestrator:
             self.project_context.status = ProjectStatus.PLANNED
             await self.project_context.save_context()
 
+        # Construir o grafo de dependências a partir da task_queue do projeto
+        for task in self.project_context.task_queue:
+            self.dependency_graph.add_task(task)
+        
         # Loop principal P.O.D.A. (Plan, Orient, Decide, Act)
         max_iterations = self.project_context.engine_config.max_project_iterations
-        while self.project_context.metrics.total_iterations < max_iterations:
+        while not self.dependency_graph.is_completed() and self.project_context.metrics.total_iterations < max_iterations:
             self.project_context.metrics.total_iterations += 1
             iteration = self.project_context.metrics.total_iterations
             logger.info(f"--- Iniciando Ciclo P.O.D.A. #{iteration} ---")
             
-            # P.O.D.A. PHASE 1: PLAN (Planejar) - Get next task
-            current_task = await self._get_next_task()
-            if not current_task:
+            # P.O.D.A. PHASE 1 & 2: PLAN & ORIENT (Planejar e Orientar)
+            # Obter todas as tarefas prontas para execução paralela
+            runnable_tasks = await self._get_runnable_tasks()
+            if not runnable_tasks:
                 logger.info("Nenhuma tarefa executável encontrada. Verificando conclusão do projeto.")
                 break
 
-            # P.O.D.A. PHASE 2: ORIENT (Orientar) - Gather context and situational awareness
-            logger.info(f"🧭 ORIENT: Contextualizando tarefa {current_task.task_id}")
-            current_task.status = TaskStatus.IN_PROGRESS
-            await self.project_context.save_context()
-            
-            # P.O.D.A. PHASE 3: DECIDE (Decidir) - Select optimal approach and tools
-            logger.info(f"🎯 DECIDE: Preparando execução para {current_task.description}")
+            # Marcar todas as tarefas como IN_PROGRESS no grafo e no contexto
+            for task in runnable_tasks:
+                self.dependency_graph.update_task_status(task.task_id, TaskStatus.IN_PROGRESS)
+            await self.project_context.save_context() # Salva o estado geral
 
-            # 🧠 METACOGNIÇÃO: Reflexão sobre processo de execução
-            if self.metacognition_enabled:
-                process_context = {
-                    "strategy": "analytical",
-                    "task_type": current_task.type.value,
-                    "complexity": "medium",
-                    "steps": [f"Executando tarefa {current_task.task_id}"],
-                    "execution_time": 0.0
-                }
-                
-                thinking_analysis = await self.metacognitive_engine.reflect_on_thinking_process(process_context)
-                logger.info(f"🤔 METACOGNIÇÃO: Efetividade {thinking_analysis.effectiveness_score:.2f}")
+            # P.O.D.A. PHASE 3 & 4: DECIDE & ACT (Decidir e Agir)
+            # Criar e executar as corrotinas de execução de tarefas em paralelo
+            execution_coroutines = [self._execute_and_process_task(task) for task in runnable_tasks]
+            results = await asyncio.gather(*execution_coroutines, return_exceptions=True)
 
-            # P.O.D.A. PHASE 4: ACT (Agir) - Execute, validate and learn
-            logger.info(f"⚡ ACT: Executando tarefa {current_task.task_id}")
+            # Processar resultados e atualizar o contexto
+            for result in results:
+                if isinstance(result, Exception):
+                    logger.error(f"Erro inesperado durante a execução paralela de tarefa: {result}")
+                    # Aqui, precisaríamos de uma forma de mapear o erro de volta para a tarefa
+                    # Por enquanto, vamos logar e continuar. Uma implementação mais robusta
+                    # retornaria uma tupla (task_id, result) de _execute_and_process_task.
+                # O processamento do resultado da tarefa (sucesso/falha) já é feito dentro de _execute_and_process_task
             
-            # Métricas de observabilidade - início da execução
-            start_time = asyncio.get_event_loop().time()
-            if self.observability:
-                await self.observability.record_task_start(current_task.task_id, current_task.type.value)
-            
-            execution_result = await self.task_executor_agent.execute_task(current_task)
-
-            # Validar resultado (ainda parte da fase ACT)
-            validation_result = await self.semantic_validator_agent.validate_task_output(current_task, execution_result)
-            
-            # Métricas de observabilidade - fim da execução
-            end_time = asyncio.get_event_loop().time()
-            execution_time = end_time - start_time
-            if self.observability:
-                await self.observability.record_task_completion(
-                    current_task.task_id, 
-                    validation_result.validation_passed,
-                    execution_time,
-                    execution_result.exit_code
-                )
-            
-            # 🧠 METACOGNIÇÃO: Meta-aprendizado com experiência
-            if self.metacognition_enabled:
-                learning_experience = {
-                    "task_type": current_task.type.value,
-                    "success": validation_result.validation_passed,
-                    "execution_time": execution_time,
-                    "learning_effectiveness": 0.8 if validation_result.validation_passed else 0.3,
-                    "learning_speed": 1.0 / max(execution_time, 0.1)
-                }
-                
-                meta_insight = await self.metacognitive_engine.meta_learn_from_experience(learning_experience)
-                logger.info(f"📚 META-APRENDIZADO: {meta_insight.description}")
-
-            # 3. Decidir Próximo Passo
-            if validation_result.validation_passed:
-                logger.success(f"Tarefa {current_task.task_id} concluída e validada com sucesso!")
-                current_task.status = TaskStatus.COMPLETED
-                # Mover da fila principal para a de concluídas
-                self.project_context.completed_tasks.append(current_task)
-                self.project_context.task_queue = [t for t in self.project_context.task_queue if t.task_id != current_task.task_id]
-            else:
-                issues_str = ', '.join(validation_result.identified_issues) if validation_result.identified_issues else "Motivos não especificados"
-                logger.warning(f"Validação para tarefa {current_task.task_id} falhou: {issues_str}")
-                current_task.retries += 1
-                if current_task.retries >= current_task.max_retries:
-                    logger.error(f"Tarefa {current_task.task_id} excedeu o máximo de tentativas.")
-                    current_task.status = TaskStatus.FAILED
-                    # Lógica de replanejamento seria acionada aqui
-                    issues_list = validation_result.identified_issues if validation_result.identified_issues else ["Falha na validação sem detalhes específicos"]
-                    error_feedback = (f"Tarefa '{current_task.description}' falhou após {current_task.retries} tentativas. "
-                                      f"Últimos erros: {', '.join(issues_list)}")
-                    
-                    # Limite de replanejamentos para evitar loops infinitos
-                    replan_count = getattr(current_task, 'replan_count', 0)
-                    if replan_count >= 3:  # Máximo 3 replanejamentos
-                        logger.error(f"Tarefa {current_task.task_id} excedeu limite de replanejamentos. Marcando como falha crítica.")
-                        current_task.status = TaskStatus.FAILED
-                        self.project_context.task_queue = [t for t in self.project_context.task_queue if t.task_id != current_task.task_id]
-                        self.project_context.failed_tasks.append(current_task)
-                    else:
-                        new_tasks = await self.planner_agent.replan_task(current_task, error_feedback)
-                        if new_tasks:
-                            # Propagar contador de replanejamento
-                            for new_task in new_tasks:
-                                new_task.replan_count = replan_count + 1
-                            
-                            # Substituir a tarefa antiga pelas novas
-                            self.project_context.task_queue = [t for t in self.project_context.task_queue if t.task_id != current_task.task_id]
-                            self.project_context.task_queue = new_tasks + self.project_context.task_queue
-                            logger.info(f"Tarefa replanejada ({replan_count + 1}/3): {len(new_tasks)} novas tarefas criadas")
-                        else:
-                            logger.error(f"Falha no replanejamento da tarefa {current_task.task_id}. Marcando como falha.")
-                            current_task.status = TaskStatus.FAILED
-                            self.project_context.task_queue = [t for t in self.project_context.task_queue if t.task_id != current_task.task_id]
-                            self.project_context.failed_tasks.append(current_task)
-                else:
-                    logger.info(f"Tarefa {current_task.task_id} será tentada novamente.")
-                    current_task.status = TaskStatus.PENDING # Volta para a fila
-
             await self.project_context.save_context()
 
         # Fase 3: Conclusão e Entrega conforme especificação
@@ -347,6 +269,121 @@ class Orchestrator:
         await self.project_context.save_context()
         logger.info(f"🎯 Ciclo do projeto finalizado com status: {self.project_context.status.value}")
         return self.project_context.status
+
+    async def _execute_and_process_task(self, task: Task):
+        """
+        Encapsula a lógica completa de execução e processamento de uma única tarefa.
+        """
+        logger.info(f"⚡ ACT: Iniciando execução da tarefa {task.task_id}: {task.description}")
+        
+        # Métricas de observabilidade
+        start_time = asyncio.get_event_loop().time()
+        if self.observability:
+            await self.observability.record_task_start(task.task_id, task.type.value)
+
+        # Executar a tarefa
+        execution_result = await self.task_executor_agent.execute_task(task)
+
+        # Validar o resultado
+        validation_result = await self.semantic_validator_agent.validate_task_output(task, execution_result)
+        
+        # Métricas de observabilidade
+        end_time = asyncio.get_event_loop().time()
+        execution_time = end_time - start_time
+        if self.observability:
+            await self.observability.record_task_completion(
+                task.task_id, 
+                validation_result.validation_passed,
+                execution_time,
+                execution_result.exit_code
+            )
+
+        # Processar o resultado da validação e decidir o próximo passo para a tarefa
+        if validation_result.validation_passed:
+            logger.success(f"Tarefa {task.task_id} concluída e validada com sucesso!")
+            self.dependency_graph.update_task_status(task.task_id, TaskStatus.COMPLETED)
+            task.status = TaskStatus.COMPLETED
+            self.project_context.completed_tasks.append(task)
+
+            # Se a tarefa foi criar ou modificar um arquivo, disparar a revisão do código
+            if task.type in [TaskType.CREATE_FILE, TaskType.MODIFY_FILE] and hasattr(task.details, 'file_path'):
+                asyncio.create_task(self.run_code_review(task))
+        else:
+            issues_str = ', '.join(validation_result.identified_issues) if validation_result.identified_issues else "Motivos não especificados"
+            logger.warning(f"Validação para tarefa {task.task_id} falhou: {issues_str}")
+            task.retries += 1
+            if task.retries >= task.max_retries:
+                logger.error(f"Tarefa {task.task_id} excedeu o máximo de tentativas. Acionando replanejamento.")
+                
+                # Coletar feedback de erro para o planejador
+                error_feedback = (
+                    f"A tarefa '{task.description}' falhou após {task.max_retries} tentativas. "
+                    f"Últimos erros: {', '.join(validation_result.identified_issues)}"
+                )
+
+                # Invocar o planejador para obter um novo plano para a tarefa falha
+                new_tasks = await self.planner_agent.replan_task(task, error_feedback)
+                
+                if new_tasks:
+                    logger.info(f"Replanejamento gerou {len(new_tasks)} nova(s) tarefa(s).")
+                    # Marcar a tarefa antiga como falha e removê-la do grafo ativo
+                    self.dependency_graph.update_task_status(task.task_id, TaskStatus.FAILED)
+                    task.status = TaskStatus.FAILED
+                    self.project_context.failed_tasks.append(task)
+                    
+                    # Adicionar as novas tarefas ao grafo e ao contexto do projeto
+                    for new_task in new_tasks:
+                        self.dependency_graph.add_task(new_task)
+                        self.project_context.task_queue.append(new_task)
+                else:
+                    logger.error(f"Replanejamento para a tarefa {task.task_id} falhou. Marcando como falha crítica.")
+                    self.dependency_graph.update_task_status(task.task_id, TaskStatus.FAILED)
+                    task.status = TaskStatus.FAILED
+                    self.project_context.failed_tasks.append(task)
+            else:
+                logger.info(f"Tarefa {task.task_id} será tentada novamente (tentativa {task.retries}/{task.max_retries}).")
+                self.dependency_graph.update_task_status(task.task_id, TaskStatus.PENDING)
+                task.status = TaskStatus.PENDING
+        
+        # Sincronizar a task_queue principal
+        self.project_context.task_queue = [
+            t for t in self.project_context.task_queue 
+            if t.status not in [TaskStatus.COMPLETED, TaskStatus.FAILED]
+        ]
+
+    # ============================================================================
+    # 🕵️ MÉTODOS DE REVISÃO CRÍTICA (CRITIC AGENT)
+    # ============================================================================
+
+    async def run_plan_review(self):
+        """Executa a revisão do plano inicial em segundo plano."""
+        logger.info("🕵️ CriticAgent: Iniciando revisão do plano em segundo plano...")
+        report = await self.critic_agent.review_plan(self.project_context.task_queue)
+        logger.info(f"🕵️ Crítica do Plano Concluída: Score={report['score']:.2f}, Aprovado={report['is_approved']}")
+        if not report['is_approved']:
+            logger.warning(f"Problemas no plano identificados pelo CriticAgent: {report['potential_issues']}")
+        # O feedback poderia ser armazenado no ProjectContext para o Planner usar no futuro.
+
+    async def run_code_review(self, task: Task):
+        """Executa a revisão de um artefato de código em segundo plano."""
+        logger.info(f"🕵️ CriticAgent: Iniciando revisão do código da tarefa {task.task_id}...")
+        file_path = task.details.file_path
+        relative_file_path = f"artifacts/{file_path}"
+        
+        try:
+            content = self.file_service.read_file(relative_file_path)
+            artifact_state = self.project_context.artifacts_state.get(relative_file_path)
+            if content and artifact_state:
+                report = await self.critic_agent.review_code_artifact(artifact_state, content)
+                logger.info(f"🕵️ Crítica de Código Concluída ({file_path}): Score={report['score']:.2f}, Aprovado={report['is_approved']}")
+                if not report['is_approved']:
+                    logger.warning(f"Problemas no código de '{file_path}': {report['potential_issues']}")
+                # Armazenar o feedback para refinamento futuro
+            else:
+                logger.warning(f"Não foi possível ler o conteúdo ou estado do artefato para revisão: {file_path}")
+        except Exception as e:
+            logger.error(f"Erro durante a revisão de código para {file_path}: {e}")
+
 
     # ============================================================================
     # 🚀 MÉTODOS DE EXECUÇÃO INTELIGENTE A2A

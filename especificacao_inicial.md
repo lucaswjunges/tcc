@@ -4,7 +4,7 @@ O objetivo deste documento é servir como um **blueprint inequívoco**, permitin
 
 ---
 
-# Especificação Canônica e Definitiva do Evolux Engine
+# Especificação Canônica e Definitiva Inicial do Evolux Engine
 
 ## 1. Visão Geral
 

@@ -15,9 +15,10 @@ logger = get_structured_logger("planner")
 
 # Imports from contracts
 from evolux_engine.schemas.contracts import (
-    Task, TaskType, TaskStatus, 
+    Task, TaskType, TaskStatus,
     TaskDetailsCreateFile, TaskDetailsModifyFile, TaskDetailsExecuteCommand
 )
+from evolux_engine.core.dependency_graph import DependencyGraph
 from evolux_engine.core.evolux_a2a_integration import A2ACapableMixin, auto_register_agent, handoff_capable
 
 
@@ -51,85 +52,76 @@ class PlannerAgent(A2ACapableMixin):
         return str(uuid.uuid4())
 
     async def generate_initial_plan(self) -> bool:
-        """Gera o plano inicial de tarefas para o projeto baseado no goal específico"""
+        """Gera o plano inicial de tarefas para o projeto e o estrutura como um DependencyGraph."""
         try:
             logger.info("Gerando plano inicial de tarefas...")
-            
-            # Obter o objetivo do projeto
             project_goal = self.project_context.project_goal if self.project_context else "projeto genérico"
             logger.info(f"Planejando para objetivo: {project_goal}")
+
+            # O DependencyGraph será a fonte da verdade para a estrutura do plano
+            dependency_graph = await self._generate_dynamic_plan(project_goal)
             
-            # Gerar plano dinâmico baseado no objetivo
-            tasks = await self._generate_dynamic_plan(project_goal)
-            
-            # Adicionar tarefas ao project_context se disponível
+            # Popular a task_queue do contexto do projeto a partir do grafo
             if self.project_context:
-                self.project_context.task_queue.extend(tasks)
+                all_tasks = dependency_graph.get_all_tasks()
+                self.project_context.task_queue = all_tasks
                 await self.project_context.save_context()
+                logger.info(f"Plano inicial criado com {len(all_tasks)} tarefas e salvo no contexto.")
+                # Opcional: Logar a estrutura do grafo para depuração
+                # logger.debug(f"Grafo de dependências gerado:\n{dependency_graph.to_mermaid()}")
             else:
-                # Fallback para compatibilidade
-                for task in tasks:
-                    self.active_tasks[task.task_id] = task
-                
-            logger.info(f"Plano inicial criado com {len(tasks)} tarefas para: {project_goal}")
+                # Fallback para ambientes sem project_context
+                self.active_tasks = {task.task_id: task for task in dependency_graph.get_all_tasks()}
+
             return True
             
         except Exception as e:
-            logger.error(f"Erro ao gerar plano inicial: {e}")
+            logger.opt(exception=True).error("Erro ao gerar plano inicial")
             return False
 
-    async def _generate_dynamic_plan(self, project_goal: str) -> List[Task]:
-        """Gera um plano dinâmico de tarefas baseado no objetivo do projeto"""
-        
-        # Realizar análise semântica do projeto
+    async def _generate_dynamic_plan(self, project_goal: str) -> DependencyGraph:
+        """Gera um plano dinâmico de tarefas e o retorna como um DependencyGraph."""
+        graph = DependencyGraph()
         project_analysis = await self._analyze_project_semantically(project_goal)
         
-        # Tarefas básicas que todo projeto precisa
-        tasks = []
-        
-        # 1. Sempre começar com documentação adaptada ao objetivo
-        tasks.append(Task(
+        # Tarefas básicas que todo projeto precisa (sem dependências)
+        readme_task = Task(
             task_id=self._generate_next_id(),
             description="Criar documentação do projeto",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(
-                file_path="README.md",
-                content_guideline=f"Criar documentação completa para: {project_goal}. Incluir instalação, uso, estrutura e exemplos específicos para este tipo de projeto."
-            ),
+            details=TaskDetailsCreateFile(file_path="README.md", content_guideline=f"Criar documentação completa para: {project_goal}."),
             status=TaskStatus.PENDING,
             dependencies=[],
             acceptance_criteria="README.md específico e completo para o projeto"
-        ))
-        
-        # 2. Dependências específicas do tipo de projeto
-        tasks.append(Task(
+        )
+        graph.add_task(readme_task)
+
+        reqs_task = Task(
             task_id=self._generate_next_id(),
             description="Criar arquivo de dependências",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(
-                file_path="requirements.txt",
-                content_guideline=f"Listar dependências Python necessárias para: {project_goal}. Incluir frameworks e bibliotecas específicas."
-            ),
+            details=TaskDetailsCreateFile(file_path="requirements.txt", content_guideline=f"Listar dependências Python para: {project_goal}."),
             status=TaskStatus.PENDING,
             dependencies=[],
             acceptance_criteria="requirements.txt com dependências específicas do projeto"
-        ))
+        )
+        graph.add_task(reqs_task)
         
-        # Gerar tarefas específicas baseadas na análise semântica
-        domain_tasks = await self._generate_domain_specific_tasks(
+        # Gerar tarefas específicas do domínio e adicioná-las ao grafo
+        await self._generate_domain_specific_tasks(
+            graph,
             project_analysis['project_type'], 
             project_goal,
             project_analysis['complexity']
         )
-        tasks.extend(domain_tasks)
         
-        # Adicionar tarefas de qualidade baseadas na complexidade
+        # Adicionar tarefas de qualidade (que podem depender de outras)
         if project_analysis['complexity'] >= 7:
-            tasks.extend(self._get_enterprise_quality_tasks())
+            self._get_enterprise_quality_tasks(graph)
         elif project_analysis['complexity'] >= 5:
-            tasks.extend(self._get_professional_quality_tasks())
+            self._get_professional_quality_tasks(graph)
         
-        return tasks
+        return graph
 
     async def _analyze_project_semantically(self, goal: str) -> Dict[str, Any]:
         """Analisa semanticamente o objetivo do projeto usando LLM"""
@@ -220,146 +212,103 @@ class PlannerAgent(A2ACapableMixin):
             "features": ["basic_functionality"]
         }
 
-    async def _generate_domain_specific_tasks(self, project_type: str, goal: str, complexity: int) -> List[Task]:
-        """Gera tarefas específicas baseadas no domínio e complexidade"""
+    async def _generate_domain_specific_tasks(self, graph: DependencyGraph, project_type: str, goal: str, complexity: int):
+        """Gera tarefas específicas do domínio e as adiciona diretamente ao grafo."""
         
-        # Calcular número de tarefas baseado na complexidade
-        base_tasks = 3  # README, requirements, main
-        complexity_factor = max(1, complexity / 3)
+        # A lógica de contagem de tarefas pode ser mantida para guiar a geração
+        logger.info(f"Gerando tarefas de domínio para projeto tipo '{project_type}' com complexidade {complexity}")
         
-        type_multipliers = {
-            'blog': 2.0,
-            'api': 1.5,
-            'ecommerce': 2.5,
-            'dashboard': 2.0,
-            'chatbot': 1.8,
-            'data_science': 2.2,
-            'web_app': 1.6,
-            'generic': 1.0
-        }
-        
-        multiplier = type_multipliers.get(project_type, 1.0)
-        target_tasks = int(base_tasks * complexity_factor * multiplier)
-        target_tasks = max(4, min(target_tasks, 20))  # Entre 4 e 20 tarefas
-        
-        logger.info(f"Gerando {target_tasks} tarefas para projeto {project_type} (complexidade {complexity})")
-        
-        # Gerar tarefas específicas por tipo
+        # Gerar tarefas específicas por tipo e adicioná-las ao grafo
         if project_type == "blog":
-            return self._get_blog_tasks()
+            self._get_blog_tasks(graph)
         elif project_type == "api":
-            return self._get_enhanced_api_tasks(complexity)
+            self._get_enhanced_api_tasks(graph, complexity)
         elif project_type == "ecommerce":
-            return self._get_enhanced_ecommerce_tasks(complexity)
+            self._get_enhanced_ecommerce_tasks(graph, complexity)
         elif project_type == "dashboard":
-            return self._get_enhanced_dashboard_tasks(complexity)
+            self._get_enhanced_dashboard_tasks(graph, complexity)
         elif project_type == "web_app":
-            return self._get_enhanced_web_app_tasks(complexity)
+            self._get_enhanced_web_app_tasks(graph, complexity)
         else:
-            return self._get_enhanced_generic_tasks(complexity)
+            self._get_enhanced_generic_tasks(graph, complexity)
 
-    def _get_enhanced_api_tasks(self, complexity: int) -> List[Task]:
-        """Tarefas aprimoradas para APIs baseadas na complexidade"""
-        tasks = []
+    def _get_enhanced_api_tasks(self, graph: DependencyGraph, complexity: int):
+        """Adiciona tarefas aprimoradas para APIs diretamente ao grafo."""
+        models_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar modelos de dados da API",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="models.py", content_guideline="Modelos SQLAlchemy com relacionamentos, validações e métodos de serialização"),
+            dependencies=[],
+            acceptance_criteria="Modelos de dados implementados com relacionamentos corretos"
+        )
+        graph.add_task(models_task)
+
+        schemas_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar schemas de validação",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="schemas.py", content_guideline="Schemas Marshmallow para validação e serialização de dados da API"),
+            dependencies=[models_task.task_id],
+            acceptance_criteria="Schemas de validação implementados"
+        )
+        graph.add_task(schemas_task)
+
+        api_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar API REST principal",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="api.py", content_guideline="API REST com Flask-RESTX, endpoints CRUD, documentação Swagger automática"),
+            dependencies=[schemas_task.task_id],
+            acceptance_criteria="API REST com documentação implementada"
+        )
+        graph.add_task(api_task)
         
-        # Tarefas básicas
-        tasks.extend([
-            Task(
-                task_id=self._generate_next_id(),
-                description="Criar modelos de dados da API",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="models.py",
-                    content_guideline="Modelos SQLAlchemy com relacionamentos, validações e métodos de serialização"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Modelos de dados implementados com relacionamentos corretos"
-            ),
-            Task(
-                task_id=self._generate_next_id(),
-                description="Criar schemas de validação",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="schemas.py",
-                    content_guideline="Schemas Marshmallow para validação e serialização de dados da API"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Schemas de validação implementados"
-            ),
-            Task(
-                task_id=self._generate_next_id(),
-                description="Implementar API REST principal",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="api.py",
-                    content_guideline="API REST com Flask-RESTX, endpoints CRUD, documentação Swagger automática"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="API REST com documentação implementada"
-            )
-        ])
-        
-        # Tarefas adicionais baseadas na complexidade
+        last_task_id = api_task.task_id
         if complexity >= 5:
-            tasks.append(Task(
+            auth_task = Task(
                 task_id=self._generate_next_id(),
                 description="Implementar autenticação JWT",
                 type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="auth.py",
-                    content_guideline="Sistema de autenticação com JWT, registro e login de usuários"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
+                details=TaskDetailsCreateFile(file_path="auth.py", content_guideline="Sistema de autenticação com JWT, registro e login de usuários"),
+                dependencies=[api_task.task_id],
                 acceptance_criteria="Sistema de autenticação JWT implementado"
-            ))
+            )
+            graph.add_task(auth_task)
+            last_task_id = auth_task.task_id
             
         if complexity >= 6:
-            tasks.append(Task(
+            test_task = Task(
                 task_id=self._generate_next_id(),
                 description="Criar testes automatizados",
                 type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="test_api.py",
-                    content_guideline="Testes pytest para todos os endpoints da API com cobertura de casos de uso"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
+                details=TaskDetailsCreateFile(file_path="test_api.py", content_guideline="Testes pytest para todos os endpoints da API com cobertura de casos de uso"),
+                dependencies=[last_task_id],
                 acceptance_criteria="Suite de testes automatizados implementada"
-            ))
+            )
+            graph.add_task(test_task)
+            last_task_id = test_task.task_id
             
         if complexity >= 7:
-            tasks.extend([
-                Task(
-                    task_id=self._generate_next_id(),
-                    description="Configurar containerização Docker",
-                    type=TaskType.CREATE_FILE,
-                    details=TaskDetailsCreateFile(
-                        file_path="Dockerfile",
-                        content_guideline="Dockerfile multi-stage para produção com otimizações de segurança e performance"
-                    ),
-                    status=TaskStatus.PENDING,
-                    dependencies=[],
-                    acceptance_criteria="Dockerfile de produção criado"
-                ),
-                Task(
-                    task_id=self._generate_next_id(),
-                    description="Configurar docker-compose",
-                    type=TaskType.CREATE_FILE,
-                    details=TaskDetailsCreateFile(
-                        file_path="docker-compose.yml",
-                        content_guideline="Docker-compose com API, banco de dados, Redis e proxy reverso"
-                    ),
-                    status=TaskStatus.PENDING,
-                    dependencies=[],
-                    acceptance_criteria="Orquestração Docker configurada"
-                )
-            ])
+            dockerfile_task = Task(
+                task_id=self._generate_next_id(),
+                description="Configurar containerização Docker",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(file_path="Dockerfile", content_guideline="Dockerfile multi-stage para produção com otimizações de segurança e performance"),
+                dependencies=[last_task_id],
+                acceptance_criteria="Dockerfile de produção criado"
+            )
+            graph.add_task(dockerfile_task)
             
-        return tasks
+            compose_task = Task(
+                task_id=self._generate_next_id(),
+                description="Configurar docker-compose",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(file_path="docker-compose.yml", content_guideline="Docker-compose com API, banco de dados, Redis e proxy reverso"),
+                dependencies=[dockerfile_task.task_id],
+                acceptance_criteria="Orquestração Docker configurada"
+            )
+            graph.add_task(compose_task)
 
     def _get_enhanced_web_app_tasks(self, complexity: int) -> List[Task]:
         """Tarefas aprimoradas para aplicações web"""
@@ -517,10 +466,21 @@ class PlannerAgent(A2ACapableMixin):
             
         return tasks
 
-    def _get_professional_quality_tasks(self) -> List[Task]:
-        """Tarefas para elevar o projeto a nível profissional"""
-        return [
-            Task(
+    def _get_professional_quality_tasks(self, graph: DependencyGraph):
+        """Adiciona tarefas de qualidade profissional diretamente ao grafo."""
+        # Encontrar a última tarefa adicionada para criar dependência
+        # Esta é uma heurística simples; uma abordagem melhor poderia ser mais específica.
+        last_task_id = None
+        if graph.nodes:
+            # Tenta encontrar uma tarefa principal como 'api.py' ou 'app.py'
+            main_app_tasks = [t for t in graph.get_all_tasks() if t.details and ('app.py' in getattr(t.details, 'file_path', '') or 'api.py' in getattr(t.details, 'file_path', ''))]
+            if main_app_tasks:
+                last_task_id = main_app_tasks[0].task_id
+            else:
+                # Fallback para a última tarefa adicionada
+                last_task_id = list(graph.nodes.keys())[-1]
+
+        linting_task = Task(
                 task_id=self._generate_next_id(),
                 description="Configurar linting e formatação",
                 type=TaskType.CREATE_FILE,
@@ -529,10 +489,12 @@ class PlannerAgent(A2ACapableMixin):
                     content_guideline="Configuração pre-commit com black, flake8, isort e mypy"
                 ),
                 status=TaskStatus.PENDING,
-                dependencies=[],
+                dependencies=[last_task_id] if last_task_id else [],
                 acceptance_criteria="Linting e formatação configurados"
-            ),
-            Task(
+            )
+        graph.add_task(linting_task)
+
+        docs_task = Task(
                 task_id=self._generate_next_id(),
                 description="Criar documentação técnica",
                 type=TaskType.CREATE_FILE,
@@ -541,15 +503,19 @@ class PlannerAgent(A2ACapableMixin):
                     content_guideline="Documentação da arquitetura, decisões técnicas e guias de desenvolvimento"
                 ),
                 status=TaskStatus.PENDING,
-                dependencies=[],
+                dependencies=[last_task_id] if last_task_id else [],
                 acceptance_criteria="Documentação técnica criada"
             )
-        ]
+        graph.add_task(docs_task)
 
-    def _get_enterprise_quality_tasks(self) -> List[Task]:
-        """Tarefas para elevar o projeto a nível enterprise"""
-        return [
-            Task(
+
+    def _get_enterprise_quality_tasks(self, graph: DependencyGraph):
+        """Adiciona tarefas de nível enterprise diretamente ao grafo."""
+        last_task_id = None
+        if graph.nodes:
+            last_task_id = list(graph.nodes.keys())[-1]
+
+        monitoring_task = Task(
                 task_id=self._generate_next_id(),
                 description="Implementar monitoramento e métricas",
                 type=TaskType.CREATE_FILE,
@@ -558,10 +524,12 @@ class PlannerAgent(A2ACapableMixin):
                     content_guideline="Sistema de monitoramento com Prometheus, health checks e alertas"
                 ),
                 status=TaskStatus.PENDING,
-                dependencies=[],
+                dependencies=[last_task_id] if last_task_id else [],
                 acceptance_criteria="Sistema de monitoramento implementado"
-            ),
-            Task(
+            )
+        graph.add_task(monitoring_task)
+
+        cicd_task = Task(
                 task_id=self._generate_next_id(),
                 description="Configurar pipeline CI/CD",
                 type=TaskType.CREATE_FILE,
@@ -570,10 +538,12 @@ class PlannerAgent(A2ACapableMixin):
                     content_guideline="Pipeline CI/CD com testes, build, security scan e deploy automático"
                 ),
                 status=TaskStatus.PENDING,
-                dependencies=[],
+                dependencies=[monitoring_task.task_id],
                 acceptance_criteria="Pipeline CI/CD configurado"
-            ),
-            Task(
+            )
+        graph.add_task(cicd_task)
+
+        security_task = Task(
                 task_id=self._generate_next_id(),
                 description="Implementar configuração de segurança",
                 type=TaskType.CREATE_FILE,
@@ -582,174 +552,83 @@ class PlannerAgent(A2ACapableMixin):
                     content_guideline="Configurações de segurança com HTTPS, CORS, rate limiting e validações"
                 ),
                 status=TaskStatus.PENDING,
-                dependencies=[],
+                dependencies=[cicd_task.task_id],
                 acceptance_criteria="Configurações de segurança implementadas"
             )
-        ]
+        graph.add_task(security_task)
 
-    def _get_blog_tasks(self) -> List[Task]:
-        """Tarefas específicas para sistemas de blog com dependências inteligentes"""
+    def _get_blog_tasks(self, graph: DependencyGraph):
+        """Adiciona tarefas de blog diretamente ao grafo com dependências explícitas."""
         
-        # Task IDs para dependências
-        models_task_id = self._generate_next_id()
-        app_task_id = self._generate_next_id()
-        base_template_id = self._generate_next_id()
-        index_template_id = self._generate_next_id()
-        post_template_id = self._generate_next_id()
-        create_template_id = self._generate_next_id()
-        auth_forms_id = self._generate_next_id()
-        init_db_id = self._generate_next_id()
+        models_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar modelos de dados para blog (User, Post, Comment)",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="models.py", content_guideline="Modelos Flask-SQLAlchemy para User, Post, Comment com relacionamentos."),
+            dependencies=[],
+            acceptance_criteria="Modelos User, Post, Comment definidos com relacionamentos corretos"
+        )
+        graph.add_task(models_task)
         
-        return [
-            # 1. Modelos primeiro (base de tudo)
-            Task(
-                task_id=models_task_id,
-                description="Criar modelos de dados para blog",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="models.py",
-                    content_guideline="""Criar modelos Flask-SQLAlchemy para blog completo:
-                    - User (para autenticação): id, username, email, password_hash, posts, comments
-                    - Post: id, title, content, date_posted, author_id, comments
-                    - Comment: id, content, date_posted, author_id, post_id
-                    Incluir relacionamentos bidirecionais e métodos __repr__"""
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Modelos User, Post, Comment definidos com relacionamentos corretos"
-            ),
-            
-            # 2. Formulários de autenticação
-            Task(
-                task_id=auth_forms_id,
-                description="Criar formulários de autenticação",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="forms.py",
-                    content_guideline="""Criar formulários Flask-WTF:
-                    - RegistrationForm: username, email, password, confirm_password
-                    - LoginForm: username, password, remember_me
-                    - PostForm: title, content
-                    - CommentForm: content
-                    Com validações apropriadas"""
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Formulários WTF para autenticação e posts criados"
-            ),
-            
-            # 3. Aplicação Flask (depende dos modelos)
-            Task(
-                task_id=app_task_id,
-                description="Criar aplicação Flask principal",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="app.py",
-                    content_guideline="""Criar aplicação Flask completa com:
-                    - Configuração do banco de dados SQLite
-                    - Flask-Login para autenticação
-                    - Rotas: /, /register, /login, /logout, /post/<id>, /create_post, /post/<id>/comment
-                    - Importar modelos User, Post, Comment (não Author)
-                    - Usar formulários do forms.py
-                    - Implementar user_loader para Flask-Login"""
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[models_task_id, auth_forms_id],
-                acceptance_criteria="Aplicação Flask com autenticação e CRUD de posts funcionando"
-            ),
-            
-            # 4. Template base
-            Task(
-                task_id=base_template_id,
-                description="Criar template base HTML",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="templates/base.html",
-                    content_guideline="""Criar template base com:
-                    - DOCTYPE, html, head, body
-                    - Bootstrap CSS para styling
-                    - Navbar com links para Home, Login/Logout
-                    - Flash messages para feedbacks
-                    - Block content para outros templates estenderem
-                    - Sintaxe Jinja2 correta"""
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[],
-                acceptance_criteria="Template base com navbar e sistema de mensagens criado"
-            ),
-            
-            # 5. Templates específicos (dependem do base)
-            Task(
-                task_id=index_template_id,
-                description="Criar página inicial do blog",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="templates/index.html",
-                    content_guideline="""Criar página inicial que:
-                    - Estende base.html
-                    - Lista todos os posts com título, autor e data
-                    - Links para visualizar posts individuais
-                    - Botão para criar novo post (se logado)
-                    - Usar sintaxe Jinja2 para loop de posts"""
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[base_template_id],
-                acceptance_criteria="Página inicial listando posts criada"
-            ),
-            
-            Task(
-                task_id=post_template_id,
-                description="Criar página de visualização de post",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="templates/post.html",
-                    content_guideline="""Criar página de post individual com:
-                    - Título e conteúdo do post
-                    - Informações do autor e data
-                    - Lista de comentários
-                    - Formulário para adicionar comentário (se logado)
-                    - Estender base.html"""
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[base_template_id],
-                acceptance_criteria="Página de post individual com comentários criada"
-            ),
-            
-            Task(
-                task_id=create_template_id,
-                description="Criar página de criação de post",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="templates/create_post.html",
-                    content_guideline="""Criar formulário de criação de post:
-                    - Estender base.html
-                    - Formulário com título e conteúdo
-                    - Validação cliente e servidor
-                    - Usar WTForms rendering"""
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[base_template_id],
-                acceptance_criteria="Formulário de criação de post criado"
-            ),
-            
-            # 6. Scripts de inicialização
-            Task(
-                task_id=init_db_id,
-                description="Criar script de inicialização do banco",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="init_db.py",
-                    content_guideline="""Criar script para:
-                    - Importar app e models
-                    - Criar todas as tabelas
-                    - Adicionar dados de exemplo (usuário admin, posts exemplo)
-                    - Poder ser executado independentemente"""
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[models_task_id, app_task_id],
-                acceptance_criteria="Script de inicialização que cria DB e dados exemplo"
-            )
-        ]
+        forms_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar formulários de autenticação e post",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="forms.py", content_guideline="Formulários Flask-WTF para login, registro, post e comentário."),
+            dependencies=[],
+            acceptance_criteria="Formulários WTF para autenticação e posts criados"
+        )
+        graph.add_task(forms_task)
+        
+        app_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar aplicação Flask principal com rotas",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="app.py", content_guideline="Aplicação Flask com rotas de autenticação e CRUD de posts, usando os modelos e formulários."),
+            dependencies=[models_task.task_id, forms_task.task_id],
+            acceptance_criteria="Aplicação Flask com autenticação e CRUD de posts funcionando"
+        )
+        graph.add_task(app_task)
+        
+        base_template_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar template base HTML com navbar",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="templates/base.html", content_guideline="Template base com Bootstrap, navbar, flash messages e block content."),
+            dependencies=[],
+            acceptance_criteria="Template base com navbar e sistema de mensagens criado"
+        )
+        graph.add_task(base_template_task)
+        
+        index_template_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar página inicial do blog (index.html)",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="templates/index.html", content_guideline="Página que estende base.html e lista todos os posts."),
+            dependencies=[base_template_task.task_id, app_task.task_id],
+            acceptance_criteria="Página inicial listando posts criada"
+        )
+        graph.add_task(index_template_task)
+        
+        post_template_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar página de visualização de post (post.html)",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="templates/post.html", content_guideline="Página que exibe um post e seus comentários."),
+            dependencies=[base_template_task.task_id, app_task.task_id],
+            acceptance_criteria="Página de post individual com comentários criada"
+        )
+        graph.add_task(post_template_task)
+        
+        init_db_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar script de inicialização do banco de dados",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(file_path="init_db.py", content_guideline="Script para criar tabelas e popular com dados de exemplo."),
+            dependencies=[app_task.task_id],
+            acceptance_criteria="Script de inicialização que cria DB e dados exemplo"
+        )
+        graph.add_task(init_db_task)
 
     def _get_api_tasks(self) -> List[Task]:
         """Tarefas específicas para APIs REST"""
@@ -1535,8 +1414,8 @@ class PlannerAgent(A2ACapableMixin):
             
             return response.status.value == "completed"
             
-        except Exception as e:
-            logger.error(f"Erro na delegação de planejamento: {e}")
+        except Exception:
+            logger.exception("Erro ao gerar plano inicial")
             return False
     
     async def share_planning_knowledge(self, target_agents: List[str]):
