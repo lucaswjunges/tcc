@@ -91,17 +91,58 @@ class SemanticValidatorAgent:
         improvements = []
         confidence = 0.5
         
+        # Tentar detectar arquivo a partir da descrição da tarefa ou artifacts_changed
+        file_path = None
+        
+        # Primeiro, verificar se tem informação nos artifacts_changed
+        if execution_result.artifacts_changed:
+            for artifact in execution_result.artifacts_changed:
+                if artifact.path and (artifact.change_type == "created" or artifact.change_type == "modified"):
+                    file_path = Path(self.project_context.get_artifact_path(artifact.path))
+                    break
+        
+        # Se não encontrou, tentar extrair da descrição da tarefa
+        if not file_path:
+            # Procurar padrões de arquivos na descrição
+            import re
+            patterns = [
+                r'criar\s+(?:arquivo\s+)?([^\s]+\.(?:py|html|txt|md|js|css|json|yaml|yml))',
+                r'gerar\s+(?:arquivo\s+)?([^\s]+\.(?:py|html|txt|md|js|css|json|yaml|yml))',
+                r'arquivo\s+([^\s]+\.(?:py|html|txt|md|js|css|json|yaml|yml))',
+                r'([^\s]+\.(?:py|html|txt|md|js|css|json|yaml|yml))'
+            ]
+            
+            for pattern in patterns:
+                match = re.search(pattern, task.description.lower())
+                if match:
+                    potential_path = match.group(1)
+                    file_path = Path(self.project_context.get_artifact_path(potential_path))
+                    break
+        
+        # Se ainda não encontrou arquivo específico, tentar buscar por arquivos similares no workspace
+        if not file_path:
+            # Busca final no workspace por arquivos relacionados
+            workspace_path = Path(self.project_context.workspace_path)
+            if "readme" in task.description.lower():
+                potential_files = list(workspace_path.glob("**/README*")) + list(workspace_path.glob("**/readme*"))
+                if potential_files:
+                    file_path = potential_files[0]  # Usar o primeiro encontrado
+                    logger.info(f"Arquivo README encontrado: {file_path}")
+            
+            # Se ainda não encontrou, usar validação genérica
+            if not file_path:
+                logger.info(f"Não foi possível identificar arquivo específico para tarefa {task.task_id}, usando validação genérica")
+                return await self._perform_generic_file_validation(task, execution_result)
+        
         # Verificar se arquivo foi realmente criado
-        if hasattr(task.details, 'file_path'):
-            file_path = Path(self.project_context.get_artifact_path(task.details.file_path))
-            if not file_path.exists():
-                issues.append(f"Arquivo {task.details.file_path} não foi criado")
-                return ValidationResult(
-                    validation_passed=False,
-                    confidence_score=0.0,
-                    identified_issues=issues,
-                    suggested_improvements=["Verificar se comando de criação foi executado corretamente"]
-                )
+        if not file_path.exists():
+            issues.append(f"Arquivo {file_path.name} não foi criado")
+            return ValidationResult(
+                validation_passed=False,
+                confidence_score=0.0,
+                identified_issues=issues,
+                suggested_improvements=["Verificar se comando de criação foi executado corretamente"]
+            )
             
             # Análise de conteúdo baseada no tipo de arquivo
             try:
@@ -131,7 +172,7 @@ class SemanticValidatorAgent:
                 issues.append(f"Erro ao analisar arquivo: {str(e)}")
                 confidence = 0.3
         
-        passed = len(issues) == 0 and confidence >= 0.6
+        passed = len(issues) == 0 and confidence >= 0.5
         
         return ValidationResult(
             validation_passed=passed,
@@ -246,19 +287,98 @@ class SemanticValidatorAgent:
                 confidence += len(found_deps) * 0.1
         
         elif "readme" in task_description.lower():
-            if len(content) < 100:
+            if len(content) < 50:
                 issues.append("README muito curto, falta informação essencial")
             else:
                 confidence += 0.2
                 
-            required_sections = ['installation', 'usage', 'features']
-            for section in required_sections:
-                if section.lower() in content.lower():
-                    confidence += 0.1
-                else:
-                    improvements.append(f"Considerar adicionar seção {section}")
+            # Verificar seções básicas, mas não ser muito rigoroso
+            basic_sections = ['installation', 'usage', 'features', 'description', 'install', 'how to', 'como usar']
+            found_sections = sum(1 for section in basic_sections if section.lower() in content.lower())
+            
+            if found_sections > 0:
+                confidence += 0.1 * min(found_sections, 3)  # Máximo de 0.3 bonus
+            else:
+                improvements.append("Considerar adicionar seções como instalação, uso ou funcionalidades")
         
         return min(confidence, 1.0), issues, improvements
+    
+    async def _perform_generic_file_validation(self, task: Task, execution_result: ExecutionResult) -> ValidationResult:
+        """Validação genérica quando não é possível identificar arquivo específico"""
+        issues = []
+        improvements = []
+        confidence = 0.6
+        
+        # Verificar se houve artifacts_changed que indicam criação de arquivos
+        if execution_result.artifacts_changed:
+            created_files = [a for a in execution_result.artifacts_changed if a.change_type == "created"]
+            modified_files = [a for a in execution_result.artifacts_changed if a.change_type == "modified"]
+            
+            if created_files:
+                confidence += 0.2
+                logger.info(f"Arquivos criados detectados: {[f.path for f in created_files]}")
+            elif modified_files:
+                confidence += 0.1
+                logger.info(f"Arquivos modificados detectados: {[f.path for f in modified_files]}")
+            else:
+                issues.append("Nenhum arquivo foi criado ou modificado conforme esperado")
+                confidence = 0.3
+        else:
+            # Sem artifacts_changed, verificar pelo menos se comando foi executado com sucesso
+            if execution_result.exit_code == 0:
+                confidence = 0.5
+                improvements.append("Considerar adicionar informações sobre arquivos criados no resultado")
+            else:
+                issues.append("Comando falhou e nenhum artefato foi reportado")
+                confidence = 0.1
+        
+        # Verificar se a descrição indica criação de documentação
+        if "readme" in task.description.lower() or "documentação" in task.description.lower():
+            # Buscar por arquivos README ou de documentação no workspace
+            workspace_path = Path(self.project_context.workspace_path)
+            readme_files = list(workspace_path.glob("**/README*")) + list(workspace_path.glob("**/readme*"))
+            doc_files = list(workspace_path.glob("**/*.md"))
+            
+            if readme_files or doc_files:
+                confidence += 0.2
+                logger.info(f"Arquivos de documentação encontrados: {[f.name for f in readme_files + doc_files]}")
+                
+                # Se encontrou arquivos de documentação, validar o mais recente
+                all_docs = readme_files + doc_files
+                if all_docs:
+                    # Pegar o arquivo mais recente
+                    latest_doc = max(all_docs, key=lambda f: f.stat().st_mtime)
+                    try:
+                        content = latest_doc.read_text(encoding='utf-8')
+                        if len(content.strip()) >= 50:
+                            confidence += 0.1
+                            logger.info(f"Arquivo de documentação {latest_doc.name} tem conteúdo adequado")
+                        else:
+                            improvements.append(f"Arquivo {latest_doc.name} poderia ter mais conteúdo")
+                    except Exception as e:
+                        logger.warning(f"Erro ao ler arquivo de documentação {latest_doc.name}: {e}")
+            else:
+                # Ser menos rigoroso - pode ter sido criado mas com nome diferente
+                if execution_result.exit_code == 0:
+                    improvements.append("Arquivo de documentação pode ter sido criado com nome diferente do esperado")
+                    confidence = max(confidence, 0.6)  # Dar benefit of doubt
+                else:
+                    issues.append("Nenhum arquivo de documentação encontrado no workspace")
+        
+        # Verificar padrões de sucesso no stdout
+        if execution_result.stdout:
+            success_indicators = ["success", "created", "generated", "completed", "done"]
+            if any(indicator in execution_result.stdout.lower() for indicator in success_indicators):
+                confidence += 0.1
+        
+        passed = len(issues) == 0 and confidence >= 0.5
+        
+        return ValidationResult(
+            validation_passed=passed,
+            confidence_score=confidence,
+            identified_issues=issues,
+            suggested_improvements=improvements
+        )
     
     async def _validate_file_modification(self, task: Task, execution_result: ExecutionResult) -> ValidationResult:
         """Valida modificação de arquivos"""

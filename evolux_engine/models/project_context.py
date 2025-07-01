@@ -66,8 +66,8 @@ class ProjectContext(BaseModel):
         return str(self.workspace_path)
     
     def get_artifact_path(self, relative_path: str) -> str:
-        """Retorna caminho relativo para um artefato dentro do workspace"""
-        return str(Path("artifacts") / relative_path)
+        """Retorna caminho absoluto para um artefato dentro do workspace"""
+        return str(self.workspace_path / relative_path)
     
     def get_log_path(self, filename: str) -> str:
         """Retorna caminho para arquivo de log"""
