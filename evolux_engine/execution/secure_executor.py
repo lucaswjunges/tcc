@@ -411,30 +411,97 @@ class SecureExecutor:
         }
     
     async def cleanup_execution(self, execution_id: str):
-        """Limpa recursos de uma execução específica"""
+        """Limpa recursos de uma execução específica com timeout e força"""
         
         if execution_id in self.active_containers:
             container_id = self.active_containers[execution_id]
             
             try:
-                import subprocess
-                await asyncio.create_subprocess_exec(
-                    'docker', 'stop', container_id,
-                    stdout=asyncio.subprocess.DEVNULL,
-                    stderr=asyncio.subprocess.DEVNULL
+                # Primeiro tenta parar graciosamente
+                stop_proc = await asyncio.create_subprocess_exec(
+                    'docker', 'stop', '--time', '10', container_id,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
                 )
+                
+                try:
+                    stdout, stderr = await asyncio.wait_for(stop_proc.communicate(), timeout=15)
+                    if stop_proc.returncode != 0:
+                        logger.warning("Docker stop failed, trying force kill",
+                                     execution_id=execution_id,
+                                     stderr=stderr.decode())
+                        
+                        # Se falhar, força a remoção
+                        kill_proc = await asyncio.create_subprocess_exec(
+                            'docker', 'rm', '--force', container_id,
+                            stdout=asyncio.subprocess.DEVNULL,
+                            stderr=asyncio.subprocess.DEVNULL
+                        )
+                        await asyncio.wait_for(kill_proc.communicate(), timeout=10)
+                        
+                except asyncio.TimeoutError:
+                    logger.error("Container cleanup timeout, forcing removal",
+                               execution_id=execution_id,
+                               container_id=container_id)
+                    
+                    # Último recurso: force remove
+                    try:
+                        force_proc = await asyncio.create_subprocess_exec(
+                            'docker', 'rm', '--force', container_id,
+                            stdout=asyncio.subprocess.DEVNULL,
+                            stderr=asyncio.subprocess.DEVNULL
+                        )
+                        await asyncio.wait_for(force_proc.communicate(), timeout=5)
+                    except:
+                        logger.error("Failed to force remove container", container_id=container_id)
                 
                 logger.info("Container stopped and cleaned up",
                            execution_id=execution_id,
                            container_id=container_id)
                 
             except Exception as e:
-                logger.warning("Failed to cleanup container",
-                             execution_id=execution_id,
-                             error=str(e))
+                logger.error("Failed to cleanup container",
+                           execution_id=execution_id,
+                           container_id=container_id,
+                           error=str(e))
             
             finally:
-                del self.active_containers[execution_id]
+                # Sempre remove da lista ativa, mesmo se cleanup falhou
+                self.active_containers.pop(execution_id, None)
+                
+                # Limpa também volumes temporários se existirem
+                await self._cleanup_temp_volumes(execution_id)
+    
+    async def _cleanup_temp_volumes(self, execution_id: str):
+        """Limpa volumes temporários associados a uma execução"""
+        try:
+            # Lista volumes com o padrão de nome da execução
+            list_proc = await asyncio.create_subprocess_exec(
+                'docker', 'volume', 'ls', '--filter', f'name=evolux-{execution_id}',
+                '--format', '{{.Name}}',
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.DEVNULL
+            )
+            
+            stdout, _ = await list_proc.communicate()
+            volume_names = stdout.decode().strip().split('\n')
+            
+            # Remove cada volume encontrado
+            for volume_name in volume_names:
+                if volume_name and volume_name.startswith(f'evolux-{execution_id}'):
+                    try:
+                        rm_proc = await asyncio.create_subprocess_exec(
+                            'docker', 'volume', 'rm', volume_name,
+                            stdout=asyncio.subprocess.DEVNULL,
+                            stderr=asyncio.subprocess.DEVNULL
+                        )
+                        await rm_proc.communicate()
+                        logger.debug("Cleaned up volume", volume=volume_name)
+                    except Exception as e:
+                        logger.warning("Failed to cleanup volume", volume=volume_name, error=str(e))
+                        
+        except Exception as e:
+            logger.warning("Error during volume cleanup", execution_id=execution_id, error=str(e))
     
     async def cleanup_all(self):
         """Limpa todos os recursos ativos"""

@@ -51,9 +51,13 @@ class ConfigManager:
             if not self.global_config.evolux_google_api_key:
                 self.global_config.evolux_google_api_key = os.getenv('EVOLUX_GOOGLE_API_KEY')
                 
-            logger.debug(f"Final OpenRouter API key: {self.global_config.evolux_openrouter_api_key[:10] + '...' if self.global_config.evolux_openrouter_api_key else None}")
-            logger.debug(f"Final OpenAI API key: {self.global_config.evolux_openai_api_key[:10] + '...' if self.global_config.evolux_openai_api_key else None}")
-            logger.debug(f"Final Google API key: {self.global_config.evolux_google_api_key[:10] + '...' if self.global_config.evolux_google_api_key else None}")
+            # Log mascarado para segurança - nunca expor chaves reais
+            logger.debug(f"OpenRouter API key configured: {'Yes' if self.global_config.evolux_openrouter_api_key else 'No'}")
+            logger.debug(f"OpenAI API key configured: {'Yes' if self.global_config.evolux_openai_api_key else 'No'}")
+            logger.debug(f"Google API key configured: {'Yes' if self.global_config.evolux_google_api_key else 'No'}")
+            
+            # Validar chaves API
+            self._validate_api_keys()
 
             if config_file_path and os.path.exists(config_file_path):
                 try:
@@ -68,6 +72,35 @@ class ConfigManager:
             logger.opt(exception=True).critical(f"Falha crítica ao carregar configurações globais: {e}")
             raise
 
+    def _validate_api_keys(self):
+        """Valida formato e segurança das chaves API"""
+        import re
+        
+        # Padrões básicos para validar formato das chaves
+        key_patterns = {
+            'evolux_openrouter_api_key': r'^sk-or-v1-[a-zA-Z0-9]{40,}$',
+            'evolux_openai_api_key': r'^sk-[a-zA-Z0-9]{20,}$',
+            'evolux_google_api_key': r'^[a-zA-Z0-9_-]{20,}$'
+        }
+        
+        for key_attr, pattern in key_patterns.items():
+            key_value = getattr(self.global_config, key_attr, None)
+            
+            if key_value:
+                # Verificar formato básico
+                if not re.match(pattern, key_value):
+                    logger.warning(f"API key format may be invalid for {key_attr}")
+                
+                # Verificar comprimento mínimo de segurança
+                if len(key_value) < 20:
+                    logger.error(f"API key too short for {key_attr} - security risk")
+                    raise ValueError(f"Invalid API key length for {key_attr}")
+                
+                # Verificar se não é chave de exemplo/teste comum
+                test_keys = ['test', 'example', 'demo', 'placeholder', 'your-key-here']
+                if any(test in key_value.lower() for test in test_keys):
+                    logger.error(f"Test/placeholder API key detected for {key_attr}")
+                    raise ValueError(f"Cannot use test API key for {key_attr}")
 
     def get_global_setting(self, key: str, default: Optional[Any] = None) -> Any:
         """

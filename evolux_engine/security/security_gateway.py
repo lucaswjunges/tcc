@@ -169,18 +169,31 @@ class SecurityGateway:
         return sanitized
     
     def _check_whitelist(self, command: str) -> bool:
-        """Verifica se o comando base está na whitelist"""
+        """Verifica se o comando base está na whitelist com validação aprimorada"""
         try:
+            # Normalizar comando removendo caracteres de escape e encoding
+            normalized_command = self._normalize_command(command)
+            
             # Parse do comando para extrair o executável base
-            parts = shlex.split(command)
+            parts = shlex.split(normalized_command)
             if not parts:
                 return False
             
             base_command = parts[0]
             
-            # Remove path se presente
+            # Validar se não há tentativas de path traversal
+            if '..' in base_command or base_command.startswith('/'):
+                logger.warning("Path traversal attempt detected", command=command)
+                return False
+            
+            # Remove path se presente (depois de validar)
             if '/' in base_command:
                 base_command = os.path.basename(base_command)
+            
+            # Verificar se o comando base não contém caracteres suspeitos
+            if not re.match(r'^[a-zA-Z0-9_.-]+$', base_command):
+                logger.warning("Invalid characters in command", command=base_command)
+                return False
             
             return base_command in self.command_whitelist
             
@@ -188,6 +201,24 @@ class SecurityGateway:
             # Erro de parsing (aspas não fechadas, etc)
             logger.warning("Command parsing failed", command=command)
             return False
+    
+    def _normalize_command(self, command: str) -> str:
+        """Normaliza comando para prevenir bypass via encoding"""
+        # Remove null bytes
+        command = command.replace('\x00', '')
+        
+        # Decode possíveis encodings
+        try:
+            # Tenta decodificar hex encoding
+            if '\\x' in command:
+                command = bytes(command, 'utf-8').decode('unicode_escape')
+        except:
+            pass
+        
+        # Remove caracteres de controle
+        command = ''.join(char for char in command if ord(char) >= 32 or char in '\t\n')
+        
+        return command.strip()
     
     def _check_danger_patterns(self, command: str) -> Optional[Dict[str, Any]]:
         """Verifica padrões perigosos no comando"""

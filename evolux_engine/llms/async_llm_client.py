@@ -313,16 +313,27 @@ class AsyncLLMClient:
                     return response
                 
             except Exception as e:
-                if attempt == max_retries:
+                # Classificar tipo de erro para decidir se deve tentar novamente
+                error_type = self._classify_error(e)
+                should_retry = self._should_retry_error(error_type, attempt, max_retries)
+                
+                logger.error("LLM request failed",
+                           request_id=request.request_id,
+                           attempt=attempt + 1,
+                           error_type=error_type,
+                           error=str(e),
+                           will_retry=should_retry)
+                
+                if not should_retry or attempt == max_retries:
                     return LLMResponse(
                         content="",
                         request_id=request.request_id,
                         model=request.model,
                         tokens_used=0,
                         cost_usd=0.0,
-                        latency_ms=0.0,
+                        latency_ms=time.time() * 1000 - start_time,
                         success=False,
-                        error=str(e),
+                        error=f"{error_type}: {str(e)}",
                         attempt=attempt + 1
                     )
                 
@@ -585,6 +596,54 @@ class AsyncLLMClient:
                    success_rate=successful/len(requests))
         
         return responses
+    
+    def _classify_error(self, error: Exception) -> str:
+        """Classifica o tipo de erro para decidir estratégia de retry"""
+        error_str = str(error).lower()
+        
+        # Erros de rate limiting - aguardar mais tempo
+        if any(indicator in error_str for indicator in ['rate limit', 'quota', '429', 'too many requests']):
+            return 'rate_limit'
+        
+        # Erros de rede - tentar novamente
+        if any(indicator in error_str for indicator in ['connection', 'timeout', 'network', 'dns']):
+            return 'network'
+        
+        # Erros de servidor - tentar novamente
+        if any(indicator in error_str for indicator in ['500', '502', '503', '504', 'server error']):
+            return 'server_error'
+        
+        # Erros de autenticação - não tentar novamente
+        if any(indicator in error_str for indicator in ['401', '403', 'unauthorized', 'forbidden', 'invalid key']):
+            return 'auth_error'
+        
+        # Erros de conteúdo - não tentar novamente
+        if any(indicator in error_str for indicator in ['400', 'bad request', 'invalid input', 'content policy']):
+            return 'content_error'
+        
+        # Erro desconhecido
+        return 'unknown'
+    
+    def _should_retry_error(self, error_type: str, attempt: int, max_retries: int) -> bool:
+        """Decide se deve tentar novamente baseado no tipo de erro"""
+        
+        # Nunca tentar novamente erros de autenticação ou conteúdo
+        if error_type in ['auth_error', 'content_error']:
+            return False
+        
+        # Para rate limiting, aguardar mais tempo mas tentar menos vezes
+        if error_type == 'rate_limit':
+            return attempt < min(2, max_retries)
+        
+        # Para erros de rede e servidor, tentar normalmente
+        if error_type in ['network', 'server_error']:
+            return attempt < max_retries
+        
+        # Para erros desconhecidos, tentar com cautela
+        if error_type == 'unknown':
+            return attempt < max(1, max_retries // 2)
+        
+        return False
 
     def get_metrics(self) -> Dict[str, Any]:
         """Retorna métricas detalhadas"""
