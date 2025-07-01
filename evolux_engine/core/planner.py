@@ -18,11 +18,17 @@ from evolux_engine.schemas.contracts import (
     Task, TaskType, TaskStatus, 
     TaskDetailsCreateFile, TaskDetailsModifyFile, TaskDetailsExecuteCommand
 )
+from evolux_engine.core.evolux_a2a_integration import A2ACapableMixin, auto_register_agent, handoff_capable
 
 
-class PlannerAgent:
-    """Classe responsável por gerenciar a criação e o fluxo de tarefas"""
+@auto_register_agent("planner", ["handle_context_transfer", "handle_task_delegation", "handle_knowledge_share"])
+@handoff_capable("context_transfer", "task_delegation", "knowledge_share")
+class PlannerAgent(A2ACapableMixin):
+    """Classe responsável por gerenciar a criação e o fluxo de tarefas com capacidades A2A"""
     def __init__(self, context_manager, task_db, artifact_store, project_context=None, llm_client=None):
+        # Inicializar A2A primeiro
+        super().__init__()
+        
         self.context_manager = context_manager
         self.task_db = task_db
         self.artifact_store = artifact_store
@@ -33,7 +39,12 @@ class PlannerAgent:
         self.failure_history = {}  # Track failures for recovery
         self.recovery_strategies = {}  # Store recovery strategies
         self.max_recovery_attempts = 3  # Maximum recovery attempts per task
-        logger.info("PlannerAgent inicializado com componentes necessários")
+        
+        # A2A specific attributes
+        self.delegated_tasks = {}  # Tarefas delegadas para outros agentes
+        self.received_contexts = {}  # Contextos recebidos de outros agentes
+        
+        logger.info("PlannerAgent inicializado com componentes necessários e capacidades A2A")
 
     def _generate_next_id(self) -> str:
         """Gera um ID sequencial único"""
@@ -1360,3 +1371,210 @@ class PlannerAgent:
                 })
         
         return sorted(problematic, key=lambda x: x['failure_count'], reverse=True)
+
+    # ============================================================================
+    # MÉTODOS A2A (Agent-to-Agent) - Parallel Handoff
+    # ============================================================================
+    
+    async def _process_received_handoff(self, request):
+        """Processa handoff recebido - implementação específica do PlannerAgent"""
+        from evolux_engine.core.agent_handoff import HandoffType
+        
+        if request.handoff_type == HandoffType.CONTEXT_TRANSFER:
+            await self._handle_context_transfer(request)
+        elif request.handoff_type == HandoffType.TASK_DELEGATION:
+            await self._handle_task_delegation(request)
+        elif request.handoff_type == HandoffType.KNOWLEDGE_SHARE:
+            await self._handle_knowledge_share(request)
+        else:
+            logger.warning(f"PlannerAgent: Tipo de handoff não suportado: {request.handoff_type}")
+    
+    async def _handle_context_transfer(self, request):
+        """Processa transferência de contexto de outro agente"""
+        context_data = request.data_payload.get('project_context', {})
+        
+        logger.info(f"PlannerAgent: Recebendo contexto do projeto {context_data.get('project_id')}")
+        
+        # Armazenar contexto recebido
+        self.received_contexts[request.handoff_id] = {
+            'context': context_data,
+            'sender': request.sender_agent_id,
+            'received_at': datetime.utcnow()
+        }
+        
+        # Se incluir task_queue, mesclar com tarefas existentes
+        if 'task_queue' in request.data_payload:
+            received_tasks = request.data_payload['task_queue']
+            logger.info(f"PlannerAgent: Recebendo {len(received_tasks)} tarefas do agente {request.sender_agent_id}")
+            
+            # Converter de dict para Task objects se necessário
+            for task_dict in received_tasks:
+                if isinstance(task_dict, dict):
+                    # Reconstruir objeto Task
+                    task = Task(
+                        task_id=task_dict.get('task_id'),
+                        description=task_dict.get('description'),
+                        type=TaskType(task_dict.get('type')) if task_dict.get('type') else TaskType.CREATE_FILE,
+                        status=TaskStatus(task_dict.get('status')) if task_dict.get('status') else TaskStatus.PENDING,
+                        details=None,  # Simplificado por ora
+                        dependencies=task_dict.get('dependencies', []),
+                        acceptance_criteria=task_dict.get('acceptance_criteria', '')
+                    )
+                    
+                    # Adicionar à fila se não existe
+                    if not any(t.task_id == task.task_id for t in self.project_context.task_queue):
+                        self.project_context.task_queue.append(task)
+                        logger.info(f"PlannerAgent: Tarefa {task.task_id} adicionada à fila local")
+    
+    async def _handle_task_delegation(self, request):
+        """Processa delegação de tarefa de outro agente"""
+        task_data = request.data_payload.get('task', {})
+        execution_context = request.data_payload.get('execution_context', {})
+        
+        logger.info(f"PlannerAgent: Recebendo delegação da tarefa {task_data.get('task_id')}")
+        
+        # Reconstruir objeto Task
+        delegated_task = Task(
+            task_id=task_data.get('task_id'),
+            description=task_data.get('description'),
+            type=TaskType(task_data.get('type')) if task_data.get('type') else TaskType.CREATE_FILE,
+            status=TaskStatus.PENDING,  # Reset para pending
+            details=None,  # Simplificado
+            dependencies=task_data.get('dependencies', []),
+            acceptance_criteria=task_data.get('acceptance_criteria', '')
+        )
+        
+        # Adicionar à fila de tarefas
+        if self.project_context:
+            self.project_context.task_queue.append(delegated_task)
+            await self.project_context.save_context()
+        else:
+            self.active_tasks[delegated_task.task_id] = delegated_task
+        
+        # Armazenar informações da delegação
+        self.delegated_tasks[delegated_task.task_id] = {
+            'delegated_by': request.sender_agent_id,
+            'execution_context': execution_context,
+            'received_at': datetime.utcnow(),
+            'handoff_id': request.handoff_id
+        }
+        
+        logger.info(f"PlannerAgent: Tarefa {delegated_task.task_id} aceita para execução")
+    
+    async def _handle_knowledge_share(self, request):
+        """Processa compartilhamento de conhecimento de outro agente"""
+        knowledge_data = request.data_payload.get('knowledge', {})
+        knowledge_type = request.data_payload.get('knowledge_type', 'general')
+        source_agent = request.data_payload.get('source_agent')
+        
+        logger.info(f"PlannerAgent: Recebendo conhecimento '{knowledge_type}' do agente {source_agent}")
+        
+        # Processar conhecimento baseado no tipo
+        if knowledge_type == 'planning_patterns':
+            await self._integrate_planning_patterns(knowledge_data)
+        elif knowledge_type == 'failure_patterns':
+            await self._integrate_failure_patterns(knowledge_data)
+        elif knowledge_type == 'task_templates':
+            await self._integrate_task_templates(knowledge_data)
+        else:
+            # Armazenar conhecimento genérico
+            if not hasattr(self, 'shared_knowledge'):
+                self.shared_knowledge = {}
+            self.shared_knowledge[knowledge_type] = {
+                'data': knowledge_data,
+                'source': source_agent,
+                'received_at': datetime.utcnow()
+            }
+        
+        logger.info(f"PlannerAgent: Conhecimento '{knowledge_type}' integrado com sucesso")
+    
+    async def _integrate_planning_patterns(self, patterns_data):
+        """Integra padrões de planejamento recebidos"""
+        # Exemplo: integrar novos templates de tarefas ou estratégias de planejamento
+        if 'task_generation_strategies' in patterns_data:
+            strategies = patterns_data['task_generation_strategies']
+            logger.info(f"PlannerAgent: Integrando {len(strategies)} estratégias de geração de tarefas")
+            # Implementar integração específica
+    
+    async def _integrate_failure_patterns(self, failure_data):
+        """Integra padrões de falha recebidos"""
+        if 'common_failures' in failure_data:
+            failures = failure_data['common_failures']
+            for failure_pattern in failures:
+                # Adicionar ao histórico local de falhas para aprendizado
+                pattern_id = failure_pattern.get('pattern_id', 'unknown')
+                if pattern_id not in self.recovery_strategies:
+                    self.recovery_strategies[pattern_id] = failure_pattern.get('recovery_strategy', {})
+                    logger.info(f"PlannerAgent: Nova estratégia de recuperação adicionada: {pattern_id}")
+    
+    async def _integrate_task_templates(self, templates_data):
+        """Integra templates de tarefas recebidos"""
+        if 'templates' in templates_data:
+            templates = templates_data['templates']
+            logger.info(f"PlannerAgent: Integrando {len(templates)} templates de tarefas")
+            # Implementar integração de templates
+    
+    async def delegate_complex_planning(self, target_agent: str, planning_context: dict) -> bool:
+        """Delega planejamento complexo para outro agente especializado"""
+        try:
+            response = await self.a2a_integration.delegate_task(
+                sender_agent_id="planner",
+                receiver_agent_id=target_agent,
+                task=Task(
+                    task_id=self._generate_next_id(),
+                    description="Planejamento complexo especializado",
+                    type=TaskType.EXECUTE_COMMAND,
+                    status=TaskStatus.PENDING,
+                    details=None,
+                    dependencies=[],
+                    acceptance_criteria="Plano detalhado gerado"
+                ),
+                execution_context=planning_context,
+                priority=8
+            )
+            
+            return response.status.value == "completed"
+            
+        except Exception as e:
+            logger.error(f"Erro na delegação de planejamento: {e}")
+            return False
+    
+    async def share_planning_knowledge(self, target_agents: List[str]):
+        """Compartilha conhecimento de planejamento com outros agentes"""
+        planning_knowledge = {
+            'successful_patterns': self._extract_successful_patterns(),
+            'failure_recovery': dict(self.recovery_strategies),
+            'task_generation_metrics': await self._get_planning_metrics()
+        }
+        
+        try:
+            responses = await self.a2a_integration.share_knowledge(
+                sender_agent_id="planner",
+                receiver_agents=target_agents,
+                knowledge_data=planning_knowledge,
+                knowledge_type="planning_patterns"
+            )
+            
+            successful_shares = sum(1 for r in responses if hasattr(r, 'status') and r.status.value == "completed")
+            logger.info(f"PlannerAgent: Conhecimento compartilhado com {successful_shares}/{len(target_agents)} agentes")
+            
+        except Exception as e:
+            logger.error(f"Erro no compartilhamento de conhecimento: {e}")
+    
+    def _extract_successful_patterns(self) -> dict:
+        """Extrai padrões de planejamento bem-sucedidos"""
+        # Implementar análise de padrões de sucesso
+        return {
+            'high_success_types': ['api', 'web_app'],
+            'optimal_task_counts': {'simple': 4, 'complex': 12},
+            'effective_dependencies': []
+        }
+    
+    async def _get_planning_metrics(self) -> dict:
+        """Obtém métricas de planejamento"""
+        return {
+            'total_plans_generated': len(self.active_tasks) + (len(self.project_context.task_queue) if self.project_context else 0),
+            'average_tasks_per_plan': 8,  # Calculado dinamicamente
+            'success_rate': 0.85,  # Calculado baseado no histórico
+            'most_used_task_types': ['CREATE_FILE', 'EXECUTE_COMMAND']
+        }

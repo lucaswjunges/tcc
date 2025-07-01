@@ -19,6 +19,7 @@ from evolux_engine.services.enterprise_observability import EnterpriseObservabil
 from .planner import PlannerAgent
 from .executor import TaskExecutorAgent
 from .validator import SemanticValidatorAgent
+from .intelligent_a2a_system import get_intelligent_a2a_system, IntelligentA2ASystem
 
 class Orchestrator:
     """
@@ -101,8 +102,16 @@ class Orchestrator:
             file_service=self.file_service
         )
         # --- Fim do Bloco de Inicialização Corrigido ---
+        
+        # 🚀 INICIALIZAR SISTEMA A2A INTELIGENTE
+        self.intelligent_a2a = get_intelligent_a2a_system()
+        self.a2a_enabled = self.config_manager.get_global_setting("enable_intelligent_a2a", True)
+        
+        # Registrar agentes no sistema A2A inteligente
+        if self.a2a_enabled:
+            asyncio.create_task(self._initialize_intelligent_a2a())
 
-        logger.info(f"Orchestrator (ID: {self.agent_id}) inicializado para projeto '{self.project_context.project_name}'.")
+        logger.info(f"Orchestrator (ID: {self.agent_id}) inicializado para projeto '{self.project_context.project_name}' com A2A Inteligente: {'ATIVADO' if self.a2a_enabled else 'DESATIVADO'}.")
 
     async def _get_next_task(self) -> Optional[Task]:
         """
@@ -125,9 +134,20 @@ class Orchestrator:
     async def run_project_cycle(self) -> ProjectStatus:
         """
         Executa o ciclo principal do projeto: planejar (se necessário), executar tarefas, validar.
+        🚀 MODO INTELIGENTE A2A ATIVADO
         """
         logger.info(f"Orchestrator (ID: {self.agent_id}): Iniciando ciclo do projeto '{self.project_context.project_name}'.")
 
+        # 🧠 EXECUÇÃO INTELIGENTE A2A - DECISÃO AUTOMÁTICA
+        if self.a2a_enabled and len(self.project_context.task_queue) >= 3:
+            logger.info("🚀 MODO A2A INTELIGENTE: Ativando execução colaborativa avançada")
+            return await self._run_intelligent_a2a_cycle()
+        else:
+            logger.info("🔄 MODO TRADICIONAL: Executando ciclo P.O.D.A. clássico")
+            return await self._run_traditional_cycle()
+
+    async def _run_traditional_cycle(self) -> ProjectStatus:
+        """Executa ciclo tradicional P.O.D.A."""
         # Fase 1: Planejamento
         if not self.project_context.task_queue:
             logger.info(f"Orchestrator: Fase de Planejamento Inicial.")
@@ -275,3 +295,213 @@ class Orchestrator:
         await self.project_context.save_context()
         logger.info(f"🎯 Ciclo do projeto finalizado com status: {self.project_context.status.value}")
         return self.project_context.status
+
+    # ============================================================================
+    # 🚀 MÉTODOS DE EXECUÇÃO INTELIGENTE A2A
+    # ============================================================================
+
+    async def _initialize_intelligent_a2a(self):
+        """Inicializa sistema A2A inteligente com os agentes"""
+        try:
+            logger.info("🧠 Inicializando sistema A2A inteligente...")
+            
+            # Registrar agentes principais no sistema inteligente
+            await self.intelligent_a2a.register_intelligent_agent(
+                agent_id=f"planner_{self.project_context.project_id}",
+                initial_capabilities={
+                    "performance_metrics": {"planning_speed": 1.0, "plan_quality": 0.9},
+                    "max_concurrent_tasks": 3,
+                    "expertise_level": {"CREATE_FILE": 0.9, "EXECUTE_COMMAND": 0.7}
+                }
+            )
+            
+            await self.intelligent_a2a.register_intelligent_agent(
+                agent_id=f"executor_{self.project_context.project_id}",
+                initial_capabilities={
+                    "performance_metrics": {"execution_speed": 1.2, "success_rate": 0.95},
+                    "max_concurrent_tasks": 5,
+                    "expertise_level": {"CREATE_FILE": 0.95, "EXECUTE_COMMAND": 0.9}
+                }
+            )
+            
+            await self.intelligent_a2a.register_intelligent_agent(
+                agent_id=f"validator_{self.project_context.project_id}",
+                initial_capabilities={
+                    "performance_metrics": {"validation_accuracy": 0.98, "response_time": 0.8},
+                    "max_concurrent_tasks": 4,
+                    "expertise_level": {"CREATE_FILE": 0.8, "EXECUTE_COMMAND": 0.85}
+                }
+            )
+            
+            logger.info("✅ Sistema A2A inteligente inicializado com 3 agentes especializados")
+            
+        except Exception as e:
+            logger.error(f"❌ Erro na inicialização A2A: {e}")
+            self.a2a_enabled = False
+
+    async def _run_intelligent_a2a_cycle(self) -> ProjectStatus:
+        """
+        🚀 EXECUÇÃO INTELIGENTE A2A
+        Usa colaboração avançada, especialização dinâmica e fault tolerance
+        """
+        logger.info("🚀 INICIANDO EXECUÇÃO INTELIGENTE A2A")
+        
+        try:
+            # Fase 1: Planejamento Colaborativo (se necessário)
+            if not self.project_context.task_queue:
+                logger.info("🧠 Fase de Planejamento Colaborativo A2A")
+                self.project_context.status = ProjectStatus.PLANNING
+                await self.project_context.save_context()
+                
+                # Usar planner especializado
+                plan_successful = await self._execute_collaborative_planning()
+                if not plan_successful:
+                    logger.error("❌ Falha no planejamento colaborativo")
+                    self.project_context.status = ProjectStatus.PLANNING_FAILED
+                    await self.project_context.save_context()
+                    return self.project_context.status
+                
+                self.project_context.status = ProjectStatus.PLANNED
+                await self.project_context.save_context()
+            
+            # Fase 2: Execução Inteligente via Pipeline Colaborativo
+            logger.info("⚡ Iniciando Pipeline Colaborativo Inteligente")
+            self.project_context.status = ProjectStatus.EXECUTING
+            await self.project_context.save_context()
+            
+            # Executar projeto via sistema inteligente A2A
+            pipeline_id = await self.intelligent_a2a.execute_intelligent_project(
+                tasks=self.project_context.task_queue,
+                project_name=self.project_context.project_name
+            )
+            
+            logger.info(f"🎉 Pipeline colaborativo '{pipeline_id}' executado!")
+            
+            # Fase 3: Validação Inteligente Distribuída
+            logger.info("🔍 Executando Validação Inteligente Distribuída")
+            validation_success = await self._execute_intelligent_validation()
+            
+            # Fase 4: Geração de Relatório de Inteligência
+            intelligence_report = await self.intelligent_a2a.generate_intelligence_report()
+            logger.info("📊 Relatório de Inteligência A2A gerado", 
+                       agents=intelligence_report["system_overview"]["total_agents"],
+                       pipelines=intelligence_report["system_overview"]["active_pipelines"])
+            
+            # Determinar status final
+            if validation_success:
+                self.project_context.status = ProjectStatus.COMPLETED_SUCCESSFULLY
+                logger.info("🎊 PROJETO CONCLUÍDO COM SUCESSO VIA A2A INTELIGENTE!")
+            else:
+                self.project_context.status = ProjectStatus.COMPLETED_WITH_FAILURES
+                logger.warning("⚠️ Projeto concluído com algumas falhas")
+            
+            await self.project_context.save_context()
+            return self.project_context.status
+            
+        except Exception as e:
+            logger.error(f"❌ Erro na execução A2A inteligente: {e}")
+            # Fallback para execução tradicional
+            logger.info("🔄 Fallback: Executando modo tradicional")
+            return await self._run_traditional_cycle()
+
+    async def _execute_collaborative_planning(self) -> bool:
+        """Executa planejamento colaborativo com especialização"""
+        try:
+            logger.info("🧠 Executando planejamento colaborativo especializado")
+            
+            # Verificar se o planner foi especializado
+            await self.intelligent_a2a.analyze_and_specialize_agents()
+            
+            # Executar planejamento tradicional com melhorias A2A
+            plan_successful = await self.planner_agent.generate_initial_plan()
+            
+            if plan_successful and len(self.project_context.task_queue) >= 5:
+                # Projeto complexo - aplicar otimizações A2A
+                logger.info("📈 Projeto complexo detectado - aplicando otimizações A2A")
+                
+                # Distribuir tarefas inteligentemente
+                distribution = await self.intelligent_a2a.intelligent_task_distribution(
+                    self.project_context.task_queue
+                )
+                
+                logger.info(f"⚖️ Distribuição inteligente: {len(distribution)} agentes envolvidos")
+            
+            return plan_successful
+            
+        except Exception as e:
+            logger.error(f"Erro no planejamento colaborativo: {e}")
+            return False
+
+    async def _execute_intelligent_validation(self) -> bool:
+        """Executa validação inteligente distribuída"""
+        try:
+            logger.info("🔍 Executando validação inteligente distribuída")
+            
+            # Simular validação distribuída (implementação completa usaria validação real)
+            validation_tasks = []
+            
+            # Validar cada tarefa completada
+            for task in self.project_context.completed_tasks:
+                if task.status == TaskStatus.COMPLETED:
+                    # Executar validação com fault tolerance
+                    validation_result = await self.intelligent_a2a.ensure_fault_tolerant_execution(
+                        task=task,
+                        primary_agent=f"validator_{self.project_context.project_id}"
+                    )
+                    validation_tasks.append(validation_result)
+            
+            # Calcular taxa de sucesso
+            if validation_tasks:
+                success_rate = sum(validation_tasks) / len(validation_tasks)
+                logger.info(f"📊 Validação distribuída: {success_rate:.1%} de sucesso")
+                return success_rate >= 0.8  # 80% de sucesso mínimo
+            
+            return True  # Se não há tarefas para validar, considerar sucesso
+            
+        except Exception as e:
+            logger.error(f"Erro na validação inteligente: {e}")
+            return False
+
+    async def get_a2a_intelligence_report(self) -> Dict:
+        """Obtém relatório completo da inteligência A2A do projeto"""
+        if not self.a2a_enabled:
+            return {"error": "Sistema A2A não está habilitado"}
+        
+        try:
+            # Gerar relatório de inteligência
+            intelligence_report = await self.intelligent_a2a.generate_intelligence_report()
+            
+            # Adicionar métricas específicas do projeto
+            project_metrics = {
+                "project_id": self.project_context.project_id,
+                "project_name": self.project_context.project_name,
+                "total_tasks": len(self.project_context.task_queue) + len(self.project_context.completed_tasks),
+                "completed_tasks": len(self.project_context.completed_tasks),
+                "project_status": self.project_context.status.value,
+                "execution_mode": "INTELLIGENT_A2A"
+            }
+            
+            intelligence_report["project_metrics"] = project_metrics
+            
+            return intelligence_report
+            
+        except Exception as e:
+            logger.error(f"Erro ao gerar relatório A2A: {e}")
+            return {"error": str(e)}
+
+    def is_a2a_enabled(self) -> bool:
+        """Verifica se o sistema A2A inteligente está habilitado"""
+        return self.a2a_enabled
+
+    async def enable_a2a_mode(self):
+        """Habilita modo A2A inteligente dinamicamente"""
+        if not self.a2a_enabled:
+            self.a2a_enabled = True
+            await self._initialize_intelligent_a2a()
+            logger.info("🚀 Modo A2A Inteligente habilitado dinamicamente")
+
+    async def disable_a2a_mode(self):
+        """Desabilita modo A2A inteligente"""
+        if self.a2a_enabled:
+            self.a2a_enabled = False
+            logger.info("🔄 Modo A2A desabilitado - usando execução tradicional")
