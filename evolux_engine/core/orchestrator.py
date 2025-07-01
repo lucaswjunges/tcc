@@ -83,12 +83,13 @@ class Orchestrator:
         advanced_config = AdvancedSystemConfig()
         self.observability = EnterpriseObservabilityService(config=advanced_config)
         
-        # Passando o project_context para o planner agent
+        # Passando o project_context e llm_client para o planner agent
         self.planner_agent = PlannerAgent(
             context_manager=None,
             task_db=None,
             artifact_store=None,
-            project_context=self.project_context
+            project_context=self.project_context,
+            llm_client=self.planner_llm_client
         )
         self.task_executor_agent = TaskExecutorAgent(
             executor_llm_client=self.executor_llm_client,
@@ -192,12 +193,40 @@ class Orchestrator:
             logger.info(f"🕵️ Plan Review Completed: Score={plan_review_report['score']:.2f}, Approved={plan_review_report['is_approved']}")
 
             if not plan_review_report['is_approved']:
-                logger.error(f"Plan rejected by CriticAgent. Issues: {plan_review_report['potential_issues']}. Aborting execution.")
-                # Idealmente, aqui deveria haver um ciclo de replanejamento com o feedback.
-                # Por agora, vamos falhar para evitar a execução de um plano ruim.
-                self.project_context.status = ProjectStatus.PLANNING_FAILED
-                await self.project_context.save_context()
-                return self.project_context.status
+                logger.warning(f"Plan rejected by CriticAgent (Score: {plan_review_report['score']:.2f}). Attempting improvement...")
+                logger.info(f"Issues identified: {plan_review_report['potential_issues']}")
+                
+                # Implementar feedback loop: tentar melhorar o plano uma vez
+                try:
+                    improved_graph = await self.planner_agent.improve_plan_with_feedback(
+                        self.project_context.task_queue, 
+                        plan_review_report
+                    )
+                    
+                    # Atualizar com o plano melhorado
+                    improved_tasks = improved_graph.get_all_tasks()
+                    self.project_context.task_queue = improved_tasks
+                    await self.project_context.save_context()
+                    
+                    logger.info(f"🔄 Plan improved: {len(improved_tasks)} tasks generated")
+                    
+                    # Revisar o plano melhorado
+                    improved_review = await self.critic_agent.review_plan(improved_tasks)
+                    logger.info(f"🕵️ Improved Plan Review: Score={improved_review['score']:.2f}, Approved={improved_review['is_approved']}")
+                    
+                    if not improved_review['is_approved']:
+                        logger.error(f"Improved plan still rejected. Final issues: {improved_review['potential_issues']}")
+                        self.project_context.status = ProjectStatus.PLANNING_FAILED
+                        await self.project_context.save_context()
+                        return self.project_context.status
+                    else:
+                        logger.success("✨ Improved plan approved by CriticAgent!")
+                        
+                except Exception as e:
+                    logger.error(f"Error during plan improvement: {e}")
+                    self.project_context.status = ProjectStatus.PLANNING_FAILED
+                    await self.project_context.save_context()
+                    return self.project_context.status
 
             logger.success("Plan approved by CriticAgent. Proceeding to execution.")
             self.project_context.status = ProjectStatus.PLANNED

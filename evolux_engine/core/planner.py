@@ -55,11 +55,22 @@ class PlannerAgent(A2ACapableMixin):
         """Gera o plano inicial de tarefas para o projeto e o estrutura como um DependencyGraph."""
         try:
             logger.info("Generating initial task plan...")
-            project_goal = self.project_context.project_goal if self.project_context else "generic project"
-            logger.info(f"Planning for goal: {project_goal}")
+            prompt_mestre = self.project_context.project_goal if self.project_context else "generic project"
+            logger.info(f"Prompt Mestre: {prompt_mestre}")
+
+            # Aplicar refinamento de prompt se necessário
+            prompt_efetivo = await self._refine_prompt_if_needed(prompt_mestre)
+            if prompt_efetivo != prompt_mestre:
+                logger.info(f"🎯 Prompt refinado de vago para específico")
+                logger.info(f"Prompt Efetivo: {prompt_efetivo}")
+                # Log dos prompts para análise (evitando modificar ProjectContext que usa Pydantic)
+                logger.info(f"📝 Transformação: {len(prompt_mestre)} chars → {len(prompt_efetivo)} chars")
+            else:
+                logger.info("✅ Prompt mestre já é suficientemente específico")
+                prompt_efetivo = prompt_mestre
 
             # O DependencyGraph será a fonte da verdade para a estrutura do plano
-            dependency_graph = await self._generate_dynamic_plan(project_goal)
+            dependency_graph = await self._generate_dynamic_plan(prompt_efetivo)
             
             # Popular a task_queue do contexto do projeto a partir do grafo
             if self.project_context:
@@ -79,64 +90,396 @@ class PlannerAgent(A2ACapableMixin):
             logger.error(f"Error generating initial plan: {e}", exc_info=True)
             return False
 
+    async def _refine_prompt_if_needed(self, prompt_mestre: str) -> str:
+        """
+        Analisa se o prompt mestre é suficientemente específico.
+        Se não, utiliza LLM para criar um prompt efetivo mais detalhado.
+        """
+        # Primeiro, verificar se o prompt é suficientemente específico
+        specificity_score = self._analyze_prompt_specificity(prompt_mestre)
+        
+        logger.info(f"📊 Prompt specificity score: {specificity_score:.2f}")
+        
+        # Se o score for baixo (< 0.6), refinar o prompt
+        if specificity_score < 0.6:
+            logger.info("🔄 Prompt considerado vago - iniciando refinamento...")
+            return await self._create_effective_prompt(prompt_mestre, specificity_score)
+        else:
+            logger.info("✅ Prompt suficientemente específico - usando original")
+            return prompt_mestre
+
+    async def improve_plan_with_feedback(self, current_tasks: List[Task], feedback: dict) -> DependencyGraph:
+        """
+        Melhora o plano atual baseado no feedback do CriticAgent.
+        Implementa o feedback loop entre refinamento e geração de planos.
+        """
+        if not hasattr(self, 'llm_client') or not self.llm_client:
+            logger.warning("LLM client not available for plan improvement")
+            return await self._generate_dynamic_plan(self.project_context.project_goal)
+        
+        try:
+            # Extrair informações do feedback
+            issues = feedback.get('potential_issues', [])
+            suggestions = feedback.get('suggestions_for_improvement', [])
+            score = feedback.get('score', 0.0)
+            
+            logger.info(f"🔄 Melhorando plano com score {score:.2f} baseado em {len(issues)} problemas identificados")
+            
+            # Criar prompt para melhoria
+            improvement_prompt = f"""
+            Você é um planejador de projetos experiente. Analise o plano atual e os problemas identificados, então gere um plano melhorado.
+
+            OBJETIVO DO PROJETO:
+            {self.project_context.project_goal}
+
+            PLANO ATUAL (Score: {score:.2f}):
+            {[f"{task.description} (deps: {len(task.dependencies)})" for task in current_tasks]}
+
+            PROBLEMAS IDENTIFICADOS:
+            {chr(10).join([f"- {issue}" for issue in issues])}
+
+            SUGESTÕES DE MELHORIA:
+            {chr(10).join([f"- {suggestion}" for suggestion in suggestions])}
+
+            Crie um plano melhorado que:
+            1. Resolve os problemas identificados
+            2. Implementa as sugestões quando viáveis
+            3. Mantém o foco no objetivo principal
+            4. É mais eficiente e bem estruturado
+
+            Forneça apenas o objetivo refinado (1-2 parágrafos) que resolva os problemas:
+            """
+            
+            response = await self.llm_client.generate_response(
+                messages=[{"role": "user", "content": improvement_prompt}],
+                temperature=0.4,
+                max_tokens=400
+            )
+            
+            if response and response.strip():
+                improved_goal = response.strip()
+                logger.info(f"✨ Objetivo melhorado gerado ({len(improved_goal)} chars)")
+                
+                # Gerar novo plano com o objetivo melhorado
+                return await self._generate_dynamic_plan(improved_goal)
+            else:
+                logger.warning("Failed to generate improved plan, using original")
+                return await self._generate_dynamic_plan(self.project_context.project_goal)
+                
+        except Exception as e:
+            logger.error(f"Error improving plan with feedback: {e}")
+            return await self._generate_dynamic_plan(self.project_context.project_goal)
+
+    def _analyze_prompt_specificity(self, prompt: str) -> float:
+        """
+        Analisa a especificidade de um prompt usando métricas heurísticas.
+        Retorna score de 0.0 (muito vago) a 1.0 (muito específico).
+        """
+        if not prompt or len(prompt.strip()) < 10:
+            return 0.0
+        
+        prompt_lower = prompt.lower()
+        words = prompt_lower.split()
+        word_count = len(words)
+        
+        # Penalizar prompts muito curtos
+        if word_count < 5:
+            length_score = 0.2
+        elif word_count < 10:
+            length_score = 0.4
+        elif word_count < 20:
+            length_score = 0.7
+        else:
+            length_score = 1.0
+        
+        # Verificar palavras vagas (penalizam o score)
+        vague_words = [
+            'coisa', 'algo', 'sistema', 'aplicação', 'projeto', 'ferramenta',
+            'programa', 'software', 'solução', 'plataforma', 'site', 'app'
+        ]
+        
+        specific_words = [
+            # Web/Frontend
+            'flask', 'django', 'react', 'vue', 'angular', 'bootstrap', 'css', 'html', 'javascript',
+            # Backend/API
+            'fastapi', 'rest', 'api', 'endpoint', 'microservice', 'graphql', 'oauth', 'jwt',
+            # Database
+            'postgresql', 'mysql', 'mongodb', 'redis', 'sqlite', 'orm', 'sqlalchemy',
+            # Cloud/Infrastructure
+            'aws', 'azure', 'gcp', 'docker', 'kubernetes', 'terraform', 'nginx',
+            # Data Science/ML
+            'pandas', 'numpy', 'tensorflow', 'pytorch', 'scikit-learn', 'jupyter', 'ml', 'ai',
+            # Business domains
+            'e-commerce', 'fintech', 'crm', 'erp', 'blog', 'forum', 'dashboard',
+            # Specific features
+            'autenticação', 'pagamento', 'carrinho', 'estoque', 'relatório', 'analytics'
+        ]
+        
+        # Contabilizar palavras vagas vs específicas
+        vague_count = sum(1 for word in vague_words if word in prompt_lower)
+        specific_count = sum(1 for word in specific_words if word in prompt_lower)
+        
+        # Score baseado na proporção de palavras específicas
+        if word_count == 0:
+            word_specificity = 0.0
+        else:
+            # Penalizar palavras vagas, premiar específicas
+            word_specificity = max(0.0, (specific_count - vague_count * 0.5) / word_count)
+        
+        # Verificar se menciona tecnologias específicas
+        tech_bonus = 0.3 if specific_count >= 2 else 0.1 if specific_count >= 1 else 0.0
+        
+        # Verificar se menciona funcionalidades específicas
+        feature_keywords = [
+            'crud', 'login', 'registro', 'dashboard', 'relatório', 'api', 'banco de dados',
+            'autenticação', 'autorização', 'pagamento', 'carrinho', 'estoque', 'usuário'
+        ]
+        feature_count = sum(1 for keyword in feature_keywords if keyword in prompt_lower)
+        feature_bonus = min(0.2, feature_count * 0.05)
+        
+        # Score final (média ponderada)
+        final_score = (length_score * 0.3 + word_specificity * 0.4 + tech_bonus + feature_bonus)
+        
+        return min(1.0, final_score)
+
+    async def _create_effective_prompt(self, prompt_mestre: str, specificity_score: float) -> str:
+        """
+        Usa LLM estrategicamente escolhido para criar um prompt efetivo 
+        a partir de um prompt mestre vago.
+        """
+        if not hasattr(self, 'llm_client') or not self.llm_client:
+            logger.warning("LLM client not available for prompt refinement. Using original prompt.")
+            return prompt_mestre
+
+        try:
+            logger.info("🤖 Usando LLM para refinar prompt vago...")
+            
+            # Determinar nível de refinamento baseado no score
+            if specificity_score < 0.3:
+                refinement_level = "extensive"
+                example_complexity = "alta complexidade com múltiplas funcionalidades integradas"
+            elif specificity_score < 0.5:
+                refinement_level = "moderate"
+                example_complexity = "complexidade média com funcionalidades essenciais"
+            else:
+                refinement_level = "light"
+                example_complexity = "escopo bem definido"
+            
+            refinement_prompt = f"""
+            Você é um especialista em engenharia de software e análise de requisitos. Sua tarefa é transformar um objetivo vago em um prompt específico e actionable para desenvolvimento de software.
+
+            PROMPT ORIGINAL (VAGO): "{prompt_mestre}"
+            NÍVEL DE REFINAMENTO: {refinement_level}
+            
+            Sua tarefa é criar um prompt efetivo que:
+            
+            1. **Especifique o tipo de aplicação** (web app, API, CLI tool, data science, etc.)
+            2. **Defina tecnologias principais** (Flask, React, FastAPI, Python, etc.)
+            3. **Liste funcionalidades específicas** (CRUD, autenticação, dashboard, etc.)
+            4. **Inclua requisitos técnicos** (banco de dados, segurança, performance, etc.)
+            5. **Mencione entregáveis concretos** (MVP, funcionalidades específicas)
+            
+            EXEMPLO DE TRANSFORMAÇÃO:
+            Vago: "Preciso de um sistema para gerenciar informações"
+            Específico: "Desenvolver uma aplicação web usando Flask para gerenciamento de inventário. Preciso de CRUD completo para produtos, sistema de autenticação de usuários, dashboard com relatórios, integração com banco PostgreSQL, e funcionalidades de busca e filtros. A aplicação deve ter interface responsiva e ser deployável em produção."
+            
+            DIRETRIZES:
+            - Assuma {example_complexity} baseado no contexto
+            - Seja específico mas realista
+            - Inclua tecnologias modernas e práticas
+            - Mencione aspectos de produção (deployment, segurança, etc.)
+            - Mantenha a essência do objetivo original
+            
+            RETORNE APENAS O PROMPT REFINADO, SEM EXPLICAÇÕES ADICIONAIS:
+            """
+            
+            # Fazer chamada para o LLM
+            response = await self.llm_client.generate_response(
+                messages=[{"role": "user", "content": refinement_prompt}],
+                temperature=0.7,
+                max_tokens=500
+            )
+            
+            if response and response.strip():
+                refined_prompt = response.strip()
+                logger.info(f"✅ Prompt refinado com sucesso ({len(refined_prompt)} chars)")
+                return refined_prompt
+            else:
+                logger.warning("LLM returned empty response for prompt refinement")
+                return prompt_mestre
+                
+        except Exception as e:
+            logger.error(f"Error in prompt refinement: {e}")
+            return prompt_mestre
+
     async def _get_project_type(self, goal: str) -> str:
         """
         Usa um prompt focado para determinar o tipo de projeto.
+        Corrigido para classificar corretamente aplicações web como 'web_app'.
         """
-        # Se não houver cliente LLM, recorra à análise básica.
+        # Se não houver cliente LLM, recorra à análise básica melhorada.
         if not hasattr(self, 'llm_client') or not self.llm_client:
-            logger.warning("LLM client not available for project type analysis. Falling back to basic analysis.")
-            analysis = self._analyze_project_basic(goal)
-            return analysis.get("project_type", "generic")
+            logger.warning("LLM client not available for project type analysis. Using improved basic analysis.")
+            return self._analyze_project_type_basic(goal)
 
         try:
-            # Prompt focado para classificação
+            # Prompt melhorado e mais específico para classificação
             classification_prompt = f"""
-            Analise o seguinte objetivo de projeto e classifique-o em UMA das seguintes categorias:
-            'web_app', 'api_service', 'cli_tool', 'static_website', 'data_science', 'mobile_app', 'desktop_app', 'documentation'.
-
-            Baseie-se estritamente nas palavras-chave do objetivo. Por exemplo:
-            - 'servidor web', 'site', 'flask', 'react' -> 'web_app'
-            - 'script', 'ferramenta de linha de comando' -> 'cli_tool'
-            - 'análise de dados', 'jupyter' -> 'data_science'
-
-            Objetivo: "{goal}"
-
-            Retorne APENAS a string da categoria (ex: "web_app"). Não inclua JSON ou qualquer outra formatação.
+            Você é um especialista em classificação de projetos de software. Analise o objetivo e classifique em UMA categoria:
+            
+            CATEGORIAS DISPONÍVEIS:
+            - 'web_app': Aplicações web interativas (Flask, Django, React, lista de tarefas, blog, e-commerce)
+            - 'api_service': APIs REST, microserviços, endpoints de dados
+            - 'cli_tool': Ferramentas de linha de comando, scripts utilitários
+            - 'static_website': Sites estáticos, landing pages, documentação
+            - 'data_science': Análise de dados, machine learning, relatórios, Jupyter
+            - 'mobile_app': Aplicativos móveis (Android, iOS)
+            - 'desktop_app': Aplicações desktop (GUI, Tkinter, PyQt)
+            - 'documentation': Documentação técnica, manuais, wikis
+            
+            REGRAS DE CLASSIFICAÇÃO:
+            - Se menciona 'aplicação web', 'lista de tarefas', 'to-do', 'Flask', 'Django' → 'web_app'
+            - Se menciona 'banco de dados' E interface web → 'web_app'
+            - Se menciona apenas 'API' ou 'REST' sem interface → 'api_service'
+            - Se menciona 'análise', 'dados', 'gráficos', 'relatórios' → 'data_science'
+            
+            OBJETIVO: "{goal}"
+            
+            Retorne APENAS a categoria (exemplo: web_app)
             """
             
-            # O LLMClient precisa ser inicializado no __init__ do PlannerAgent
-            # Supondo que self.llm_client foi passado durante a inicialização do PlannerAgent
-            response = await self.llm_client.generate_response(classification_prompt)
+            response = await self.llm_client.generate_response(
+                messages=[{"role": "user", "content": classification_prompt}],
+                temperature=0.3,
+                max_tokens=50
+            )
             
-            # Limpar a resposta para garantir que seja apenas a string
-            project_type = response.strip().replace('"', '').replace("'", "")
+            # Limpar a resposta e normalizar
+            project_type = response.strip().lower().replace('"', '').replace("'", "")
             
-            # Validação para garantir que o tipo retornado é um dos tipos esperados
-            valid_types = ['web_app', 'api_service', 'cli_tool', 'static_website', 'data_science', 'mobile_app', 'desktop_app', 'documentation', 'generic']
-            if project_type not in valid_types:
-                logger.warning(f"LLM returned an invalid project type: '{project_type}'. Falling back to basic analysis.")
-                analysis = self._analyze_project_basic(goal)
-                return analysis.get("project_type", "generic")
-
-            logger.info(f"Project classified as '{project_type}' by LLM.")
-            return project_type
+            # Validação rigorosa dos tipos
+            valid_types = ['web_app', 'api_service', 'cli_tool', 'static_website', 'data_science', 'mobile_app', 'desktop_app', 'documentation']
+            
+            if project_type in valid_types:
+                logger.info(f"✅ Project classified as '{project_type}' by LLM")
+                return project_type
+            else:
+                logger.warning(f"LLM returned invalid type: '{project_type}'. Using basic analysis.")
+                return self._analyze_project_type_basic(goal)
 
         except Exception as e:
-            logger.error(f"Error during LLM-based project type classification: {e}. Falling back to basic analysis.")
-            analysis = self._analyze_project_basic(goal)
-            return analysis.get("project_type", "generic")
+            logger.error(f"Error in LLM classification: {e}. Using basic analysis.")
+            return self._analyze_project_type_basic(goal)
 
+    async def _extract_project_info(self, project_goal: str) -> dict:
+        """
+        Extrai informações específicas do prompt refinado usando LLM.
+        Retorna tecnologias, funcionalidades e arquitetura identificadas.
+        """
+        if not hasattr(self, 'llm_client') or not self.llm_client:
+            return self._extract_project_info_basic(project_goal)
+        
+        try:
+            extraction_prompt = f"""
+            Analise o seguinte objetivo de projeto e extraia informações específicas em formato JSON:
+
+            OBJETIVO: "{project_goal}"
+
+            Extraia as seguintes informações:
+            1. Tecnologias mencionadas (frameworks, linguagens, bancos de dados)
+            2. Funcionalidades principais identificadas
+            3. Tipo de arquitetura (monolito, microserviços, API, etc.)
+            4. Componentes de infraestrutura (Docker, Kubernetes, Redis, etc.)
+
+            FORMATO DE RESPOSTA (JSON):
+            {{
+                "technologies": ["FastAPI", "React", "PostgreSQL"],
+                "features": ["autenticação JWT", "CRUD de produtos", "dashboard"],
+                "architecture": "microserviços",
+                "infrastructure": ["Docker", "Redis"]
+            }}
+
+            Retorne APENAS o JSON, sem explicações:
+            """
+            
+            response = await self.llm_client.generate_response(
+                messages=[{"role": "user", "content": extraction_prompt}],
+                temperature=0.2,
+                max_tokens=300
+            )
+            
+            if response and response.strip():
+                import json
+                try:
+                    info = json.loads(response.strip())
+                    logger.info(f"📋 Project info extracted: {len(info.get('technologies', []))} techs, {len(info.get('features', []))} features")
+                    return info
+                except json.JSONDecodeError:
+                    logger.warning("Failed to parse LLM JSON response for project info")
+                    return self._extract_project_info_basic(project_goal)
+            else:
+                return self._extract_project_info_basic(project_goal)
+                
+        except Exception as e:
+            logger.error(f"Error extracting project info: {e}")
+            return self._extract_project_info_basic(project_goal)
+    
+    def _extract_project_info_basic(self, project_goal: str) -> dict:
+        """Extração básica de informações do projeto usando análise de texto."""
+        goal_lower = project_goal.lower()
+        
+        # Tecnologias detectadas
+        tech_keywords = {
+            'fastapi': 'FastAPI', 'flask': 'Flask', 'django': 'Django',
+            'react': 'React', 'vue': 'Vue.js', 'angular': 'Angular',
+            'postgresql': 'PostgreSQL', 'mysql': 'MySQL', 'mongodb': 'MongoDB',
+            'redis': 'Redis', 'docker': 'Docker', 'kubernetes': 'Kubernetes',
+            'kafka': 'Apache Kafka', 'tensorflow': 'TensorFlow', 'pytorch': 'PyTorch'
+        }
+        
+        technologies = [tech_name for keyword, tech_name in tech_keywords.items() if keyword in goal_lower]
+        
+        # Funcionalidades detectadas
+        feature_keywords = {
+            'autenticação': 'Sistema de autenticação', 'login': 'Login/logout',
+            'jwt': 'Autenticação JWT', 'oauth': 'OAuth', 'crud': 'Operações CRUD',
+            'dashboard': 'Dashboard', 'relatório': 'Relatórios', 'api': 'API REST',
+            'microserviç': 'Microserviços', 'cache': 'Sistema de cache',
+            'notification': 'Sistema de notificações', 'email': 'Envio de emails'
+        }
+        
+        features = [feature_name for keyword, feature_name in feature_keywords.items() if keyword in goal_lower]
+        
+        # Arquitetura
+        architecture = "monolito"  # default
+        if 'microserviç' in goal_lower or 'microservice' in goal_lower:
+            architecture = "microserviços"
+        elif any(keyword in goal_lower for keyword in ['api', 'rest', 'endpoint']):
+            architecture = "API service"
+        
+        # Infraestrutura
+        infra_keywords = ['docker', 'kubernetes', 'redis', 'kafka', 'nginx']
+        infrastructure = [keyword.title() for keyword in infra_keywords if keyword in goal_lower]
+        
+        return {
+            "technologies": technologies,
+            "features": features,
+            "architecture": architecture,
+            "infrastructure": infrastructure
+        }
 
     async def _generate_dynamic_plan(self, project_goal: str) -> DependencyGraph:
         """Gera um plano dinâmico de tarefas e o retorna como um DependencyGraph."""
         graph = DependencyGraph()
         
-        # Passo 1: Classificar o tipo de projeto de forma robusta.
+        # Passo 1: Extrair informações específicas do prompt refinado
+        project_info = await self._extract_project_info(project_goal)
+        
+        # Passo 2: Classificar o tipo de projeto de forma robusta.
         project_type = await self._get_project_type(project_goal)
         logger.info(f"Determined project type: {project_type}")
 
-        # Passo 2: Usar a análise básica para determinar a complexidade.
+        # Passo 3: Usar a análise básica para determinar a complexidade.
         project_analysis = self._analyze_project_basic(project_goal)
         complexity = project_analysis['complexity']
         logger.info(f"Determined project complexity: {complexity}")
@@ -164,12 +507,13 @@ class PlannerAgent(A2ACapableMixin):
         )
         graph.add_task(reqs_task)
         
-        # Gerar tarefas específicas do domínio e adicioná-las ao grafo
+        # Gerar tarefas específicas do domínio usando informações extraídas
         await self._generate_domain_specific_tasks(
             graph,
             project_type, 
             project_goal,
-            complexity
+            complexity,
+            project_info
         )
         
         # Adicionar tarefas de qualidade (que podem depender de outras)
@@ -180,45 +524,105 @@ class PlannerAgent(A2ACapableMixin):
         
         return graph
 
-    def _analyze_project_basic(self, goal: str) -> Dict[str, Any]:
-        """Análise básica por palavras-chave como fallback"""
+    def _analyze_project_type_basic(self, goal: str) -> str:
+        """Análise básica melhorada por palavras-chave para classificação de tipo"""
         goal_lower = goal.lower()
         
-        # Determinar tipo de projeto
-        if any(keyword in goal_lower for keyword in ["blog", "cms", "artigo", "post", "conteúdo"]):
-            project_type = "blog"
-            complexity = 6
-        elif any(keyword in goal_lower for keyword in ["api", "rest", "microserviço", "microservice"]):
-            project_type = "api"
-            complexity = 5
-        elif any(keyword in goal_lower for keyword in ["ecommerce", "loja", "vendas", "produto", "cart"]):
-            project_type = "ecommerce"
-            complexity = 8
-        elif any(keyword in goal_lower for keyword in ["dashboard", "admin", "gestão", "gerenciamento"]):
-            project_type = "dashboard"
-            complexity = 7
-        elif any(keyword in goal_lower for keyword in ["chatbot", "chat", "bot", "assistente"]):
-            project_type = "chatbot"
-            complexity = 6
-        elif any(keyword in goal_lower for keyword in ["análise", "data", "dados", "relatório", "gráfico"]):
-            project_type = "data_science"
-            complexity = 7
-        elif any(keyword in goal_lower for keyword in ["flask", "django", "web", "site"]):
-            project_type = "web_app"
-            complexity = 5
-        else:
-            project_type = "generic"
-            complexity = 4
+        # Prioridade para aplicações web (corrige o problema principal)
+        web_keywords = ["aplicação web", "web app", "lista de tarefas", "to-do", "todo", "flask", "django", "site", "web"]
+        if any(keyword in goal_lower for keyword in web_keywords):
+            return "web_app"
+        
+        # API sem interface web
+        api_keywords = ["api", "rest", "microserviço", "microservice", "endpoint"]
+        if any(keyword in goal_lower for keyword in api_keywords) and "web" not in goal_lower:
+            return "api_service"
+        
+        # Data Science
+        data_keywords = ["análise", "data science", "dados", "relatório", "gráfico", "jupyter", "pandas", "machine learning"]
+        if any(keyword in goal_lower for keyword in data_keywords):
+            return "data_science"
+        
+        # CLI Tools
+        cli_keywords = ["script", "comando", "cli", "terminal", "linha de comando"]
+        if any(keyword in goal_lower for keyword in cli_keywords):
+            return "cli_tool"
+        
+        # Mobile
+        mobile_keywords = ["mobile", "android", "ios", "app móvel"]
+        if any(keyword in goal_lower for keyword in mobile_keywords):
+            return "mobile_app"
+        
+        # Desktop
+        desktop_keywords = ["desktop", "gui", "tkinter", "pyqt"]
+        if any(keyword in goal_lower for keyword in desktop_keywords):
+            return "desktop_app"
+        
+        # Documentation
+        doc_keywords = ["documentação", "manual", "wiki", "docs"]
+        if any(keyword in goal_lower for keyword in doc_keywords):
+            return "documentation"
+        
+        # Default para web_app se contém termos relacionados a interface
+        interface_keywords = ["interface", "página", "formulário", "bootstrap", "css"]
+        if any(keyword in goal_lower for keyword in interface_keywords):
+            return "web_app"
+        
+        # Fallback
+        return "web_app"  # Mudança: default para web_app em vez de generic
+    
+    def _analyze_project_basic(self, goal: str) -> Dict[str, Any]:
+        """Análise básica para complexidade e outros detalhes"""
+        goal_lower = goal.lower()
+        project_type = self._analyze_project_type_basic(goal)
+        
+        # Determinar complexidade base mais precisa
+        complexity_map = {
+            "web_app": 5,
+            "api_service": 6,  # APIs são mais complexas por natureza
+            "cli_tool": 4,     # CLI tools podem ser bem complexos
+            "static_website": 3,
+            "data_science": 7, # ML projects são naturalmente complexos
+            "mobile_app": 8,
+            "desktop_app": 6,
+            "documentation": 2
+        }
+        
+        complexity = complexity_map.get(project_type, 4)
+        
+        # Ajustar complexidade baseada em palavras-chave específicas
+        # Segurança e autenticação
+        if any(keyword in goal_lower for keyword in ["autenticação", "login", "usuário", "auth", "jwt", "oauth"]):
+            complexity += 1
+        if any(keyword in goal_lower for keyword in ["encryption", "criptografia", "segurança", "security"]):
+            complexity += 1
             
-        # Ajustar complexidade baseada em palavras-chave adicionais
-        if any(keyword in goal_lower for keyword in ["autenticação", "login", "usuário", "auth"]):
+        # Banco de dados e persistência
+        if any(keyword in goal_lower for keyword in ["banco", "database", "db", "sqlite", "postgresql", "mysql"]):
             complexity += 1
-        if any(keyword in goal_lower for keyword in ["banco", "database", "db", "dados"]):
+        if any(keyword in goal_lower for keyword in ["migration", "migração", "backup", "sincronização"]):
             complexity += 1
-        if any(keyword in goal_lower for keyword in ["testes", "test", "ci", "deploy"]):
+            
+        # Testing e qualidade
+        if any(keyword in goal_lower for keyword in ["testes", "test", "ci", "deploy", "pipeline"]):
             complexity += 1
-        if any(keyword in goal_lower for keyword in ["docker", "kubernetes", "cloud"]):
-            complexity += 2
+            
+        # DevOps e infraestrutura
+        if any(keyword in goal_lower for keyword in ["docker", "kubernetes", "cloud", "aws", "azure"]):
+            complexity += 1
+        if any(keyword in goal_lower for keyword in ["rate limiting", "monitoramento", "metrics", "observability"]):
+            complexity += 1
+            
+        # Features avançadas específicas por tipo
+        if project_type == "api_service":
+            if any(keyword in goal_lower for keyword in ["swagger", "openapi", "documentação", "fastapi"]):
+                complexity += 1
+        elif project_type == "data_science":
+            if any(keyword in goal_lower for keyword in ["machine learning", "ml", "churn", "predição", "dashboard"]):
+                complexity += 1
+        elif project_type == "cli_tool":
+            if any(keyword in goal_lower for keyword in ["yaml", "configuração", "múltiplos", "compressão"]):
+                complexity += 2  # CLI tools com estas features são bem complexos
             
         complexity = min(complexity, 10)  # Máximo 10
         
@@ -230,198 +634,558 @@ class PlannerAgent(A2ACapableMixin):
             "features": ["basic_functionality"]
         }
 
-    async def _generate_domain_specific_tasks(self, graph: DependencyGraph, project_type: str, goal: str, complexity: int):
+    async def _generate_domain_specific_tasks(self, graph: DependencyGraph, project_type: str, goal: str, complexity: int, project_info: dict = None):
         """Gera tarefas específicas do domínio e as adiciona diretamente ao grafo."""
         
+        if project_info is None:
+            project_info = {}
+            
         # A lógica de contagem de tarefas pode ser mantida para guiar a geração
         logger.info(f"Generating domain-specific tasks for project type '{project_type}' with complexity {complexity}")
         
         # Gerar tarefas específicas por tipo e adicioná-las ao grafo
         if project_type == "blog":
             self._get_blog_tasks(graph)
-        elif project_type == "api":
-            self._get_enhanced_api_tasks(graph, complexity)
+        elif project_type == "api_service":
+            await self._get_enhanced_api_tasks(graph, complexity, goal, project_info)
         elif project_type == "ecommerce":
             self._get_enhanced_ecommerce_tasks(graph, complexity)
         elif project_type == "dashboard":
             self._get_enhanced_dashboard_tasks(graph, complexity)
         elif project_type == "web_app":
-            self._get_enhanced_web_app_tasks(graph, complexity)
+            await self._get_enhanced_web_app_tasks(graph, complexity, goal, project_info)
+        elif project_type == "data_science":
+            await self._get_enhanced_data_science_tasks(graph, complexity, goal, project_info)
         else:
-            self._get_enhanced_generic_tasks(graph, complexity)
+            await self._get_enhanced_generic_tasks(graph, complexity, goal, project_info)
 
-    def _get_enhanced_api_tasks(self, graph: DependencyGraph, complexity: int):
-        """Adiciona tarefas aprimoradas para APIs diretamente ao grafo."""
+    async def _get_enhanced_api_tasks(self, graph: DependencyGraph, complexity: int, goal: str, project_info: dict):
+        """Tarefas específicas e detalhadas para APIs REST baseadas nas informações extraídas"""
+        
+        logger.info(f"🚀 Creating API service tasks with complexity {complexity}")
+        
+        # Extrair informações específicas
+        technologies = project_info.get('technologies', [])
+        features = project_info.get('features', [])
+        infrastructure = project_info.get('infrastructure', [])
+        
+        # Determinar framework baseado nas tecnologias
+        framework = "FastAPI"  # default
+        if "Flask" in technologies:
+            framework = "Flask"
+        elif "Django" in technologies:
+            framework = "Django"
+        
+        # Determinar banco de dados
+        database = "PostgreSQL"  # default
+        if "MongoDB" in technologies:
+            database = "MongoDB"
+        elif "MySQL" in technologies:
+            database = "MySQL"
+        
+        # 1. Configuração inicial baseada no framework detectado
+        config_task = Task(
+            task_id=self._generate_next_id(),
+            description=f"Configurar projeto {framework}",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="main.py", 
+                content_guideline=f"Configurar aplicação {framework} com {database}, incluindo configurações básicas, middleware CORS e documentação automática"
+            ),
+            dependencies=[],
+            acceptance_criteria=f"Aplicação {framework} configurada e funcional"
+        )
+        graph.add_task(config_task)
+        
+        # 2. Modelos baseados nas funcionalidades identificadas
+        models_content = f"Modelos de dados para {', '.join(features[:3]) if features else 'sistema de autenticação'}"
+        if "JWT" in ' '.join(technologies + features):
+            models_content += " com suporte a autenticação JWT"
+        
         models_task = Task(
             task_id=self._generate_next_id(),
-            description="Criar modelos de dados da API",
+            description="Implementar modelos de dados",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(file_path="models.py", content_guideline="Modelos SQLAlchemy com relacionamentos, validações e métodos de serialização"),
-            dependencies=[],
+            details=TaskDetailsCreateFile(
+                file_path="models.py", 
+                content_guideline=models_content
+            ),
+            dependencies=[config_task.task_id],
             acceptance_criteria="Modelos de dados implementados com relacionamentos corretos"
         )
         graph.add_task(models_task)
 
+        # 3. Schemas de validação baseadas nas funcionalidades
         schemas_task = Task(
             task_id=self._generate_next_id(),
-            description="Criar schemas de validação",
+            description="Implementar schemas de validação",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(file_path="schemas.py", content_guideline="Schemas Marshmallow para validação e serialização de dados da API"),
+            details=TaskDetailsCreateFile(
+                file_path="schemas.py", 
+                content_guideline=f"Schemas Pydantic para {', '.join(features[:3]) if features else 'autenticação e dados básicos'}, com validações customizadas"
+            ),
             dependencies=[models_task.task_id],
-            acceptance_criteria="Schemas de validação implementados"
+            acceptance_criteria="Schemas de validação implementados para todas as funcionalidades"
         )
         graph.add_task(schemas_task)
 
+        # 4. Endpoints específicos baseados nas funcionalidades
+        endpoints_description = "Implementar endpoints da API"
+        if "autenticação" in ' '.join(features).lower() or "jwt" in ' '.join(features).lower():
+            endpoints_description = "Implementar endpoints de autenticação e autorização"
+        elif "crud" in ' '.join(features).lower():
+            endpoints_description = "Implementar endpoints CRUD da API"
+        
         api_task = Task(
             task_id=self._generate_next_id(),
-            description="Implementar API REST principal",
+            description=endpoints_description,
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(file_path="api.py", content_guideline="API REST com Flask-RESTX, endpoints CRUD, documentação Swagger automática"),
+            details=TaskDetailsCreateFile(
+                file_path="routes.py", 
+                content_guideline=f"Endpoints {framework} para {', '.join(features) if features else 'operações básicas'}, com documentação automática e tratamento de erros"
+            ),
             dependencies=[schemas_task.task_id],
-            acceptance_criteria="API REST com documentação implementada"
+            acceptance_criteria="Endpoints funcionais com documentação e validação"
         )
         graph.add_task(api_task)
         
-        last_task_id = api_task.task_id
-        if complexity >= 5:
+        # 5. Funcionalidades específicas baseadas nas tecnologias detectadas
+        
+        # Redis para cache (se detectado)
+        if "Redis" in infrastructure:
+            redis_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar cache Redis",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="cache.py", 
+                    content_guideline="Configuração e integração Redis para cache de sessões e dados frequentes"
+                ),
+                dependencies=[api_task.task_id],
+                acceptance_criteria="Sistema de cache Redis implementado e funcional"
+            )
+            graph.add_task(redis_task)
+        
+        # JWT Authentication (se detectado)
+        if any("jwt" in tech.lower() for tech in technologies + features):
             auth_task = Task(
                 task_id=self._generate_next_id(),
                 description="Implementar autenticação JWT",
                 type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(file_path="auth.py", content_guideline="Sistema de autenticação com JWT, registro e login de usuários"),
+                details=TaskDetailsCreateFile(
+                    file_path="auth.py", 
+                    content_guideline="Sistema completo de autenticação JWT com geração, validação e middleware de autorização"
+                ),
                 dependencies=[api_task.task_id],
-                acceptance_criteria="Sistema de autenticação JWT implementado"
+                acceptance_criteria="Autenticação JWT implementada com middleware e validação"
             )
             graph.add_task(auth_task)
-            last_task_id = auth_task.task_id
-            
-        if complexity >= 6:
-            test_task = Task(
-                task_id=self._generate_next_id(),
-                description="Criar testes automatizados",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(file_path="test_api.py", content_guideline="Testes pytest para todos os endpoints da API com cobertura de casos de uso"),
-                dependencies=[last_task_id],
-                acceptance_criteria="Suite de testes automatizados implementada"
-            )
-            graph.add_task(test_task)
-            last_task_id = test_task.task_id
-            
-        if complexity >= 7:
-            dockerfile_task = Task(
-                task_id=self._generate_next_id(),
-                description="Configurar containerização Docker",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(file_path="Dockerfile", content_guideline="Dockerfile multi-stage para produção com otimizações de segurança e performance"),
-                dependencies=[last_task_id],
-                acceptance_criteria="Dockerfile de produção criado"
-            )
-            graph.add_task(dockerfile_task)
-            
-            compose_task = Task(
-                task_id=self._generate_next_id(),
-                description="Configurar docker-compose",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(file_path="docker-compose.yml", content_guideline="Docker-compose com API, banco de dados, Redis e proxy reverso"),
-                dependencies=[dockerfile_task.task_id],
-                acceptance_criteria="Orquestração Docker configurada"
-            )
-            graph.add_task(compose_task)
-
-    def _get_enhanced_web_app_tasks(self, graph: DependencyGraph, complexity: int):
-        """Tarefas aprimoradas para aplicações web"""
         
-        # Tarefas básicas sempre incluídas
+        # Rate Limiting (se mencionado)
+        if any("rate limit" in feature.lower() for feature in features):
+            rate_limit_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar rate limiting",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="rate_limiter.py", 
+                    content_guideline="Sistema de rate limiting por IP e usuário com configuração flexível"
+                ),
+                dependencies=[api_task.task_id],
+                acceptance_criteria="Rate limiting implementado e configurado"
+            )
+            graph.add_task(rate_limit_task)
+
+    async def _get_enhanced_web_app_tasks(self, graph: DependencyGraph, complexity: int, goal: str, project_info: dict):
+        """Tarefas específicas e detalhadas para aplicações web baseadas nas informações extraídas"""
+        
+        logger.info(f"🌐 Creating web app tasks with complexity {complexity}")
+        
+        # Verificar se é e-commerce baseado no project_goal
+        goal = self.project_context.project_goal if self.project_context else ""
+        is_ecommerce = any(keyword in goal.lower() for keyword in [
+            'e-commerce', 'ecommerce', 'loja', 'shop', 'carrinho', 'cart', 'pagamento', 
+            'payment', 'produto', 'product', 'estoque', 'inventory', 'vendas', 'sales'
+        ])
+        
+        if is_ecommerce and complexity >= 8:
+            logger.info("🛒 Detectado projeto E-COMMERCE complexo - criando plano especializado")
+            return self._get_ecommerce_specific_tasks(graph, complexity)
+        
+        # 1. Setup de projeto e dependências (SEMPRE)
+        setup_task = Task(
+            task_id=self._generate_next_id(),
+            description="Configurar estrutura do projeto Flask",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="requirements.txt",
+                content_guideline="Dependências Flask com Flask-SQLAlchemy, Flask-Login, Flask-WTF, Flask-Mail, pytest, gunicorn"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Requirements.txt com dependências essenciais criado"
+        )
+        graph.add_task(setup_task)
+        
+        # 2. Aplicação Flask principal (SEMPRE)
         app_task = Task(
             task_id=self._generate_next_id(),
-            description="Criar aplicação Flask principal",
+            description="Criar aplicação Flask principal com configuração",
             type=TaskType.CREATE_FILE,
             details=TaskDetailsCreateFile(
                 file_path="app.py",
-                content_guideline="Aplicação Flask com estrutura MVC, rotas organizadas e configuração adequada"
+                content_guideline="Aplicação Flask com configuração de banco SQLite/PostgreSQL, blueprints, CSRF protection, configuração de segurança"
             ),
             status=TaskStatus.PENDING,
-            dependencies=[],
-            acceptance_criteria="Aplicação Flask estruturada implementada"
+            dependencies=[setup_task.task_id],
+            acceptance_criteria="Aplicação Flask com configuração de segurança e banco funcionais"
         )
         graph.add_task(app_task)
-
-        base_template_task = Task(
+        
+        # 3. Modelos de dados específicos (SEMPRE)
+        models_task = Task(
             task_id=self._generate_next_id(),
-            description="Criar templates base",
+            description="Criar modelos SQLAlchemy específicos do projeto",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="models.py",
+                content_guideline="Modelos SQLAlchemy com User, relacionamentos, índices de performance, validações de dados, timestamps"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[app_task.task_id],
+            acceptance_criteria="Modelos de dados com relacionamentos e validações implementados"
+        )
+        graph.add_task(models_task)
+        
+        # 4. Sistema de autenticação robusto (SEMPRE para complexidade >= 6)
+        if complexity >= 6:
+            auth_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar autenticação robusta com Flask-Login",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="auth.py",
+                    content_guideline="Sistema completo com registro, login, logout, verificação de email, reset de senha, proteção contra brute force"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[models_task.task_id],
+                acceptance_criteria="Sistema de autenticação com segurança avançada implementado"
+            )
+            graph.add_task(auth_task)
+            last_auth_task = auth_task.task_id
+        else:
+            last_auth_task = models_task.task_id
+        
+        # 5. Templates responsivos (SEMPRE)
+        templates_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar sistema de templates responsivos",
             type=TaskType.CREATE_FILE,
             details=TaskDetailsCreateFile(
                 file_path="templates/base.html",
-                content_guideline="Template base com Bootstrap, navbar responsiva e sistema de mensagens"
+                content_guideline="Template base com Bootstrap 5, navbar responsiva, footer, sistema de mensagens, SEO meta tags, PWA ready"
             ),
             status=TaskStatus.PENDING,
-            dependencies=[],
-            acceptance_criteria="Sistema de templates base criado"
+            dependencies=[last_auth_task],
+            acceptance_criteria="Sistema de templates responsivos com SEO implementado"
         )
-        graph.add_task(base_template_task)
+        graph.add_task(templates_task)
         
-        last_task_id = app_task.task_id
-        # Tarefas baseadas na complexidade
-        if complexity >= 5:
-            models_task = Task(
-                task_id=self._generate_next_id(),
-                description="Implementar sistema de usuários",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="models.py",
-                    content_guideline="Modelos User com autenticação, perfis e sistema de permissões"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[last_task_id],
-                acceptance_criteria="Sistema de usuários implementado"
-            )
-            graph.add_task(models_task)
-            last_task_id = models_task.task_id
-
-            forms_task = Task(
-                task_id=self._generate_next_id(),
-                description="Criar formulários de autenticação",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="forms.py",
-                    content_guideline="Formulários WTF para login, registro e edição de perfil com validações"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[last_task_id],
-                acceptance_criteria="Formulários de autenticação criados"
-            )
-            graph.add_task(forms_task)
-            last_task_id = forms_task.task_id
-            
+        # 6. Views principais da aplicação (SEMPRE)
+        views_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar views e rotas principais",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="routes.py",
+                content_guideline="Routes Flask com CRUD completo, paginação, filtros, validação de formulários, tratamento de erros"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[templates_task.task_id],
+            acceptance_criteria="Sistema de rotas com funcionalidades completas implementado"
+        )
+        graph.add_task(views_task)
+        
+        # 7. Configuração avançada (para complexidade >= 7)
         if complexity >= 7:
-            admin_task = Task(
+            config_task = Task(
                 task_id=self._generate_next_id(),
-                description="Implementar painel administrativo",
+                description="Configurar ambiente de produção avançado",
                 type=TaskType.CREATE_FILE,
                 details=TaskDetailsCreateFile(
-                    file_path="admin.py",
-                    content_guideline="Painel administrativo com gestão de usuários, conteúdo e métricas"
+                    file_path="config.py",
+                    content_guideline="Configurações para dev/test/prod, variáveis de ambiente, logs estruturados, cache Redis, rate limiting"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[views_task.task_id],
+                acceptance_criteria="Configurações de produção com cache e rate limiting implementadas"
+            )
+            graph.add_task(config_task)
+            last_task_id = config_task.task_id
+        else:
+            last_task_id = views_task.task_id
+            
+        # 8. Testes automatizados (para complexidade >= 8)
+        if complexity >= 8:
+            test_task = Task(
+                task_id=self._generate_next_id(),
+                description="Criar suite de testes automatizados",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="tests/test_app.py",
+                    content_guideline="Testes pytest com fixtures, test client, cobertura de auth, CRUD, validações, casos edge"
                 ),
                 status=TaskStatus.PENDING,
                 dependencies=[last_task_id],
-                acceptance_criteria="Painel administrativo implementado"
+                acceptance_criteria="Suite de testes com alta cobertura implementada"
             )
-            graph.add_task(admin_task)
-            last_task_id = admin_task.task_id
-
+            graph.add_task(test_task)
+            
+            # 9. Scripts de deployment (para complexidade >= 8)
             deploy_task = Task(
                 task_id=self._generate_next_id(),
-                description="Configurar deployment",
+                description="Configurar deployment automatizado",
                 type=TaskType.CREATE_FILE,
                 details=TaskDetailsCreateFile(
-                    file_path="deploy.py",
-                    content_guideline="Script de deployment com configurações de produção e CI/CD"
+                    file_path="Dockerfile",
+                    content_guideline="Dockerfile otimizado, docker-compose para dev/prod, health checks, variáveis de ambiente"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[test_task.task_id],
+                acceptance_criteria="Sistema de deployment containerizado implementado"
+            )
+            graph.add_task(deploy_task)
+            
+        # 10. Segurança avançada (para complexidade >= 9)
+        if complexity >= 9:
+            security_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar segurança avançada",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="security.py",
+                    content_guideline="CSRF protection, Content Security Policy, sanitização XSS, rate limiting por IP, logging de segurança"
                 ),
                 status=TaskStatus.PENDING,
                 dependencies=[last_task_id],
-                acceptance_criteria="Sistema de deployment configurado"
+                acceptance_criteria="Medidas de segurança avançadas implementadas"
             )
-            graph.add_task(deploy_task)
+            graph.add_task(security_task)
+    
+    def _get_ecommerce_specific_tasks(self, graph: DependencyGraph, complexity: int):
+        """Tarefas específicas para projetos de e-commerce complexos"""
+        
+        logger.info("🛒 Criando plano específico para E-COMMERCE")
+        
+        # 1. Setup e dependências específicas para e-commerce
+        setup_task = Task(
+            task_id=self._generate_next_id(),
+            description="Configurar dependências específicas para e-commerce",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="requirements.txt",
+                content_guideline="Flask, SQLAlchemy, Flask-Login, Flask-Mail, Stripe, PayPal-SDK, Redis, Celery, Pillow, WTForms, pytest, gunicorn"
+            ),
+            dependencies=[],
+            acceptance_criteria="Dependencies para e-commerce configuradas"
+        )
+        graph.add_task(setup_task)
+        
+        # 2. Modelos de dados para e-commerce
+        models_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar modelos específicos para e-commerce",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="models.py",
+                content_guideline="User, Product, Category, Cart, Order, OrderItem, Review, Inventory, Payment com relacionamentos e índices"
+            ),
+            dependencies=[setup_task.task_id],
+            acceptance_criteria="Modelos de e-commerce com relacionamentos implementados"
+        )
+        graph.add_task(models_task)
+        
+        # 3. Aplicação Flask principal
+        app_task = Task(
+            task_id=self._generate_next_id(),
+            description="Configurar aplicação Flask para e-commerce",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="app.py",
+                content_guideline="Flask app com blueprints, configuração de pagamento, upload de imagens, CSRF, CORS, rate limiting"
+            ),
+            dependencies=[models_task.task_id],
+            acceptance_criteria="Aplicação Flask configurada para e-commerce"
+        )
+        graph.add_task(app_task)
+        
+        # 4. Sistema de autenticação JWT
+        auth_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar autenticação JWT robusta",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="auth.py",
+                content_guideline="JWT com refresh tokens, verificação de email, reset senha, proteção brute force, roles admin/customer"
+            ),
+            dependencies=[app_task.task_id],
+            acceptance_criteria="Sistema JWT com segurança avançada implementado"
+        )
+        graph.add_task(auth_task)
+        
+        # 5. Catálogo de produtos
+        catalog_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar catálogo de produtos dinâmico",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="catalog.py",
+                content_guideline="CRUD produtos, categorias hierárquicas, filtros avançados, busca full-text, paginação, ordenação"
+            ),
+            dependencies=[auth_task.task_id],
+            acceptance_criteria="Catálogo com busca e filtros avançados implementado"
+        )
+        graph.add_task(catalog_task)
+        
+        # 6. Sistema de carrinho
+        cart_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar carrinho de compras com sessões",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="cart.py",
+                content_guideline="Carrinho com sessões Redis, persistência, cálculo de preços, descontos, frete, integração estoque"
+            ),
+            dependencies=[catalog_task.task_id],
+            acceptance_criteria="Sistema de carrinho com persistência implementado"
+        )
+        graph.add_task(cart_task)
+        
+        # 7. Sistema de pagamento
+        payment_task = Task(
+            task_id=self._generate_next_id(),
+            description="Integrar sistema de pagamento",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="payments.py",
+                content_guideline="Integração Stripe/PayPal, webhooks, processamento assíncrono, logs de transação, reembolsos"
+            ),
+            dependencies=[cart_task.task_id],
+            acceptance_criteria="Sistema de pagamento com múltiplos provedores implementado"
+        )
+        graph.add_task(payment_task)
+        
+        # 8. Dashboard administrativo
+        admin_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar dashboard administrativo completo",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="admin.py",
+                content_guideline="Dashboard com gestão produtos, pedidos, usuários, relatórios, gráficos, export CSV/PDF"
+            ),
+            dependencies=[payment_task.task_id],
+            acceptance_criteria="Dashboard administrativo completo implementado"
+        )
+        graph.add_task(admin_task)
+        
+        # 9. Sistema de reviews e ratings
+        reviews_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar sistema de reviews e ratings",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="reviews.py",
+                content_guideline="Reviews com ratings, moderação, spam detection, média de avaliações, fotos nos reviews"
+            ),
+            dependencies=[admin_task.task_id],
+            acceptance_criteria="Sistema de reviews com moderação implementado"
+        )
+        graph.add_task(reviews_task)
+        
+        # 10. Gestão de estoque em tempo real
+        inventory_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar gestão de estoque em tempo real",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="inventory.py",
+                content_guideline="Controle estoque, alertas baixo estoque, reservas temporárias, sync com pedidos, histórico movimentação"
+            ),
+            dependencies=[reviews_task.task_id],
+            acceptance_criteria="Sistema de estoque em tempo real implementado"
+        )
+        graph.add_task(inventory_task)
+        
+        # 11. Sistema de notificações
+        notifications_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar notificações por email automatizadas",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="notifications.py",
+                content_guideline="Emails transacionais, confirmação pedido, shipping, Celery tasks, templates HTML responsivos"
+            ),
+            dependencies=[inventory_task.task_id],
+            acceptance_criteria="Sistema de notificações automatizadas implementado"
+        )
+        graph.add_task(notifications_task)
+        
+        # 12. Templates e frontend responsivo
+        frontend_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar frontend responsivo e SEO-otimizado",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="templates/index.html",
+                content_guideline="Templates responsivos, SEO meta tags, schema.org, PWA, lazy loading imagens, performance otimizada"
+            ),
+            dependencies=[notifications_task.task_id],
+            acceptance_criteria="Frontend responsivo com SEO implementado"
+        )
+        graph.add_task(frontend_task)
+        
+        # 13. Relatórios de vendas
+        reports_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar relatórios de vendas com gráficos",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="reports.py",
+                content_guideline="Relatórios vendas, Chart.js, export PDF/Excel, métricas KPI, análise por período, produtos top"
+            ),
+            dependencies=[frontend_task.task_id],
+            acceptance_criteria="Sistema de relatórios com gráficos implementado"
+        )
+        graph.add_task(reports_task)
+        
+        # 14. Testes automatizados
+        tests_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar testes automatizados abrangentes",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="tests/test_ecommerce.py",
+                content_guideline="Testes unitários e integração, mock pagamentos, fixtures produtos, coverage > 80%, CI/CD pipeline"
+            ),
+            dependencies=[reports_task.task_id],
+            acceptance_criteria="Suite de testes abrangente implementada"
+        )
+        graph.add_task(tests_task)
+        
+        # 15. Deployment automatizado
+        deploy_task = Task(
+            task_id=self._generate_next_id(),
+            description="Configurar deployment automatizado",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="deploy.yml",
+                content_guideline="Docker multi-stage, Kubernetes/Docker Swarm, CI/CD GitHub Actions, monitoring, logging, backup DB"
+            ),
+            dependencies=[tests_task.task_id],
+            acceptance_criteria="Pipeline de deployment automatizado configurado"
+        )
+        graph.add_task(deploy_task)
 
     def _get_enhanced_generic_tasks(self, graph: DependencyGraph, complexity: int):
         """Tarefas aprimoradas para projetos genéricos"""
@@ -530,6 +1294,128 @@ class PlannerAgent(A2ACapableMixin):
                 acceptance_criteria="Documentação técnica criada"
             )
         graph.add_task(docs_task)
+    
+    async def _get_enhanced_data_science_tasks(self, graph: DependencyGraph, complexity: int, goal: str, project_info: dict):
+        """Tarefas específicas para projetos de data science baseadas nas informações extraídas"""
+        
+        technologies = project_info.get('technologies', [])
+        features = project_info.get('features', [])
+        
+        # Determinar biblioteca de ML principal
+        ml_framework = "scikit-learn"  # default
+        if "TensorFlow" in technologies:
+            ml_framework = "TensorFlow"
+        elif "PyTorch" in technologies:
+            ml_framework = "PyTorch"
+        
+        # 1. Setup do ambiente de data science
+        notebook_task = Task(
+            task_id=self._generate_next_id(),
+            description="Configurar ambiente Jupyter",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="notebooks/analysis.ipynb",
+                content_guideline=f"Notebook Jupyter para análise exploratória usando {ml_framework}, pandas e matplotlib"
+            ),
+            dependencies=[],
+            acceptance_criteria="Ambiente Jupyter configurado e funcional"
+        )
+        graph.add_task(notebook_task)
+        
+        # 2. Pipeline de dados
+        data_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar pipeline de dados",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="src/data_pipeline.py",
+                content_guideline=f"Pipeline de processamento de dados com pandas, validação e transformações para {', '.join(features) if features else 'análise padrão'}"
+            ),
+            dependencies=[notebook_task.task_id],
+            acceptance_criteria="Pipeline de dados implementado e testado"
+        )
+        graph.add_task(data_task)
+        
+        # 3. Modelo ML baseado nas features detectadas
+        model_description = "machine learning"
+        if any("sentiment" in feature.lower() for feature in features):
+            model_description = "análise de sentimentos"
+        elif any("predict" in feature.lower() for feature in features):
+            model_description = "predição"
+        
+        model_task = Task(
+            task_id=self._generate_next_id(),
+            description=f"Implementar modelo de {model_description}",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="src/model.py",
+                content_guideline=f"Modelo {ml_framework} para {model_description}, com treinamento, validação e serialização"
+            ),
+            dependencies=[data_task.task_id],
+            acceptance_criteria=f"Modelo de {model_description} implementado e treinado"
+        )
+        graph.add_task(model_task)
+    
+    async def _get_enhanced_generic_tasks(self, graph: DependencyGraph, complexity: int, goal: str, project_info: dict):
+        """Tarefas genéricas baseadas nas informações extraídas do projeto"""
+        
+        technologies = project_info.get('technologies', [])
+        features = project_info.get('features', [])
+        
+        # 1. Aplicação principal baseada nas tecnologias detectadas
+        main_file = "main.py"
+        framework_guidance = "aplicação Python básica"
+        
+        if "Flask" in technologies:
+            framework_guidance = "aplicação Flask com rotas básicas"
+        elif "FastAPI" in technologies:
+            framework_guidance = "aplicação FastAPI com endpoints básicos"
+        elif "Django" in technologies:
+            framework_guidance = "projeto Django com configurações básicas"
+            main_file = "manage.py"
+        
+        app_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar aplicação principal",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path=main_file,
+                content_guideline=f"{framework_guidance} implementando {', '.join(features[:3]) if features else 'funcionalidades básicas'}"
+            ),
+            dependencies=[],
+            acceptance_criteria="Aplicação principal implementada e funcional"
+        )
+        graph.add_task(app_task)
+        
+        # 2. Configurações baseadas na infraestrutura detectada
+        if any(tech in technologies for tech in ["Redis", "PostgreSQL", "MongoDB"]):
+            config_task = Task(
+                task_id=self._generate_next_id(),
+                description="Configurar conexões de banco de dados",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="config.py",
+                    content_guideline=f"Configurações para {', '.join([t for t in technologies if t in ['Redis', 'PostgreSQL', 'MongoDB']])}"
+                ),
+                dependencies=[app_task.task_id],
+                acceptance_criteria="Conexões de banco configuradas"
+            )
+            graph.add_task(config_task)
+        
+        # 3. Utilitários baseados nas funcionalidades
+        if features:
+            utils_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar utilitários e helpers",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="utils.py",
+                    content_guideline=f"Funções utilitárias para {', '.join(features[:3])}"
+                ),
+                dependencies=[app_task.task_id],
+                acceptance_criteria="Utilitários implementados e testados"
+            )
+            graph.add_task(utils_task)
 
 
     def _get_enterprise_quality_tasks(self, graph: DependencyGraph):
@@ -1480,3 +2366,411 @@ class PlannerAgent(A2ACapableMixin):
             'success_rate': 0.85,  # Calculado baseado no histórico
             'most_used_task_types': ['CREATE_FILE', 'EXECUTE_COMMAND']
         }
+
+    # ============================================================================
+    # MÉTODOS PARA NOVOS TIPOS DE PROJETO
+    # ============================================================================
+    
+    def _get_enhanced_cli_tasks(self, graph: DependencyGraph, complexity: int):
+        """Tarefas específicas e detalhadas para ferramentas CLI"""
+        
+        logger.info(f"💻 Creating CLI tool tasks with complexity {complexity}")
+        
+        # 1. Estrutura principal do CLI (SEMPRE)
+        cli_main_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar estrutura principal da ferramenta CLI",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="cli.py",
+                content_guideline="Ferramenta CLI com Click, comandos principais, help context, validação de argumentos"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Estrutura CLI com Click funcional implementada"
+        )
+        graph.add_task(cli_main_task)
+        
+        # 2. Módulos de funcionalidades core (SEMPRE)
+        core_modules_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar módulos de funcionalidades core",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="core.py",
+                content_guideline="Módulos para as funcionalidades principais da ferramenta CLI, classes e funções organizadas"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[cli_main_task.task_id],
+            acceptance_criteria="Módulos de funcionalidades core implementados"
+        )
+        graph.add_task(core_modules_task)
+        
+        last_task_id = core_modules_task.task_id
+        
+        # 3. Sistema de configuração (para complexidade >= 4)
+        if complexity >= 4:
+            config_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar sistema de configuração",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="config.py",
+                    content_guideline="Sistema de configuração com YAML, validação, defaults, profiles de configuração"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Sistema de configuração YAML funcional"
+            )
+            graph.add_task(config_task)
+            last_task_id = config_task.task_id
+            
+        # 4. Sistema de logging avançado (para complexidade >= 5)
+        if complexity >= 5:
+            logging_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar sistema de logging detalhado",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="logger.py",
+                    content_guideline="Sistema de logging estruturado com níveis, rotação de arquivos, formatação customizada"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Sistema de logging detalhado implementado"
+            )
+            graph.add_task(logging_task)
+            last_task_id = logging_task.task_id
+            
+        # 5. Testes CLI (para complexidade >= 6)
+        if complexity >= 6:
+            test_task = Task(
+                task_id=self._generate_next_id(),
+                description="Criar testes para CLI",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="test_cli.py",
+                    content_guideline="Testes pytest com Click testing, mocking, cobertura de comandos e edge cases"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Suite de testes CLI implementada"
+            )
+            graph.add_task(test_task)
+            
+        # 6. Packaging e distribuição (para complexidade >= 7)
+        if complexity >= 7:
+            package_task = Task(
+                task_id=self._generate_next_id(),
+                description="Configurar packaging e distribuição",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="setup.py",
+                    content_guideline="Setup.py para distribuição via PyPI, entry points, dependencies, metadata"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Packaging para distribuição configurado"
+            )
+            graph.add_task(package_task)
+        
+    def _get_enhanced_static_website_tasks(self, graph: DependencyGraph, complexity: int):
+        """Tarefas para sites estáticos"""
+        index_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar página principal do site",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="index.html",
+                content_guideline="Página HTML principal com CSS e JavaScript, design responsivo"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Site estático funcional criado"
+        )
+        graph.add_task(index_task)
+        
+    def _get_enhanced_data_science_tasks(self, graph: DependencyGraph, complexity: int):
+        """Tarefas específicas e detalhadas para projetos de ciência de dados"""
+        
+        logger.info(f"📊 Creating data science tasks with complexity {complexity}")
+        
+        # 1. Preparação e limpeza de dados (SEMPRE)
+        data_prep_task = Task(
+            task_id=self._generate_next_id(),
+            description="Preparação e limpeza de dados",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="data_preparation.py",
+                content_guideline="Scripts para carregamento, limpeza, transformação de dados com pandas, validação de qualidade"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Pipeline de preparação de dados funcional"
+        )
+        graph.add_task(data_prep_task)
+        
+        # 2. Análise exploratória (SEMPRE)
+        eda_task = Task(
+            task_id=self._generate_next_id(),
+            description="Análise exploratória de dados (EDA)",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="exploratory_analysis.ipynb",
+                content_guideline="Jupyter notebook com EDA completa, estatísticas descritivas, visualizações, insights"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[data_prep_task.task_id],
+            acceptance_criteria="Análise exploratória completa com insights documentados"
+        )
+        graph.add_task(eda_task)
+        
+        # 3. Feature Engineering (SEMPRE para ML)
+        feature_eng_task = Task(
+            task_id=self._generate_next_id(),
+            description="Feature engineering e seleção",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="feature_engineering.py",
+                content_guideline="Criação, transformação e seleção de features, encoding categórico, normalização"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[eda_task.task_id],
+            acceptance_criteria="Pipeline de feature engineering implementado"
+        )
+        graph.add_task(feature_eng_task)
+        
+        # 4. Modelagem de ML (SEMPRE para projetos com ML)
+        ml_model_task = Task(
+            task_id=self._generate_next_id(),
+            description="Desenvolvimento de modelo de Machine Learning",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="ml_model.py",
+                content_guideline="Treinamento de modelos scikit-learn, validação cruzada, otimização de hiperparâmetros, métricas"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[feature_eng_task.task_id],
+            acceptance_criteria="Modelo de ML treinado e validado implementado"
+        )
+        graph.add_task(ml_model_task)
+        
+        # 5. Dashboard interativo (SEMPRE para projetos com dashboard)
+        dashboard_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar dashboard interativo",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="dashboard.py",
+                content_guideline="Dashboard interativo com Plotly/Dash, gráficos dinâmicos, filtros, KPIs principais"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[ml_model_task.task_id],
+            acceptance_criteria="Dashboard interativo funcional implementado"
+        )
+        graph.add_task(dashboard_task)
+        
+        last_task_id = dashboard_task.task_id
+        
+        # 6. Relatório executivo (para complexidade >= 7)
+        if complexity >= 7:
+            report_task = Task(
+                task_id=self._generate_next_id(),
+                description="Gerar relatório executivo",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="report_generator.py",
+                    content_guideline="Geração automática de relatório PDF com insights, visualizações, recomendações executivas"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Sistema de geração de relatório PDF funcional"
+            )
+            graph.add_task(report_task)
+            last_task_id = report_task.task_id
+            
+        # 7. Pipeline MLOps (para complexidade >= 8)
+        if complexity >= 8:
+            mlops_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar pipeline MLOps",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="mlops_pipeline.py",
+                    content_guideline="Pipeline de MLOps com versionamento de modelos, monitoramento, retreinamento automático"
+                ),
+                status=TaskStatus.PENDING,
+                dependencies=[last_task_id],
+                acceptance_criteria="Pipeline MLOps funcional implementado"
+            )
+            graph.add_task(mlops_task)
+        
+    def _get_enhanced_mobile_tasks(self, graph: DependencyGraph, complexity: int):
+        """Tarefas para aplicativos móveis"""
+        app_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar aplicativo móvel básico",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="main.py",
+                content_guideline="Aplicativo móvel com framework apropriado (Kivy/BeeWare)"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Aplicativo móvel funcional criado"
+        )
+        graph.add_task(app_task)
+        
+    def _get_enhanced_desktop_tasks(self, graph: DependencyGraph, complexity: int):
+        """Tarefas para aplicações desktop"""
+        gui_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar interface desktop",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="gui.py",
+                content_guideline="Interface desktop com Tkinter ou PyQt, funcionalidades principais"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Interface desktop funcional criada"
+        )
+        graph.add_task(gui_task)
+        
+    def _get_enhanced_documentation_tasks(self, graph: DependencyGraph, complexity: int):
+        """Tarefas para documentação"""
+        docs_task = Task(
+            task_id=self._generate_next_id(),
+            description="Criar documentação técnica",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="docs/README.md",
+                content_guideline="Documentação completa com guias de instalação, uso e exemplos"
+            ),
+            status=TaskStatus.PENDING,
+            dependencies=[],
+            acceptance_criteria="Documentação técnica completa criada"
+        )
+        graph.add_task(docs_task)
+    
+    async def _get_enhanced_data_science_tasks(self, graph: DependencyGraph, complexity: int, goal: str, project_info: dict):
+        """Tarefas específicas para projetos de data science baseadas nas informações extraídas"""
+        
+        technologies = project_info.get('technologies', [])
+        features = project_info.get('features', [])
+        
+        # Determinar biblioteca de ML principal
+        ml_framework = "scikit-learn"  # default
+        if "TensorFlow" in technologies:
+            ml_framework = "TensorFlow"
+        elif "PyTorch" in technologies:
+            ml_framework = "PyTorch"
+        
+        # 1. Setup do ambiente de data science
+        notebook_task = Task(
+            task_id=self._generate_next_id(),
+            description="Configurar ambiente Jupyter",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="notebooks/analysis.ipynb",
+                content_guideline=f"Notebook Jupyter para análise exploratória usando {ml_framework}, pandas e matplotlib"
+            ),
+            dependencies=[],
+            acceptance_criteria="Ambiente Jupyter configurado e funcional"
+        )
+        graph.add_task(notebook_task)
+        
+        # 2. Pipeline de dados
+        data_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar pipeline de dados",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="src/data_pipeline.py",
+                content_guideline=f"Pipeline de processamento de dados com pandas, validação e transformações para {', '.join(features) if features else 'análise padrão'}"
+            ),
+            dependencies=[notebook_task.task_id],
+            acceptance_criteria="Pipeline de dados implementado e testado"
+        )
+        graph.add_task(data_task)
+        
+        # 3. Modelo ML baseado nas features detectadas
+        model_description = "machine learning"
+        if any("sentiment" in feature.lower() for feature in features):
+            model_description = "análise de sentimentos"
+        elif any("predict" in feature.lower() for feature in features):
+            model_description = "predição"
+        
+        model_task = Task(
+            task_id=self._generate_next_id(),
+            description=f"Implementar modelo de {model_description}",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path="src/model.py",
+                content_guideline=f"Modelo {ml_framework} para {model_description}, com treinamento, validação e serialização"
+            ),
+            dependencies=[data_task.task_id],
+            acceptance_criteria=f"Modelo de {model_description} implementado e treinado"
+        )
+        graph.add_task(model_task)
+    
+    async def _get_enhanced_generic_tasks(self, graph: DependencyGraph, complexity: int, goal: str, project_info: dict):
+        """Tarefas genéricas baseadas nas informações extraídas do projeto"""
+        
+        technologies = project_info.get('technologies', [])
+        features = project_info.get('features', [])
+        
+        # 1. Aplicação principal baseada nas tecnologias detectadas
+        main_file = "main.py"
+        framework_guidance = "aplicação Python básica"
+        
+        if "Flask" in technologies:
+            framework_guidance = "aplicação Flask com rotas básicas"
+        elif "FastAPI" in technologies:
+            framework_guidance = "aplicação FastAPI com endpoints básicos"
+        elif "Django" in technologies:
+            framework_guidance = "projeto Django com configurações básicas"
+            main_file = "manage.py"
+        
+        app_task = Task(
+            task_id=self._generate_next_id(),
+            description="Implementar aplicação principal",
+            type=TaskType.CREATE_FILE,
+            details=TaskDetailsCreateFile(
+                file_path=main_file,
+                content_guideline=f"{framework_guidance} implementando {', '.join(features[:3]) if features else 'funcionalidades básicas'}"
+            ),
+            dependencies=[],
+            acceptance_criteria="Aplicação principal implementada e funcional"
+        )
+        graph.add_task(app_task)
+        
+        # 2. Configurações baseadas na infraestrutura detectada
+        if any(tech in technologies for tech in ["Redis", "PostgreSQL", "MongoDB"]):
+            config_task = Task(
+                task_id=self._generate_next_id(),
+                description="Configurar conexões de banco de dados",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="config.py",
+                    content_guideline=f"Configurações para {', '.join([t for t in technologies if t in ['Redis', 'PostgreSQL', 'MongoDB']])}"
+                ),
+                dependencies=[app_task.task_id],
+                acceptance_criteria="Conexões de banco configuradas"
+            )
+            graph.add_task(config_task)
+        
+        # 3. Utilitários baseados nas funcionalidades
+        if features:
+            utils_task = Task(
+                task_id=self._generate_next_id(),
+                description="Implementar utilitários e helpers",
+                type=TaskType.CREATE_FILE,
+                details=TaskDetailsCreateFile(
+                    file_path="utils.py",
+                    content_guideline=f"Funções utilitárias para {', '.join(features[:3])}"
+                ),
+                dependencies=[app_task.task_id],
+                acceptance_criteria="Utilitários implementados e testados"
+            )
+            graph.add_task(utils_task)

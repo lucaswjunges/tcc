@@ -45,7 +45,7 @@ class CriticAgent:
         plan_representation = self._format_plan_for_review(tasks)
         
         prompt = f"""
-        Você é um Engenheiro de Software Sênior e Arquiteto de Sistemas. Sua tarefa é analisar criticamente o seguinte plano de projeto.
+        Você é um Engenheiro de Software Sênior e Arquiteto de Sistemas. Sua tarefa é analisar construtivamente o seguinte plano de projeto, BALANCEANDO rigor técnico com praticidade.
 
         PLANO DO PROJETO:
         {plan_representation}
@@ -53,18 +53,31 @@ class CriticAgent:
         OBJETIVO GERAL DO PROJETO:
         {self.project_context.project_goal}
 
-        Analise os seguintes aspectos:
-        1.  **Lógica e Coerência:** O plano faz sentido? Ele realmente atinge o objetivo?
-        2.  **Dependências:** Existem dependências ausentes ou circulares? A ordem está correta?
-        3.  **Completude:** Falta alguma etapa crucial (ex: configuração, testes, deploy)?
-        4.  **Eficiência:** Existem tarefas redundantes? O plano poderia ser mais simples ou direto?
+        CRITÉRIOS DE AVALIAÇÃO BALANCEADOS:
+        1. **Viabilidade Técnica:** O plano é tecnicamente viável e realista?
+        2. **Alinhamento com Objetivo:** As tarefas atingem o objetivo principal?
+        3. **Estrutura Básica:** Existem dependências críticas ausentes?
+        4. **Praticidade:** O plano é executável sem complexidade desnecessária?
+
+        DIRETRIZES DE PONTUAÇÃO BALANCEADAS:
+        - 0.8-1.0: Plano sólido com pequenos ajustes opcionais
+        - 0.6-0.8: Plano viável com melhorias recomendadas
+        - 0.4-0.6: Plano aceitável mas com questões que podem impactar execução
+        - 0.2-0.4: Plano com problemas significativos que precisam ser corrigidos
+        - 0.0-0.2: Plano fundamentalmente falho
+
+        CONSIDERE QUE:
+        - Planos MVP podem ter escopo reduzido intencionalmente
+        - Tarefas de qualidade (testes, CI/CD) podem ser iterativas
+        - Configuração de produção pode ser incremental
+        - Dependências podem ser menos rígidas em projetos pequenos
 
         Retorne sua análise em um formato JSON com a seguinte estrutura:
         {{
-            "score": <float de 0.0 a 1.0, onde 1.0 é um plano perfeito>,
-            "potential_issues": ["lista de problemas potenciais encontrados"],
-            "suggestions_for_improvement": ["lista de sugestões para melhorar o plano"],
-            "is_approved": <boolean, true se o plano for aceitável, false se precisar de revisão urgente>
+            "score": <float de 0.0 a 1.0>,
+            "potential_issues": ["lista de problemas reais encontrados"],
+            "suggestions_for_improvement": ["lista de sugestões construtivas"],
+            "is_approved": <boolean, true se score >= 0.6, false caso contrário>
         }}
         """
         

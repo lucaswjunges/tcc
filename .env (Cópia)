@@ -1,0 +1,13 @@
+# .env
+# Evolux Engine Configuration
+
+# API Keys (configure with your actual keys)
+EVOLUX_OPENAI_API_KEY=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
+EVOLUX_OPENROUTER_API_KEY=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
+EVOLUX_GOOGLE_API_KEY=AIzaSyAmri45rjRAu66kUy7aVRHdVfzgVMIPXUI
+
+# Optional configurations
+EVOLUX_HTTP_REFERER="https://your-domain.com"
+EVOLUX_X_TITLE="Evolux Engine"
+EVOLUX_DEVELOPMENT_MODE=false
+EVOLUX_DEBUG_MODE=false

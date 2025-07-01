@@ -36,6 +36,34 @@ python3 -c "from evolux_engine.utils.string_utils import extract_code_blocks; pr
 
 # Check logging system
 python3 -c "from evolux_engine.utils.logging_utils import log; log.info('✅ Logging working')"
+
+# Run comprehensive integration tests
+python3 test_metacognition_integration.py
+
+# Run with Docker
+docker-compose up evolux-core
+
+# Run tests with Docker
+docker-compose run testing-runner
+
+# Run with specific LLM provider
+EVOLUX_LLM_PROVIDER=google python3 run.py --goal "your goal here"
+```
+
+### Environment Setup
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Required environment variables:
+# EVOLUX_OPENAI_API_KEY=sk-proj-your-key
+# EVOLUX_OPENROUTER_API_KEY=sk-or-v1-your-key  
+# EVOLUX_GOOGLE_API_KEY=your-google-key
+
+# Optional settings:
+# EVOLUX_LLM_PROVIDER=google|openai|openrouter (default: google)
+# EVOLUX_PROJECT_BASE_DIR=./project_workspaces (default)
+# EVOLUX_LOGGING_LEVEL=INFO|DEBUG|WARNING (default: INFO)
 ```
 
 ## Architecture Overview
@@ -174,6 +202,50 @@ The planner implements advanced task management:
 3. Add new risk assessment categories
 4. Update audit logging for new security events
 
+## Advanced Features
+
+### MCP (Model Context Protocol) Integration
+The system includes an MCP server for enhanced Claude Code integration:
+```bash
+# Start MCP server (in mcp-llm-server directory)
+cd mcp-llm-server
+python3 shared_mcp_server.py
+
+# Test MCP integration
+python3 test_mcp_full.py
+```
+
+### Metacognitive Engine
+The system includes advanced metacognitive capabilities:
+- **Self-reflection**: Analyzes its own thinking processes
+- **Adaptive learning**: Improves strategies based on experience
+- **A2A (Agent-to-Agent) coordination**: Intelligent collaboration between agents
+- **Self-model generation**: Creates models of its own cognitive architecture
+
+```bash
+# Test metacognitive features
+python3 test_metacognition_integration.py
+```
+
+### Container Orchestration
+The system supports containerized deployment with Traefik reverse proxy:
+- **evolux-core**: Main application container
+- **jupyter-lab**: Data analysis and debugging
+- **testing-runner**: Automated test execution
+
+Access services:
+- Evolux Engine: `http://evolux.localhost`
+- Jupyter Lab: `http://jupyter.localhost`
+- Traefik Dashboard: `http://localhost:8080`
+
+## Development Guidelines
+
+### Code Architecture Principles
+- **Strict Schema Contracts**: All communication uses Pydantic models from `schemas/contracts.py`
+- **Defense-in-depth Security**: Multi-layer validation before command execution
+- **Modular Design**: Each component has a single responsibility
+- **Observability First**: Comprehensive logging, metrics, and tracing
+
 ### Important Notes
 - All API keys must be configured via environment variables or `.env` file
 - The system is designed to run autonomously - avoid hardcoded paths or manual interventions
@@ -181,3 +253,4 @@ The planner implements advanced task management:
 - Follow the Pydantic schema contracts strictly for inter-module communication
 - Docker is required for secure command execution
 - The system learns from failures - check `failure_history` and `recovery_strategies` for debugging
+- Default LLM provider is Google Gemini (2.5 Flash) for optimal performance/cost balance
