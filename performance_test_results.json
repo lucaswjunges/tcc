@@ -1,0 +1,96 @@
+{
+  "async": {
+    "type": "async",
+    "status": "completed_with_failures",
+    "execution_time": 54.60495615005493,
+    "metrics": {
+      "parallel_execution": {
+        "total_tasks": 24,
+        "parallel_tasks": 24,
+        "sequential_tasks": 0,
+        "avg_batch_size": 6.0,
+        "parallelization_efficiency": 1.0,
+        "total_execution_time": 49.558868408203125,
+        "theoretical_sequential_time": 0.0,
+        "speedup_factor": 5.0
+      },
+      "llm_clients": {
+        "executor": {
+          "total_requests": 12,
+          "successful_requests": 8,
+          "failed_requests": 4,
+          "total_tokens": 938,
+          "total_cost_usd": 0.0009425,
+          "avg_latency_ms": 7673.400104045868,
+          "circuit_breaks": 0,
+          "cache_hits": 16,
+          "cache_misses": 8,
+          "concurrent_requests": 0,
+          "cache_size": 8,
+          "circuit_state": "closed",
+          "circuit_failures": 0
+        },
+        "planner": {
+          "total_requests": 0,
+          "successful_requests": 0,
+          "failed_requests": 0,
+          "total_tokens": 0,
+          "total_cost_usd": 0.0,
+          "avg_latency_ms": 0.0,
+          "circuit_breaks": 0,
+          "cache_hits": 0,
+          "cache_misses": 0,
+          "concurrent_requests": 0,
+          "cache_size": 0,
+          "circuit_state": "closed",
+          "circuit_failures": 0
+        },
+        "validator": {
+          "total_requests": 0,
+          "successful_requests": 0,
+          "failed_requests": 0,
+          "total_tokens": 0,
+          "total_cost_usd": 0.0,
+          "avg_latency_ms": 0.0,
+          "circuit_breaks": 0,
+          "cache_hits": 0,
+          "cache_misses": 0,
+          "concurrent_requests": 0,
+          "cache_size": 0,
+          "circuit_state": "closed",
+          "circuit_failures": 0
+        }
+      },
+      "file_service": {
+        "total_operations": 18,
+        "bytes_written": 12800,
+        "bytes_read": 0,
+        "max_concurrent": 20,
+        "workspace": "project_workspaces/proj_20250630_220734_60120448"
+      },
+      "observability": {
+        "cpu_percent": 19.3,
+        "memory_percent": 44.8,
+        "memory_used_mb": 7232.71875,
+        "disk_usage_percent": 33.56062039217583,
+        "active_tasks": 0,
+        "completed_tasks": 0,
+        "failed_tasks": 24,
+        "avg_task_duration_ms": 4077.042907476425,
+        "llm_request_count": 0,
+        "llm_success_rate": 0.0,
+        "timestamp": "2025-06-30 22:08:29.437085"
+      }
+    },
+    "project_id": "proj_20250630_220734_60120448"
+  },
+  "sync": {
+    "type": "sync",
+    "status": "error",
+    "execution_time": 6.198883056640625e-06,
+    "error": "asyncio.run() cannot be called from a running event loop",
+    "metrics": {}
+  },
+  "test_goal": "Criar uma aplica\u00e7\u00e3o Python simples com 3 arquivos: main.py, utils.py e requirements.txt",
+  "timestamp": 1751332109.438862
+}

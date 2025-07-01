@@ -46,5 +46,53 @@
     "dependencies": [],
     "size_bytes": 804,
     "file_count": 5
+  },
+  "proj_20250630_210503_8781428b": {
+    "context_id": "proj_20250630_210503_8781428b",
+    "project_name": "Criar Website Venda Project",
+    "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade",
+    "status": "active",
+    "created_at": "2025-06-30T21:05:03.579324",
+    "last_modified": "2025-06-30T21:05:03.579512",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 804,
+    "file_count": 5
+  },
+  "proj_20250630_212229_8781428b": {
+    "context_id": "proj_20250630_212229_8781428b",
+    "project_name": "Criar Website Venda Project",
+    "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade",
+    "status": "active",
+    "created_at": "2025-06-30T21:22:29.489170",
+    "last_modified": "2025-06-30T21:22:29.489346",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 804,
+    "file_count": 5
+  },
+  "proj_20250630_214634_8781428b": {
+    "context_id": "proj_20250630_214634_8781428b",
+    "project_name": "Criar Website Venda Project",
+    "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade",
+    "status": "active",
+    "created_at": "2025-06-30T21:46:34.063601",
+    "last_modified": "2025-06-30T21:46:34.063778",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 804,
+    "file_count": 5
+  },
+  "proj_20250630_220922_8781428b": {
+    "context_id": "proj_20250630_220922_8781428b",
+    "project_name": "Criar Website Venda Project",
+    "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade",
+    "status": "active",
+    "created_at": "2025-06-30T22:09:22.113689",
+    "last_modified": "2025-06-30T22:09:22.113872",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 804,
+    "file_count": 5
   }
 }
