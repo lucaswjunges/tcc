@@ -18,6 +18,7 @@ from evolux_engine.services.async_file_service import AsyncFileService
 from evolux_engine.services.shell_service import ShellService
 from evolux_engine.utils.resource_manager import get_resource_manager
 from evolux_engine.services.backup_system import BackupSystem
+from evolux_engine.services.advanced_monitoring import get_metrics_collector, LLMMetrics, TaskMetrics
 from evolux_engine.services.criteria_engine import CriteriaEngine
 from evolux_engine.security.security_gateway import SecurityGateway, SecurityLevel
 from evolux_engine.execution.secure_executor import SecureExecutor
@@ -155,6 +156,9 @@ class AsyncOrchestrator:
         # Resource manager para prevenir vazamentos
         self.resource_manager = None  # Será inicializado no start()
         
+        # Monitoring avançado
+        self.metrics_collector = get_metrics_collector()
+        
         # Inicializar componentes
         self._initialize_async_components()
         
@@ -256,6 +260,9 @@ class AsyncOrchestrator:
         # Iniciar resource manager
         self.resource_manager = await get_resource_manager()
         
+        # Iniciar monitoring avançado
+        self.metrics_collector.start_collection(interval=10.0)
+        
         # Iniciar observabilidade
         if hasattr(self.observability, 'start_monitoring'):
             self.observability.start_monitoring()
@@ -266,6 +273,9 @@ class AsyncOrchestrator:
         await self.executor_llm.close()
         await self.validator_llm.close()
         await self.async_file_service.close()
+        
+        # Parar monitoring
+        self.metrics_collector.stop_collection()
         
         if hasattr(self.observability, 'stop_monitoring'):
             self.observability.stop_monitoring()
@@ -427,6 +437,20 @@ class AsyncOrchestrator:
                             duration,
                             execution_result.exit_code
                         )
+                        
+                        # Registrar métricas de tarefa
+                        task_metrics = TaskMetrics(
+                            task_type=task.type.value,
+                            execution_time_ms=duration * 1000,
+                            success=validation_result.validation_passed,
+                            parallel_count=1,  # Will be updated in batch processing
+                            dependency_cache_hit=dependency_key in self.dependency_cache if hasattr(self, 'dependency_cache') else False,
+                            resource_usage={
+                                'memory_mb': execution_result.memory_usage_mb if hasattr(execution_result, 'memory_usage_mb') else 0,
+                                'cpu_percent': execution_result.cpu_usage_percent if hasattr(execution_result, 'cpu_usage_percent') else 0
+                            }
+                        )
+                        self.metrics_collector.record_task_metrics(task_metrics)
                         
                         return task.task_id, (execution_result, validation_result)
                         
@@ -648,6 +672,57 @@ class AsyncOrchestrator:
         
         logger.info("📊 Métricas de Performance",
                    **self.parallel_metrics.__dict__)
+                   
+        # Coletar métricas de LLM
+        self._collect_llm_metrics()
+
+    def _collect_llm_metrics(self):
+        """Coleta e registra métricas dos clientes LLM"""
+        
+        # Métricas do executor LLM
+        if hasattr(self.executor_llm, 'get_metrics'):
+            executor_metrics = self.executor_llm.get_metrics()
+            llm_metrics = LLMMetrics(
+                provider=self.executor_llm.provider.value,
+                model=self.executor_llm.model_name,
+                requests_per_minute=executor_metrics.get('total_requests', 0) * 60 / max(1, self.parallel_metrics.total_execution_time),
+                avg_latency_ms=executor_metrics.get('avg_latency_ms', 0),
+                success_rate=executor_metrics.get('success_rate', 0),
+                tokens_per_second=executor_metrics.get('total_tokens', 0) / max(1, self.parallel_metrics.total_execution_time),
+                cost_per_hour=executor_metrics.get('total_cost_usd', 0) * 3600 / max(1, self.parallel_metrics.total_execution_time),
+                circuit_breaker_state=executor_metrics.get('circuit_breaker', {}).get('state', 'unknown')
+            )
+            self.metrics_collector.record_llm_metrics(llm_metrics)
+            
+        # Métricas do planner LLM
+        if hasattr(self.planner_llm, 'get_metrics'):
+            planner_metrics = self.planner_llm.get_metrics()
+            llm_metrics = LLMMetrics(
+                provider=self.planner_llm.provider.value,
+                model=self.planner_llm.model_name,
+                requests_per_minute=planner_metrics.get('total_requests', 0) * 60 / max(1, self.parallel_metrics.total_execution_time),
+                avg_latency_ms=planner_metrics.get('avg_latency_ms', 0),
+                success_rate=planner_metrics.get('success_rate', 0),
+                tokens_per_second=planner_metrics.get('total_tokens', 0) / max(1, self.parallel_metrics.total_execution_time),
+                cost_per_hour=planner_metrics.get('total_cost_usd', 0) * 3600 / max(1, self.parallel_metrics.total_execution_time),
+                circuit_breaker_state=planner_metrics.get('circuit_breaker', {}).get('state', 'unknown')
+            )
+            self.metrics_collector.record_llm_metrics(llm_metrics)
+            
+        # Métricas do validator LLM
+        if hasattr(self.validator_llm, 'get_metrics'):
+            validator_metrics = self.validator_llm.get_metrics()
+            llm_metrics = LLMMetrics(
+                provider=self.validator_llm.provider.value,
+                model=self.validator_llm.model_name,
+                requests_per_minute=validator_metrics.get('total_requests', 0) * 60 / max(1, self.parallel_metrics.total_execution_time),
+                avg_latency_ms=validator_metrics.get('avg_latency_ms', 0),
+                success_rate=validator_metrics.get('success_rate', 0),
+                tokens_per_second=validator_metrics.get('total_tokens', 0) / max(1, self.parallel_metrics.total_execution_time),
+                cost_per_hour=validator_metrics.get('total_cost_usd', 0) * 3600 / max(1, self.parallel_metrics.total_execution_time),
+                circuit_breaker_state=validator_metrics.get('circuit_breaker', {}).get('state', 'unknown')
+            )
+            self.metrics_collector.record_llm_metrics(llm_metrics)
 
     async def get_parallel_metrics(self) -> Dict[str, Any]:
         """Retorna métricas de paralelização"""
@@ -675,5 +750,6 @@ class AsyncOrchestrator:
                 'hit_rate': self.cache_hits / max(1, self.cache_hits + self.cache_misses),
                 'size': len(self.dependency_cache)
             },
+            'advanced_monitoring': self.metrics_collector.get_dashboard_data(),
             'observability': self.observability.get_performance_metrics().__dict__ if hasattr(self.observability, 'get_performance_metrics') else {}
         }
