@@ -324,10 +324,12 @@ class TaskExecutorAgent:
                 return None
 
         except asyncio.TimeoutError:
-            logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Timeout ao consultar LLM (60s).")
+            logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Timeout ao consultar LLM (60s). Possível sobrecarga do serviço.")
             return None
         except Exception as e:
-            logger.opt(exception=True).error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Erro inesperado ao consultar LLM.")
+            error_type = type(e).__name__
+            error_msg = str(e)
+            logger.opt(exception=True).error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Erro {error_type} ao consultar LLM: {error_msg[:200]}")
             return None
 
 
@@ -370,7 +372,8 @@ class TaskExecutorAgent:
                 file_content = None
 
         if file_content is None:
-            return ExecutionResult(exit_code=1, stderr=f"Falha ao gerar conteúdo da LLM para {details.file_path}.")
+            logger.error(f"TaskExecutor: Falha na geração de conteúdo para {details.file_path}. Possíveis causas: timeout, API key inválida, ou rate limiting")
+            return ExecutionResult(exit_code=1, stderr=f"Falha ao gerar conteúdo da LLM para {details.file_path}. Verifique logs para detalhes.")
 
         try:
             self.file_service.save_file(relative_file_path, str(file_content)) # Garantir que é string

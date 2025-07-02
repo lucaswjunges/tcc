@@ -1790,6 +1790,17 @@ class PlannerAgent(A2ACapableMixin):
     async def replan_task(self, failed_task: Task, error_feedback: str) -> List[Task]:
         """Replanneja uma tarefa que falhou com análise inteligente"""
         try:
+            # Implementar limite máximo de replans para evitar loops infinitos
+            MAX_REPLAN_COUNT = 3
+            if failed_task.replan_count >= MAX_REPLAN_COUNT:
+                logger.error(f"Task {failed_task.task_id} exceeded maximum replan attempts ({MAX_REPLAN_COUNT}). Stopping replanning.")
+                return []
+            
+            # Detectar loop infinito de revisões
+            if failed_task.description.count("Revisão:") >= 2:
+                logger.warning(f"Multiple revision loop detected for task {failed_task.task_id}. Stopping replanning.")
+                return []
+            
             # Detectar loop infinito de correção
             if "Corrigir erro na tarefa:" in failed_task.description:
                 logger.warning(f"Correction loop detected for task {failed_task.task_id}. Trying alternative approach.")
@@ -1813,7 +1824,8 @@ class PlannerAgent(A2ACapableMixin):
                     status=TaskStatus.PENDING,
                     dependencies=[],
                     acceptance_criteria=f"Abordagem alternativa para: {failed_task.acceptance_criteria}",
-                    max_retries=2  # Limite menor para evitar loops
+                    max_retries=2,  # Limite menor para evitar loops
+                    replan_count=failed_task.replan_count + 1
                 )
                 
                 return [alternative_task]
@@ -1832,7 +1844,8 @@ class PlannerAgent(A2ACapableMixin):
                     status=TaskStatus.PENDING,
                     dependencies=[],
                     acceptance_criteria=f"Versão simplificada de: {failed_task.acceptance_criteria}",
-                    max_retries=2
+                    max_retries=2,
+                    replan_count=failed_task.replan_count + 1
                 )
                 return [simplified_task]
             
@@ -1846,7 +1859,8 @@ class PlannerAgent(A2ACapableMixin):
                     status=TaskStatus.PENDING,
                     dependencies=[],
                     acceptance_criteria=f"Primeira parte de: {failed_task.acceptance_criteria}",
-                    max_retries=2
+                    max_retries=2,
+                    replan_count=failed_task.replan_count + 1
                 )
                 
                 subtask2 = Task(
@@ -1857,7 +1871,8 @@ class PlannerAgent(A2ACapableMixin):
                     status=TaskStatus.PENDING,
                     dependencies=[subtask1.task_id],
                     acceptance_criteria=f"Segunda parte de: {failed_task.acceptance_criteria}",
-                    max_retries=2
+                    max_retries=2,
+                    replan_count=failed_task.replan_count + 1
                 )
                 
                 return [subtask1, subtask2]
@@ -1872,7 +1887,8 @@ class PlannerAgent(A2ACapableMixin):
                     status=TaskStatus.PENDING,
                     dependencies=[],
                     acceptance_criteria=f"Versão revisada de: {failed_task.acceptance_criteria}",
-                    max_retries=1  # Apenas uma tentativa para evitar loops
+                    max_retries=1,  # Apenas uma tentativa para evitar loops
+                    replan_count=failed_task.replan_count + 1
                 )
                 
                 return [adjusted_task]

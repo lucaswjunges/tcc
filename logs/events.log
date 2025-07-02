@@ -11245,3 +11245,851 @@ Completion check finished with status: failed_criteria, score: 0.315151515151515
 Creating project snapshot for project_id: proj_20250701_204933_8781428b, backup_id: proj_20250701_204933_8781428b_20250701_205818
 Snapshot created successfully at: project_workspaces/backups/proj_20250701_204933_8781428b_20250701_205818.zip, size_mb: 0.06
 {"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-01T23:58:18.638150Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T01:57:53.294955Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T01:57:53.295424Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T01:57:53.295773Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T01:57:53.302874Z"}
+Project context saved for project_id: proj_20250701_225753_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250701_225753_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250701_225753_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250701_225753_8781428b", "level": "info", "timestamp": "2025-07-02T01:57:53.305704Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T01:57:53.305962Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_225753_8781428b", "level": "info", "timestamp": "2025-07-02T01:57:53.307106Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+Using AsyncIOEngine.POLLER as I/O engine
+🎯 Agente inteligente planner_proj_20250701_225753_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_225753_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_225753_8781428b_015753: intelligent_a2a_system -> planner_proj_20250701_225753_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_225753_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_225753_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_225753_8781428b_015753: intelligent_a2a_system -> executor_proj_20250701_225753_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_225753_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_225753_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_225753_8781428b_015753: intelligent_a2a_system -> validator_proj_20250701_225753_8781428b
+Agente sender intelligent_a2a_system não encontrado
+✅ Prompt refinado com sucesso (5961 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Desenvolver uma aplicação web de e-commerce completa e de alta performance para venda de vapes e pods, com uma arquitetura desacoplada e foco em escalabilidade e segurança.
+
+**1. Tipo de Aplicação:**
+Aplicação Web de E-commerce (Single Page Application - SPA) com API RESTful dedicada.
+
+**2. Tecnologias Principais:**
+*   **Backend:** Python 3.10+ com framework **FastAPI** para a construção da API RESTful.
+*   **Banco de Dados:** **PostgreSQL** (versão 14+) para persistência de dados.
+*   **Frontend:** **React.js** (com TypeScript) para a interface do usuário, utilizando **Tailwind CSS** ou **Styled Components** para o design responsivo e estiloso.
+*   **Gerenciamento de Estado (Frontend):** React Query ou Redux Toolkit.
+*   **Cache:** **Redis** para caching de dados e sessões.
+*   **Processamento Assíncrono (Opcional, para escalabilidade):** **Celery** com RabbitMQ ou Redis como broker para tarefas em segundo plano (ex: envio de e-mails, processamento de imagens).
+
+**3. Funcionalidades Específicas (MVP + Fases):**
+*   **Módulo de Produtos:**
+    *   CRUD completo para vapes, pods, líquidos e acessórios (incluindo gestão de múltiplas imagens, descrições ricas, variantes de SKU - sabor, nicotina, cor, tamanho, estoque, preço).
+    *   Categorização e Tagging de produtos.
+    *   Sistema de Busca Avançada (com filtros por categoria, preço, marca, atributos e ordenação).
+    *   Avaliações e Comentários de Produtos por usuários (com moderação).
+    *   Gestão de Estoque com alertas para baixo estoque.
+*   **Módulo de Usuários e Autenticação:**
+    *   Registro e Login de Usuários (email/senha, validação de email, recuperação de senha).
+    *   Autenticação JWT (JSON Web Tokens) com refresh tokens.
+    *   Perfis de Usuário (endereços de entrega múltiplos, histórico de pedidos detalhado).
+    *   Roles de Usuário (Cliente, Administrador, Gerente de Conteúdo).
+*   **Módulo de Carrinho de Compras:**
+    *   Adicionar/Remover produtos, atualização de quantidades.
+    *   Persistência do carrinho (para usuários logados e não logados).
+*   **Módulo de Checkout e Pedidos:**
+    *   Processo de Checkout multi-etapas (informações de entrega, revisão do pedido, pagamento).
+    *   Integração com Gateway de Pagamento robusto (ex: Stripe, PagSeguro, Mercado Pago) para processamento de cartões de crédito, Pix e boleto.
+    *   Geração e Gerenciamento de Pedidos com diversos status (pendente, pago, em preparação, enviado, entregue, cancelado).
+    *   Notificações por e-mail (confirmação de pedido, atualização de status).
+*   **Módulo Administrativo:**
+    *   Painel de controle dedicado para gerenciamento completo de Produtos, Pedidos, Usuários, Cupons e Conteúdo.
+    *   Visualização e Edição detalhada de Pedidos, incluindo rastreamento.
+    *   Relatórios de Vendas (por período, produto, cliente), estoque e comportamento do usuário.
+*   **Módulo de Marketing e Conteúdo:**
+    *   Sistema de Cupons de Desconto e Promoções (percentual, valor fixo, frete grátis, limites de uso).
+    *   Gestão de Conteúdo (páginas estáticas, blog para artigos sobre vapes).
+    *   Otimização para SEO (URLs amigáveis, meta tags configuráveis).
+
+**4. Requisitos Técnicos:**
+*   **Arquitetura:** Microsserviços para funcionalidades específicas ou Monolito modular desacoplado (API RESTful + SPA), com endpoints RESTful bem definidos e documentados (OpenAPI/Swagger UI, gerada automaticamente pelo FastAPI).
+*   **Banco de Dados:** Utilização de um ORM como SQLAlchemy para interação com PostgreSQL, com gerenciamento de migrações (Alembic).
+*   **Segurança:**
+    *   Implementação de autenticação JWT segura (refresh tokens, HTTP-only cookies para tokens sensíveis).
+    *   Validação robusta de entradas e saídas (Pydantic no FastAPI).
+    *   Proteção contra vulnerabilidades comuns (CSRF, XSS, SQL Injection, Brute Force).
+    *   Armazenamento seguro de senhas (hashing com Argon2 ou Bcrypt).
+    *   Conformidade com a LGPD/GDPR para tratamento de dados pessoais.
+*   **Performance:**
+    *   Otimização de consultas ao banco de dados e uso de índices.
+    *   Estratégias de caching (Redis) para dados frequentemente acessados.
+    *   Otimização de assets do frontend (compressão de imagens, lazy loading, minificação de CSS/JS).
+    *   Design responsivo para garantir ótima experiência em dispositivos móveis e desktop.
+*   **Deployment e DevOps:**
+    *   Containerização completa da aplicação (backend, frontend, banco de dados, Redis) via **Docker** e **Docker Compose**.
+    *   Implementação de um pipeline de CI/CD (ex: GitHub Actions, GitLab CI/CD) para automação de testes, build e deploy.
+    *   Estratégia de deployment em ambiente de produção (ex: AWS ECS/EKS, Google Cloud Run/GKE ou Azure Kubernetes Service), utilizando serviços gerenciados para DB (RDS/Cloud SQL) e armazenamento de arquivos (S3/Cloud Storage).
+    *   Monitoramento de logs e métricas de performance.
+*   **Qualidade de Código:**
+    *   Cobertura de testes unitários e de integração (pytest para backend, Jest/React Testing Library para frontend).
+    *   Uso de linters (Black, flake8 para Python; ESLint, Prettier para JavaScript/TypeScript).
+    *   Documentação técnica interna clara para o código e para o setup do ambiente de desenvolvimento.
+
+**5. Entregáveis Concretos:**
+*   **MVP Funcional:** Incluindo catálogo de produtos, registro/login, carrinho de compras funcional, checkout básico (com gateway simulado ou real simples), gerenciamento de pedidos e usuários no painel admin.
+*   **Código-fonte completo:** Organizado em um ou mais repositórios Git (backend, frontend) com histórico de commits.
+*   **Documentação:** Guia de setup para ambiente de desenvolvimento, documentação da API (OpenAPI), e diretrizes de deployment.
+*   **Ambiente de Produção Deployado:** Aplicação acessível via URL pública com certificado SSL/TLS configurado.
+*   **Plano de Evolução:** Roadmap com as próximas fases de desenvolvimento de funcionalidades.
+📝 Transformação: 108 chars → 5961 chars
+Failed to parse LLM JSON response for project info
+Error in LLM classification: 'NoneType' object has no attribute 'strip'. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 10
+Generating domain-specific tasks for project type 'web_app' with complexity 10
+🌐 Creating dynamic web app tasks with complexity 10 based on extracted info
+🛒 E-commerce project detected. Using specialized e-commerce plan.
+🛒 Criando plano específico para E-COMMERCE
+Initial plan created with 20 tasks and saved to context.
+Replanning task 0078dbc4-4b19-4968-93bb-e33271a47198 due to error: A tarefa 'Criar documentação do projeto (README.md)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task 9d08d1ec-72a9-4b45-8780-9444f27dca69 due to error: A tarefa 'Criar arquivo de dependências (requirements.txt)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 4de27192-006c-448e-98ec-ab32fbdc9e83 due to error: A tarefa 'Configurar dependências específicas para e-commerce' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task f435924a-d885-407a-a069-5bef9f719469 due to error: A tarefa 'Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task 661f57ac-9b78-481a-9f60-af6c86ac352b due to error: A tarefa 'Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 70ca782a-3f75-4290-b007-3765c4452f29 due to error: A tarefa 'Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 291ded95-aedf-4365-8a20-242e6f10b818 due to error: A tarefa 'Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task 31afb576-95c4-45f7-a31f-7fbd6d302899 due to error: A tarefa 'Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task cc63d24e-aada-4fe8-96b1-23972002c3ca due to error: A tarefa 'Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 430b4943-dac4-4ee6-9d80-36ccd50ea4d8 due to error: A tarefa 'Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task faa3d761-8dec-449f-917b-7a8779ecbc3d due to error: A tarefa 'Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements....
+Replanning task 2c15d891-61a3-44aa-899a-45205cce4c07 due to error: A tarefa 'Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt...
+Replanning task c6be5981-84e5-4285-b1a2-38ded35c39b3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task 6b0a25ae-0ab7-4746-9781-87119b4ae132 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requ...
+Replanning task 89d564ff-db88-40d1-9dd5-3b53afe2f8f6 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para require...
+Replanning task d5a04f5b-78e4-436f-a94d-22153d875f11 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para READM...
+Replanning task 8acb91de-6fd5-4c9e-900f-09e3c8f62ee6 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM ...
+Replanning task 1bd36530-1d3b-458f-8648-938ea91cd40c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM par...
+Replanning task 730fa934-9775-4d91-9284-9e377d5836ea due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM p...
+Replanning task 349508c4-688e-4d1d-9f51-512c0864bd8c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúd...
+Replanning task ec4c11a6-e635-4b8e-9e25-e150900a267d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo d...
+Replanning task 4dea823c-de6d-4fa6-8146-9a6845673a92 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo...
+Replanning task 06f6b375-e210-4fa0-a0b7-0c28893136e3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gera...
+Replanning task b70fc24c-08bd-469e-a6f5-523d693d094d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar c...
+Replanning task 5e67b47d-ad7a-4e46-8209-bb7a57ab12cd due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar...
+Replanning task 54ff010b-a8fa-4c83-aab7-86f57c34d08b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falh...
+Replanning task a5047ae4-c9fc-4c6d-ba48-f69c79bb77f6 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha a...
+Replanning task 2895431f-9074-4721-9952-73ac5f753efe due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha...
+Replanning task 9a52622d-ceaf-4590-a4ee-5fe233ea9f19 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, E...
+Replanning task 474ec749-6632-4e20-8ed5-0471d35e4041 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro...
+Replanning task 2051952f-6292-4635-9a15-a0dea0ad6dfc due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Er...
+Replanning task 992cd62d-3186-4969-84ba-0145d12f28f9 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit c...
+Replanning task c4c496d4-d180-49be-ad53-6778a147a065 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code...
+Replanning task 13909dd3-bca8-4448-a671-b1023676f59d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit co...
+Replanning task 69a6e130-934c-4633-81df-9996fc40cf8b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erro...
+Replanning task ba558dd1-a4fd-4f41-8134-99c4634d784d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: ...
+Replanning task ab8ed239-36c1-468d-82d9-80f345448dfe due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros...
+Replanning task e0b863ad-fde8-44f3-bf0c-bbee14dce8ea due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últ...
+Replanning task c79f5d71-b3b7-4a32-99ea-9468a76ec689 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Último...
+Replanning task c7923a3a-a2b5-4530-863b-0a8330596524 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últi...
+Replanning task c621c558-72b7-44a6-b85d-7f9212a3383c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentat...
+Replanning task 7c15373e-aeda-411f-8026-5d50e050bcb1 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativa...
+Replanning task 9d946722-437b-4a4e-810e-e9033f61153e due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentati...
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T02:02:30.106620Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T02:02:30.106977Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T02:02:30.107116Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T02:02:30.113976Z"}
+Project context saved for project_id: proj_20250701_230230_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250701_230230_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250701_230230_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250701_230230_8781428b", "level": "info", "timestamp": "2025-07-02T02:02:30.118173Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T02:02:30.118287Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_230230_8781428b", "level": "info", "timestamp": "2025-07-02T02:02:30.118850Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+Using AsyncIOEngine.POLLER as I/O engine
+🎯 Agente inteligente planner_proj_20250701_230230_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_230230_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_230230_8781428b_020230: intelligent_a2a_system -> planner_proj_20250701_230230_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_230230_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_230230_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_230230_8781428b_020230: intelligent_a2a_system -> executor_proj_20250701_230230_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_230230_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_230230_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_230230_8781428b_020230: intelligent_a2a_system -> validator_proj_20250701_230230_8781428b
+Agente sender intelligent_a2a_system não encontrado
+✅ Prompt refinado com sucesso (4709 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Desenvolver uma plataforma de e-commerce completa e de alta performance para venda de vapes e pods, com foco em uma experiência de usuário premium, escalabilidade e segurança robusta.
+
+**Tipo de Aplicação:** Aplicação web de e-commerce (loja virtual B2C).
+
+**Tecnologias Principais:**
+*   **Backend:** Python com Django Framework (utilizando Django REST Framework para a API).
+*   **Frontend:** React.js (com Next.js para otimização de SEO e SSR/SSG) e Tailwind CSS para uma interface moderna e responsiva.
+*   **Banco de Dados:** PostgreSQL como banco de dados principal.
+*   **Cache/Fila:** Redis para caching e Celery para processamento de tarefas assíncronas (ex: envio de e-mails, processamento de imagens).
+*   **Orquestração/Deployment:** Docker e Docker Compose para conteinerização e simplificação do ambiente de desenvolvimento/produção.
+*   **Gateway de Pagamento:** Integração com API de um gateway de pagamento robusto (ex: Stripe, Pagar.me ou Mercado Pago).
+*   **Versionamento de Código:** Git.
+
+**Funcionalidades Específicas (MVP e roadmap):**
+1.  **Módulo de Produtos:**
+    *   CRUD completo para produtos: nome, descrição detalhada (HTML), preço, SKUs, múltiplas imagens (com otimização), variações (sabor, teor de nicotina, cor, etc.), gerenciamento de estoque por variação, categorias e tags.
+    *   Sistema de busca avançada e filtros dinâmicos (preço, marca, categoria, atributos personalizados).
+    *   Página de detalhes do produto com informações completas, avaliações/reviews de clientes e sugestões de produtos relacionados.
+2.  **Módulo de Usuários:**
+    *   Fluxo completo de registro, login/logout (autenticação segura baseada em JWT).
+    *   Gerenciamento de perfil (endereços de entrega, dados pessoais, histórico de pedidos).
+    *   Recuperação de senha.
+3.  **Módulo de Carrinho de Compras:**
+    *   Adicionar/remover produtos, atualizar quantidades e exibição em tempo real do total.
+    *   Persistência do carrinho (para usuários autenticados e convidados via cookies/localStorage).
+4.  **Módulo de Checkout:**
+    *   Fluxo de checkout intuitivo em múltiplos passos.
+    *   Seleção de endereço de entrega e integração com API de cálculo de frete (ex: Correios ou transportadoras).
+    *   Processamento de pagamentos seguro via integração com gateway de pagamento (cartão de crédito, Pix, boleto).
+    *   Confirmação de pedido com envio de e-mail transacional.
+5.  **Módulo de Administração (Painel CMS):**
+    *   Dashboard administrativo completo para gerenciamento de produtos, categorias, marcas, estoque, pedidos, clientes e cupons de desconto.
+    *   Visualização e atualização de status de pedidos.
+    *   Relatórios básicos de vendas, estoque e usuários.
+6.  **Design e Experiência do Usuário:**
+    *   Interface de usuário moderna, "estilosa", altamente intuitiva e responsiva (abordagem mobile-first).
+    *   Otimização para velocidade de carregamento de página (Core Web Vitals).
+
+**Requisitos Técnicos:**
+*   **Arquitetura:** Aplicação monolítica bem estruturada (Django apps) com uma API RESTful robusta para comunicação com o frontend React.
+*   **Segurança:** Implementação de segurança de nível empresarial: autenticação baseada em tokens (JWT), proteção contra OWASP Top 10 (XSS, CSRF, SQL Injection, etc.), uso obrigatório de HTTPS, e conformidade com LGPD para privacidade de dados.
+*   **Performance e Escalabilidade:** Otimização de consultas ao banco de dados, uso intensivo de cache (Redis), processamento assíncrono para tarefas pesadas, e compressão/lazy loading de assets. A arquitetura deve ser desenhada para suportar crescimento futuro no tráfego e volume de dados.
+*   **Qualidade de Código:** Código limpo, modular, com alta cobertura de testes unitários e de integração (Pytest/Django Test Client para Python, Jest/React Testing Library para React). Documentação abrangente da API (OpenAPI/Swagger).
+*   **Deployment e Monitoramento:** Pipeline de CI/CD (ex: GitHub Actions) para deployment automatizado em ambiente de produção (ex: AWS ECS/EC2, DigitalOcean). Implementação de sistemas de logging e monitoramento de performance (ex: Sentry, Prometheus/Grafana).
+
+**Entregáveis Concretos:**
+*   **MVP Funcional:** Aplicação web completa com módulos de produto, carrinho de compras, checkout básico, autenticação de usuário e painel administrativo para gestão de produtos e pedidos.
+*   Código-fonte completo, versionado em Git e devidamente documentado.
+*   Documentação técnica da arquitetura, APIs e modelos de dados.
+*   Scripts e instruções detalhadas para deployment em ambiente de produção.
+*   Roadmap de funcionalidades futuras (wishlist, cupons de desconto, sistema de reviews avançado, programa de fidelidade, etc.).
+📝 Transformação: 108 chars → 4709 chars
+Error in LLM classification: 'NoneType' object has no attribute 'strip'. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 10
+Generating domain-specific tasks for project type 'web_app' with complexity 10
+🌐 Creating dynamic web app tasks with complexity 10 based on extracted info
+🛒 E-commerce project detected. Using specialized e-commerce plan.
+🛒 Criando plano específico para E-COMMERCE
+Initial plan created with 20 tasks and saved to context.
+Replanning task 9b134368-090a-4d3e-b204-9427dfc0d811 due to error: A tarefa 'Criar documentação do projeto (README.md)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task b53c4ec7-50c3-498f-bf00-3e3f949943ea due to error: A tarefa 'Configurar dependências específicas para e-commerce' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 0d61cb55-14e4-49b8-8546-3575cfcbb70c due to error: A tarefa 'Criar arquivo de dependências (requirements.txt)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 7dc24541-26b6-4807-9c44-732a56c4d89a due to error: A tarefa 'Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task d7a50234-67f3-4a7a-beae-fc8e8b1d5cb5 due to error: A tarefa 'Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 2126a5fc-e00a-4da6-8f83-0a9fbd25f696 due to error: A tarefa 'Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task bf03f589-c3d0-457e-9975-cc318a63980b due to error: A tarefa 'Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task 3b4a4a54-02e2-43e6-8535-86e0da9b0b29 due to error: A tarefa 'Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 7077b12a-482b-4a3a-964b-4028a70b5dd4 due to error: A tarefa 'Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt....
+Replanning task 78bdb895-f7bc-480f-896f-23e903a201a1 due to error: A tarefa 'Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task 99cedb31-0060-459d-bb2d-696aa4fca102 due to error: A tarefa 'Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements....
+Replanning task 8466736b-2d2d-46e6-87a8-e9d570738d46 due to error: A tarefa 'Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt...
+Replanning task ba4076a4-8034-4a6d-b1cc-f2a63ce42fff due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md....
+Replanning task f899e362-35b2-4d85-a3ee-a15f69719157 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requ...
+Replanning task a5b98f3b-ff97-4e3c-803d-5059ad4ac786 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para require...
+Replanning task 6a86d953-43ea-4842-bb57-4a2388d09abe due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para READM...
+Replanning task af85367e-c309-4aa3-90de-66ae2fed4bcd due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM ...
+Replanning task ec576ce5-412d-4013-b40f-fd3ddc68914c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM par...
+Replanning task 31594c5d-3218-4439-99fa-310c51f30be3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM p...
+Replanning task 719e08da-9e4d-48d3-be26-98cbb07d2af2 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúd...
+Replanning task 7846d13a-2eb5-44a0-b149-584acec64388 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo d...
+Replanning task 2a9f16c7-27df-453f-92e7-db943faf8ee8 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo...
+Replanning task cf0c93ca-d4b4-4083-aa3e-af7a1fc2aabe due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gera...
+Replanning task 4f6743e1-23ba-4064-af83-364c027c81f3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar c...
+Replanning task 57a5619f-a537-40f7-bdb5-d596a1983146 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar...
+Replanning task 4c55f462-d1f5-4c78-b8b2-cc8389d799fc due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falh...
+Replanning task 61daefb2-e7a7-4574-ae0a-94b8828d4bf7 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha a...
+Replanning task 6e9e99ea-be51-43fc-9b62-27140b0a025c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha...
+Replanning task 2262f1db-fb0f-4c9e-8806-dd15b22d4d90 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit code: 1, E...
+Replanning task 9fe2b1a2-4f5e-493c-b379-e55f87acfcbc due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro...
+Replanning task b96b620c-67f6-415f-82db-7d2d2aee95bd due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Er...
+Replanning task 842a6a26-4ca7-4433-902c-9a992f514d6b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erros: Exit c...
+Replanning task ea532f7c-95f1-4a77-b8c9-ba38904602fa due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code...
+Replanning task cb67fb6e-30da-4304-a608-36a0ab70c832 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit co...
+Replanning task 1c0050dc-57e7-460b-b8d0-3b4efce54b65 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últimos erro...
+Replanning task 69fdf162-7d0f-46e0-8d5c-67880a53ce40 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: ...
+Replanning task 6c119bac-f645-4143-b94f-6f4427561ef7 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros...
+Replanning task 2b18874b-1195-4ccc-8ab7-18d1f23c532f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentativas. Últ...
+Replanning task 72ef49d6-c71a-41ad-a3b4-06f9734f5187 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Último...
+Replanning task 15578452-7b77-4e1c-8112-88383a736333 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últi...
+Replanning task 8d9a2c08-1289-40d8-b0dc-e292d1943908 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após 1 tentat...
+Replanning task 97a4f825-8b79-4614-9d08-72cfeb4d4e96 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativa...
+Replanning task 24b66625-e172-4c96-abfd-38c7cccedbf9 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentati...
+Replanning task f04fc8d7-0e89-45e6-9ef0-6a878e886e2c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' falhou após...
+Replanning task a588aad1-32f5-4e0c-a407-f80fe0efc5d3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 ...
+Replanning task 3922c18c-34e4-4923-8ac4-dc2b6837fb39 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' falhou após ...
+Replanning task 1f82c652-f1c6-47e9-a552-2ac69d05cbd3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-commerce' fa...
+Replanning task ec8e94b5-3525-4f42-84d8-fe0378a80d1b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.txt)' falho...
+Replanning task fd9cd639-366c-4d1a-96d8-24fa53b0055f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README.md)' fal...
+Replanning task 280f61fb-1e2a-4b5e-82e4-fa15f13bb35e due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas para e-com...
+Replanning task e5d590c9-4807-49b6-9252-506b4135621d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requirements.tx...
+Replanning task 1d86c42b-46d1-45b6-bd62-70c43888e12b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projeto (README...
+Replanning task 4c8d3ffa-74e2-4eac-854e-9f883076329d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências específicas p...
+Replanning task b250d463-adac-48b2-a54b-b523c9a351d3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependências (requir...
+Replanning task ba98e506-31b5-4570-8f1c-e104ee0e6b76 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação do projet...
+Replanning task 7d1dcadd-20c9-468b-a0c5-cf98431a4ed0 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependências espe...
+Replanning task 8904860d-1ffa-41ab-b7b9-6d4ba39d7b35 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de dependência...
+Replanning task 9d576c0b-07b7-413f-8504-6bbaebb76b0f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar documentação ...
+Replanning task e2531fc5-6e66-4e90-940f-35758ddc2437 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar dependên...
+Replanning task 32fcce86-5d2b-4426-a781-4e2bbb0d125c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arquivo de de...
+Replanning task a8fc9c62-4616-4dfd-8204-72ed68dccb2c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar docu...
+Replanning task e7bdda5f-d197-4624-9004-e374ea407e4c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Configurar...
+Replanning task 840f2add-2336-48dc-ba28-6d5715dddda7 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Criar arqu...
+Replanning task 75dc6105-ba37-46fc-9702-6c610d937703 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: C...
+Replanning task 8aadc4d1-b3e9-464e-9421-03e02b27b527 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: C...
+Replanning task c061e9f9-1f61-4567-a607-9b40422f2153 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: C...
+Replanning task 1aff1e45-9410-4da9-9f0b-c1ba848710b3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 69878758-1db3-402f-b20f-79d2099ea06d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 82e01d3e-07b1-47a1-a04c-cc2fdee5a928 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 9dfee1ac-8f67-471d-b7c4-bca1f8d1a928 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 09383f9e-94a2-4393-a755-0b4bb84e5256 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 909d3948-39e9-4052-892e-1c800000b1e2 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 822bdc15-cecc-4a46-80c8-92f201a7deff due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task b65c98f1-772b-446b-a01e-96502bcc491e due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 5f796526-798f-4584-a283-8d583b591c36 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 6433e6dd-dbc4-4b2b-ba4a-fe09135f83b0 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 0ffa6bc2-28a0-42ce-85d4-f667870886fd due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 65fa1b84-f2dd-4339-a773-19f85374f17a due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task ac4df6d8-4c38-4037-afda-1d92c87a5ea2 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 8e2dfe6b-f7c7-4903-9ceb-16304b4eefdf due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task e0e0b7a6-5c13-4d6c-bfa0-6bdcdac9cbb9 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task eac71107-ce58-4613-8fa8-e58c6627df14 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 2a17b90d-5d68-426e-81e2-115f4926e91b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task d9d2b43e-7e39-4b3b-97a6-ee3767d9125f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 33daa61e-d58a-4d32-9f6f-646f11a500ef due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 20fca46c-6b74-4ddc-95ac-a6fd37b4b670 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 579db130-e1e4-4038-b447-2c9f1193049a due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 7df1c0fe-d1ff-4cd4-bdfb-b0ccbbdfd33b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task fab600a1-20af-4d1f-bedd-2055f356d141 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task ba6b6684-74a1-479f-88ab-f99c3166fdd1 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task efa05357-cf5f-42d4-88e9-cc96751613fc due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task df03a34b-bd9d-416f-b0d3-d9eebdb10479 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task c9919c41-a6ee-42d5-ac38-fe5f17992bfb due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 18aa2208-bccd-4b26-b8d3-75f91cd729fa due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task bf691c23-194f-414c-ad7b-419f627a8ceb due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 321a3bd8-a092-47a6-a745-59a9c1d2cc2f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 7ea6ced4-5098-425c-a894-62d626a5a7e8 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 5ebb9fdd-6bca-4290-834f-ed6aa1cd753f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 6dc023ed-b1b9-4237-8191-da8fbade0836 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 82a0d693-3511-4ee4-9c8f-6c010552e5bf due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task b2577269-3ce5-4fc1-89f5-55b6d86d923f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 71c35228-b325-44b9-a237-7aacd4029bc4 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task ecc9b8e6-b5d6-4ceb-be76-8d71fefcd00b due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 67ad4942-64cd-4da7-b04d-7b2db0774428 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 85bc9411-a033-424b-b51d-64b8026a2e9d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 6c41eb2d-81ae-4e4e-99c1-898f99503b7a due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 75c6e1d6-fb28-4b6a-9a90-a3360b90d203 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task b2f83e85-baf4-4fd0-8404-3104bf3874ac due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 9b6b0f71-e409-422e-8544-24dd00a8a339 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 77dffa4e-08ee-4656-bd7e-391fa55e0579 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 42b163fa-1ad6-4976-89fe-f04bad4f1787 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 5f1154c0-200a-4d28-81fc-3a24d9c1f7ec due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 2a8343db-5434-4818-9864-aa667f68158c due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 1030480e-cde2-4992-b2c4-4cfeb4dabb8d due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 0865ec7f-98cf-4321-ac13-57caa2cb7b82 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task b6d272d1-38cc-49d8-8404-d442bcb3ae89 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 472e286d-af54-4c96-83e6-c51ff9b666f4 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 2ca49c06-de8d-43ce-923e-e819b62c601f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 47017c60-b9cc-4353-ac71-d7e163f42e83 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task f073721d-28cf-48a2-ae52-33a9659883b2 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task f967d8af-5d5c-4f4d-bfb5-c7aafc3624c3 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 449e4406-6615-4170-90c5-48d052bbc6b8 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task d7d31755-b7af-4752-ae40-11ac614bacbd due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task bbb49313-cb36-469a-83b6-1bb4d432815e due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 95dfa689-dd8d-4838-8234-4f58375776a5 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 66cd5922-273f-4125-b26a-ac1a17c7acd0 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 18eea3c5-8184-46ec-b794-bbb0a8d11343 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 11903930-e0f5-4d18-a2b0-6f0dc2bc72f0 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 29fee21e-199d-41dc-b76e-89f61e924fff due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 42e618bf-be58-4d09-8f86-3a3816dd5e57 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 5845e906-b008-4764-9170-0d255b85e949 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 3450ee4b-1f9b-447d-a87d-f9ee66db5f91 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 7d7fd5ad-75d0-4358-8e9c-0899ff837461 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 606d045b-6223-412e-b978-ad47284833ff due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task e7f3fc90-076c-4315-bdd9-f50ce68fd547 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 63c03e94-b28c-4d2a-9acb-3ce846aff94f due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 7510d5fe-b5ef-4209-9f6f-26da3fb3ccf9 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task e4bac614-53c7-470c-bfdb-5fb53cad3812 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task a26d38c4-c0c7-445a-a408-76ea073a3a55 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 9c587382-3724-4271-b4c8-8c63223f40d2 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task d07a9836-087b-4963-a3a7-0c2c423a89b4 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 654c014d-03c1-4001-9dd2-d6c5dc0b35c2 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task 95db5939-2371-4d4f-8c97-fb8f1bd04e05 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Replanning task fb9e2a64-65ff-4cac-b2ec-cf9792c51188 due to error: A tarefa 'Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: Revisão: R...
+Checking project completion for project_id: proj_20250701_230230_8781428b
+Completion check finished with status: failed_criteria, score: 0.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250701_230230_8781428b, backup_id: proj_20250701_230230_8781428b_20250701_230326
+Snapshot created successfully at: project_workspaces/backups/proj_20250701_230230_8781428b_20250701_230326.zip, size_mb: 0.02
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T02:03:26.712943Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T02:10:54.973664Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T02:10:54.974007Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T02:10:54.974226Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T02:10:54.981389Z"}
+Project context saved for project_id: proj_20250701_231054_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250701_231054_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250701_231054_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250701_231054_8781428b", "level": "info", "timestamp": "2025-07-02T02:10:54.986683Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T02:10:54.987011Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231054_8781428b", "level": "info", "timestamp": "2025-07-02T02:10:54.990485Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+Using AsyncIOEngine.POLLER as I/O engine
+🎯 Agente inteligente planner_proj_20250701_231054_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_231054_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_231054_8781428b_021055: intelligent_a2a_system -> planner_proj_20250701_231054_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_231054_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_231054_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_231054_8781428b_021055: intelligent_a2a_system -> executor_proj_20250701_231054_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_231054_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_231054_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_231054_8781428b_021055: intelligent_a2a_system -> validator_proj_20250701_231054_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+Error in LLM classification: 'NoneType' object has no attribute 'strip'. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+Replanning task 02df5fc2-edc3-4f60-8df6-d42eba269999 due to error: A tarefa 'Criar documentação do projeto (README.md)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md. Verifique logs para detalhes....
+Replanning task 6e91a35c-110e-4b2e-b237-21a79378315b due to error: A tarefa 'Criar arquivo de dependências (requirements.txt)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt. Verifique logs para detal...
+Replanning task c6d40818-93aa-48f4-af8c-efc75a152488 due to error: A tarefa 'Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md. Verifique logs para detalhes....
+Replanning task 3e254de6-38af-42a4-9edb-82f9c3918d18 due to error: A tarefa 'Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt. Verifique logs p...
+Multiple revision loop detected for task 61df8854-6faf-4273-944e-f93b1a4d7750. Stopping replanning.
+Multiple revision loop detected for task 5faa5f51-686a-428e-b334-78124c65310e. Stopping replanning.
+Checking project completion for project_id: proj_20250701_231054_8781428b
+Completion check finished with status: failed_criteria, score: 0.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250701_231054_8781428b, backup_id: proj_20250701_231054_8781428b_20250701_231101
+Snapshot created successfully at: project_workspaces/backups/proj_20250701_231054_8781428b_20250701_231101.zip, size_mb: 0.0
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T02:11:01.910831Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T02:12:28.225754Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T02:12:28.226264Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T02:12:28.226543Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T02:12:28.232942Z"}
+Project context saved for project_id: proj_20250701_231228_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250701_231228_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250701_231228_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250701_231228_8781428b", "level": "info", "timestamp": "2025-07-02T02:12:28.235330Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T02:12:28.235455Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231228_8781428b", "level": "info", "timestamp": "2025-07-02T02:12:28.237342Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+Using AsyncIOEngine.POLLER as I/O engine
+🎯 Agente inteligente planner_proj_20250701_231228_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_231228_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_231228_8781428b_021228: intelligent_a2a_system -> planner_proj_20250701_231228_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_231228_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_231228_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_231228_8781428b_021228: intelligent_a2a_system -> executor_proj_20250701_231228_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_231228_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_231228_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_231228_8781428b_021228: intelligent_a2a_system -> validator_proj_20250701_231228_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+Error in LLM classification: 'NoneType' object has no attribute 'strip'. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+Replanning task 04f07685-c18b-4f0c-a90b-c0ef297c2ae2 due to error: A tarefa 'Criar documentação do projeto (README.md)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md. Verifique logs para detalhes....
+Replanning task 7f8eee8e-4b00-4ba5-9d07-774483530687 due to error: A tarefa 'Criar arquivo de dependências (requirements.txt)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para requirements.txt. Verifique logs para detal...
+Replanning task a725ae21-7734-45b2-9cd0-bd5536bee8d4 due to error: A tarefa 'Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Falha ao gerar conteúdo da LLM para README.md. Verifique logs para detalhes....
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T02:14:26.079651Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T02:14:26.079897Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T02:14:26.080045Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T02:14:26.085937Z"}
+Project context saved for project_id: proj_20250701_231426_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250701_231426_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250701_231426_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250701_231426_8781428b", "level": "info", "timestamp": "2025-07-02T02:14:26.088097Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T02:14:26.088194Z"}
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b", "level": "info", "timestamp": "2025-07-02T02:14:26.088709Z"}
+ModelRouter initialized with 7 available models
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+Using AsyncIOEngine.POLLER as I/O engine
+🎯 Agente inteligente planner_proj_20250701_231426_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250701_231426_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250701_231426_8781428b_021426: intelligent_a2a_system -> planner_proj_20250701_231426_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250701_231426_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250701_231426_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250701_231426_8781428b_021426: intelligent_a2a_system -> executor_proj_20250701_231426_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250701_231426_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250701_231426_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250701_231426_8781428b_021426: intelligent_a2a_system -> validator_proj_20250701_231426_8781428b
+Agente sender intelligent_a2a_system não encontrado
+✅ Prompt refinado com sucesso (4340 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Desenvolver uma aplicação web de e-commerce completa e de alta performance para venda de vapes e pods, com foco em uma experiência de usuário premium, segurança robusta e escalabilidade para o ambiente de produção.
+
+**Tipo de Aplicação:** Aplicação web B2C (Business-to-Consumer) com arquitetura full-stack.
+
+**Tecnologias Principais:**
+*   **Backend:** Python 3.9+ utilizando o framework Django (incluindo Django REST Framework para APIs).
+*   **Frontend:** Next.js (React) para interface de usuário dinâmica, responsiva (desktop, tablet, mobile) e otimizada para SEO (Server-Side Rendering).
+*   **Banco de Dados:** PostgreSQL para persistência de dados.
+*   **Cache e Filas:** Redis para caching de dados frequentes e Celery para processamento de tarefas assíncronas (e.g., processamento de pedidos, envio de e-mails).
+*   **Gateway de Pagamento:** Integração com APIs de provedores como Stripe ou Mercado Pago.
+
+**Funcionalidades Específicas:**
+1.  **Módulo de Produtos:**
+    *   CRUD completo para gerenciamento de produtos (nome, descrição, preço, estoque, SKUs, variações personalizáveis - cor, sabor, teor de nicotina, etc., múltiplas imagens, tags).
+    *   Categorização e filtragem avançada (por marca, tipo, atributo, faixa de preço).
+    *   Busca inteligente (full-text search com relevância).
+    *   Produtos relacionados e sugestões.
+2.  **Módulo de Usuários e Autenticação:**
+    *   Registro e Login (e-mail/senha, recuperação de senha, autenticação de dois fatores opcional).
+    *   Integração com OAuth2 para login via Google/Facebook.
+    *   Perfis de usuário personalizáveis (endereços de entrega, histórico de pedidos).
+    *   Sistema de roles e permissões (cliente, administrador).
+3.  **Carrinho de Compras:**
+    *   Adicionar, remover e atualizar quantidades de produtos no carrinho.
+    *   Persistência do carrinho (para usuários autenticados e sessões de convidados).
+4.  **Processo de Checkout:**
+    *   Fluxo de checkout intuitivo em múltiplas etapas.
+    *   Seleção de endereço de entrega e cálculo de frete.
+    *   Integração robusta com gateway de pagamento para Pix, cartão de crédito, boleto.
+    *   Geração, gerenciamento e rastreamento de pedidos.
+    *   Confirmação de pedido por e-mail e SMS (opcional).
+5.  **Painel Administrativo:**
+    *   Dashboard analítico para visão geral de vendas, estoque e usuários.
+    *   Gerenciamento completo de produtos, categorias, pedidos, usuários, cupons de desconto.
+    *   Relatórios de vendas detalhados (por período, produto, cliente).
+6.  **Marketing e SEO:**
+    *   Gerenciamento de cupons de desconto e promoções.
+    *   Otimização para motores de busca (meta tags customizáveis, sitemaps automáticos, URLs amigáveis).
+    *   Páginas estáticas (Sobre Nós, Contato, Política de Privacidade).
+
+**Requisitos Técnicos:**
+*   **Arquitetura:** Modular e escalável, preparada para lidar com alto volume de usuários e transações. APIs RESTful bem definidas.
+*   **Performance:** Otimização de consultas SQL, uso estratégico de cache (Redis), compressão de assets (imagens, CSS, JS), lazy loading para imagens e carregamento assíncrono de dados.
+*   **Segurança:** Implementação de boas práticas de segurança (hashing de senhas, proteção contra XSS, CSRF, SQL Injection, validação rigorosa de entradas), uso obrigatório de HTTPS.
+*   **Desenvolvimento:** Ambiente de desenvolvimento padronizado com Docker, controle de versão com Git, testes unitários e de integração com cobertura mínima de 80%, pipelines de CI/CD para automação de testes e deploy.
+*   **UI/UX:** Design moderno e responsivo, focado na usabilidade e na jornada do cliente, com tempos de carregamento mínimos.
+
+**Entregáveis Concretos:**
+*   **MVP (Minimum Viable Product) Funcional:** Incluindo CRUD básico de produtos, registro/login de usuários, carrinho de compras, checkout simplificado com integração a um gateway de pagamento (modo sandbox), e um painel administrativo essencial para gestão de produtos e pedidos.
+*   **Produto Completo:** Todas as funcionalidades detalhadas acima, completamente testadas, otimizadas para produção e prontas para deployment em ambiente de nuvem (e.g., AWS, GCP, Azure).
+*   **Documentação Técnica:** Diagramas de arquitetura, documentação de API (OpenAPI/Swagger), modelos de banco de dados, e guias detalhados de configuração e deployment.
+📝 Transformação: 108 chars → 4340 chars
+Failed to parse LLM JSON response for project info
+✅ Project classified as 'web_app' by LLM
+Determined project type: web_app
+Determined project complexity: 10
+Generating domain-specific tasks for project type 'web_app' with complexity 10
+🌐 Creating dynamic web app tasks with complexity 10 based on extracted info
+🛒 E-commerce project detected. Using specialized e-commerce plan.
+🛒 Criando plano específico para E-COMMERCE
+Initial plan created with 20 tasks and saved to context.
+🔄 Improving plan with score 0.38 based on 7 identified issues.
+📄 Received improved plan from LLM. Parsing and building new graph.
+✅ Successfully built new dependency graph with 31 improved tasks.
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T02:17:09.243689Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T02:17:09.244770Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T02:17:09.256465Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/next.js", "level": "info", "timestamp": "2025-07-02T02:17:09.566665Z"}
+{"event": "Successfully wrote to artifacts/next.js", "level": "info", "timestamp": "2025-07-02T02:17:09.567639Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/next.js", "level": "info", "timestamp": "2025-07-02T02:17:09.579633Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/readme.md", "level": "info", "timestamp": "2025-07-02T02:17:09.890022Z"}
+{"event": "Successfully wrote to artifacts/readme.md", "level": "info", "timestamp": "2025-07-02T02:17:09.891036Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/readme.md", "level": "info", "timestamp": "2025-07-02T02:17:09.897490Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/inicializar_repositorio_git_definir_estrutura.py", "level": "info", "timestamp": "2025-07-02T02:17:33.976611Z"}
+{"event": "Successfully wrote to artifacts/inicializar_repositorio_git_definir_estrutura.py", "level": "info", "timestamp": "2025-07-02T02:17:33.977605Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/inicializar_repositorio_git_definir_estrutura.py", "level": "info", "timestamp": "2025-07-02T02:17:33.986460Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/layout_basico_componentes_reutilizaveis_frontend.html", "level": "info", "timestamp": "2025-07-02T02:17:36.814766Z"}
+{"event": "Successfully wrote to artifacts/layout_basico_componentes_reutilizaveis_frontend.html", "level": "info", "timestamp": "2025-07-02T02:17:36.816200Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/layout_basico_componentes_reutilizaveis_frontend.html", "level": "info", "timestamp": "2025-07-02T02:17:36.828228Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T02:18:02.303575Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T02:18:02.304665Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T02:18:02.316260Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/definir_configuracoes_seguranca_iniciais_no.py", "level": "info", "timestamp": "2025-07-02T02:18:05.270473Z"}
+{"event": "Successfully wrote to artifacts/definir_configuracoes_seguranca_iniciais_no.py", "level": "info", "timestamp": "2025-07-02T02:18:05.271531Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/definir_configuracoes_seguranca_iniciais_no.py", "level": "info", "timestamp": "2025-07-02T02:18:05.280626Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/framework_testes_unitarios_integracao_pytest.py", "level": "info", "timestamp": "2025-07-02T02:18:13.011396Z"}
+{"event": "Successfully wrote to artifacts/framework_testes_unitarios_integracao_pytest.py", "level": "info", "timestamp": "2025-07-02T02:18:13.012708Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/framework_testes_unitarios_integracao_pytest.py", "level": "info", "timestamp": "2025-07-02T02:18:13.025216Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/configuracao_aplicacao_flask_principal_conexao.py", "level": "info", "timestamp": "2025-07-02T02:18:30.259282Z"}
+{"event": "Successfully wrote to artifacts/configuracao_aplicacao_flask_principal_conexao.py", "level": "info", "timestamp": "2025-07-02T02:18:30.259657Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/configuracao_aplicacao_flask_principal_conexao.py", "level": "info", "timestamp": "2025-07-02T02:18:30.262805Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/pipeline_cicd_inicial_github_actionsgitlab.py", "level": "info", "timestamp": "2025-07-02T02:18:39.517351Z"}
+{"event": "Successfully wrote to artifacts/pipeline_cicd_inicial_github_actionsgitlab.py", "level": "info", "timestamp": "2025-07-02T02:18:39.518319Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/pipeline_cicd_inicial_github_actionsgitlab.py", "level": "info", "timestamp": "2025-07-02T02:18:39.521695Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/apis_crud_create_read_update.py", "level": "info", "timestamp": "2025-07-02T02:19:05.287098Z"}
+{"event": "Successfully wrote to artifacts/apis_crud_create_read_update.py", "level": "info", "timestamp": "2025-07-02T02:19:05.288216Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/apis_crud_create_read_update.py", "level": "info", "timestamp": "2025-07-02T02:19:05.297566Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/docker_compose.yml", "level": "info", "timestamp": "2025-07-02T02:19:11.935268Z"}
+{"event": "Successfully wrote to artifacts/docker_compose.yml", "level": "info", "timestamp": "2025-07-02T02:19:11.936223Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/docker_compose.yml", "level": "info", "timestamp": "2025-07-02T02:19:11.939571Z"}
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/modulo_autenticacao_jwt_registro_login.py", "level": "info", "timestamp": "2025-07-02T02:20:34.173555Z"}
+{"event": "Successfully wrote to artifacts/modulo_autenticacao_jwt_registro_login.py", "level": "info", "timestamp": "2025-07-02T02:20:34.174537Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/modulo_autenticacao_jwt_registro_login.py", "level": "info", "timestamp": "2025-07-02T02:20:34.184030Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/sistema_gestao_estoque_tempo_real.py", "level": "info", "timestamp": "2025-07-02T02:20:47.479022Z"}
+{"event": "Successfully wrote to artifacts/sistema_gestao_estoque_tempo_real.py", "level": "info", "timestamp": "2025-07-02T02:20:47.480013Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/sistema_gestao_estoque_tempo_real.py", "level": "info", "timestamp": "2025-07-02T02:20:47.490842Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/paginas_listagem_detalhe_produtos_no.py", "level": "info", "timestamp": "2025-07-02T02:20:48.911099Z"}
+{"event": "Successfully wrote to artifacts/paginas_listagem_detalhe_produtos_no.py", "level": "info", "timestamp": "2025-07-02T02:20:48.912144Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/paginas_listagem_detalhe_produtos_no.py", "level": "info", "timestamp": "2025-07-02T02:20:48.922491Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/busca_inteligente_full_text_search_filtros.py", "level": "info", "timestamp": "2025-07-02T02:21:01.299918Z"}
+{"event": "Successfully wrote to artifacts/busca_inteligente_full_text_search_filtros.py", "level": "info", "timestamp": "2025-07-02T02:21:01.300380Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/busca_inteligente_full_text_search_filtros.py", "level": "info", "timestamp": "2025-07-02T02:21:01.304443Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/paginas_login_registro_no_frontend.py", "level": "info", "timestamp": "2025-07-02T02:21:02.021750Z"}
+{"event": "Successfully wrote to artifacts/paginas_login_registro_no_frontend.py", "level": "info", "timestamp": "2025-07-02T02:21:02.023162Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/paginas_login_registro_no_frontend.py", "level": "info", "timestamp": "2025-07-02T02:21:02.036118Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/apis_carrinho_compras_adicionarremoveratualizar_itens.py", "level": "info", "timestamp": "2025-07-02T02:21:03.395717Z"}
+{"event": "Successfully wrote to artifacts/apis_carrinho_compras_adicionarremoveratualizar_itens.py", "level": "info", "timestamp": "2025-07-02T02:21:03.397066Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/apis_carrinho_compras_adicionarremoveratualizar_itens.py", "level": "info", "timestamp": "2025-07-02T02:21:03.409963Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/modulo_reviews_ratings_produtos_backend.py", "level": "info", "timestamp": "2025-07-02T02:21:23.670182Z"}
+{"event": "Successfully wrote to artifacts/modulo_reviews_ratings_produtos_backend.py", "level": "info", "timestamp": "2025-07-02T02:21:23.671132Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/modulo_reviews_ratings_produtos_backend.py", "level": "info", "timestamp": "2025-07-02T02:21:23.681253Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/monitoramento_logging_alertas_prometheusgrafana_elk.py", "level": "info", "timestamp": "2025-07-02T02:21:29.437214Z"}
+{"event": "Successfully wrote to artifacts/monitoramento_logging_alertas_prometheusgrafana_elk.py", "level": "info", "timestamp": "2025-07-02T02:21:29.437652Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/monitoramento_logging_alertas_prometheusgrafana_elk.py", "level": "info", "timestamp": "2025-07-02T02:21:29.441151Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/pagina_carrinho_compras_no_frontend.html", "level": "info", "timestamp": "2025-07-02T02:21:49.764802Z"}
+{"event": "Successfully wrote to artifacts/pagina_carrinho_compras_no_frontend.html", "level": "info", "timestamp": "2025-07-02T02:21:49.766019Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/pagina_carrinho_compras_no_frontend.html", "level": "info", "timestamp": "2025-07-02T02:21:49.776640Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/otimizacao_performance_aplicacao_cache_redis.py", "level": "info", "timestamp": "2025-07-02T02:22:27.724361Z"}
+{"event": "Successfully wrote to artifacts/otimizacao_performance_aplicacao_cache_redis.py", "level": "info", "timestamp": "2025-07-02T02:22:27.724838Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/otimizacao_performance_aplicacao_cache_redis.py", "level": "info", "timestamp": "2025-07-02T02:22:27.728410Z"}
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/apis_checkout_gerenciamento_pedidos_no.py", "level": "info", "timestamp": "2025-07-02T02:24:25.565793Z"}
+{"event": "Successfully wrote to artifacts/apis_checkout_gerenciamento_pedidos_no.py", "level": "info", "timestamp": "2025-07-02T02:24:25.566292Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/apis_checkout_gerenciamento_pedidos_no.py", "level": "info", "timestamp": "2025-07-02T02:24:25.570104Z"}
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/otimizacao_seo_acessibilidade_paginas_frontend.html", "level": "info", "timestamp": "2025-07-02T02:25:27.936076Z"}
+{"event": "Successfully wrote to artifacts/otimizacao_seo_acessibilidade_paginas_frontend.html", "level": "info", "timestamp": "2025-07-02T02:25:27.936889Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/otimizacao_seo_acessibilidade_paginas_frontend.html", "level": "info", "timestamp": "2025-07-02T02:25:27.940222Z"}
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/integrar_gateway_pagamento_eg_stripe.py", "level": "info", "timestamp": "2025-07-02T02:27:18.375969Z"}
+{"event": "Successfully wrote to artifacts/integrar_gateway_pagamento_eg_stripe.py", "level": "info", "timestamp": "2025-07-02T02:27:18.376312Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/integrar_gateway_pagamento_eg_stripe.py", "level": "info", "timestamp": "2025-07-02T02:27:18.379545Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/painel_administrativo_backend_apis_ui.py", "level": "info", "timestamp": "2025-07-02T02:28:16.989511Z"}
+{"event": "Successfully wrote to artifacts/painel_administrativo_backend_apis_ui.py", "level": "info", "timestamp": "2025-07-02T02:28:16.990635Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/painel_administrativo_backend_apis_ui.py", "level": "info", "timestamp": "2025-07-02T02:28:16.999324Z"}
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/executar_testes_automatizados_abrangentes_unitarios.py", "level": "info", "timestamp": "2025-07-02T02:29:44.535065Z"}
+{"event": "Successfully wrote to artifacts/executar_testes_automatizados_abrangentes_unitarios.py", "level": "info", "timestamp": "2025-07-02T02:29:44.535416Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/executar_testes_automatizados_abrangentes_unitarios.py", "level": "info", "timestamp": "2025-07-02T02:29:44.538814Z"}
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/notificacoes_por_e_mail_automatizadas_confirmacao.py", "level": "info", "timestamp": "2025-07-02T02:31:20.483014Z"}
+{"event": "Successfully wrote to artifacts/notificacoes_por_e_mail_automatizadas_confirmacao.py", "level": "info", "timestamp": "2025-07-02T02:31:20.484007Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/notificacoes_por_e_mail_automatizadas_confirmacao.py", "level": "info", "timestamp": "2025-07-02T02:31:20.494117Z"}
+Replanning task 1c00c14b-2c78-46e1-8fd9-ebd2651043f2 due to error: A tarefa 'Auditoria de Segurança e Hardening da aplicação (testes de penetração, análise de vulnerabilidades, conformidade com LGPD).' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Falh...
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/relatorios_vendas_analises_no_backend.py", "level": "info", "timestamp": "2025-07-02T02:32:11.374114Z"}
+{"event": "Successfully wrote to artifacts/relatorios_vendas_analises_no_backend.py", "level": "info", "timestamp": "2025-07-02T02:32:11.374498Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250701_231426_8781428b/artifacts/relatorios_vendas_analises_no_backend.py", "level": "info", "timestamp": "2025-07-02T02:32:11.377947Z"}
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+Replanning task 060a50f6-e043-4076-8916-c91f185d6a23 due to error: A tarefa 'Revisão: Auditoria de Segurança e Hardening da aplicação (testes de penetração, análise de vulnerabilidades, conformidade com LGPD).' falhou após 1 tentativas. Últimos erros: Exit code: 1, E...
+ModelRouter initialized with 7 available models
+Fallback model selected. Primary: gemini-2.5-flash, Fallback: gemini-2.5-pro, Category: code_generation
+Multiple revision loop detected for task 67114a1e-89ea-48c4-80e2-06ca375ee03f. Stopping replanning.
+Checking project completion for project_id: proj_20250701_231426_8781428b
+Completion check finished with status: partially_completed, score: 0.5222222222222223, total_checks: 4
+Creating project snapshot for project_id: proj_20250701_231426_8781428b, backup_id: proj_20250701_231426_8781428b_20250701_233528
+Snapshot created successfully at: project_workspaces/backups/proj_20250701_231426_8781428b_20250701_233528.zip, size_mb: 0.07
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T02:35:28.314849Z"}

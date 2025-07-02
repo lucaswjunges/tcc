@@ -130,5 +130,17 @@
     "dependencies": [],
     "size_bytes": 804,
     "file_count": 5
+  },
+  "proj_20250701_231426_8781428b": {
+    "context_id": "proj_20250701_231426_8781428b",
+    "project_name": "Criar Website Venda Project",
+    "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade",
+    "status": "active",
+    "created_at": "2025-07-01T23:14:26.087124",
+    "last_modified": "2025-07-01T23:14:26.087369",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 804,
+    "file_count": 5
   }
 }

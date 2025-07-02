@@ -40,6 +40,12 @@ python3 -c "from evolux_engine.utils.logging_utils import log; log.info('✅ Log
 # Run comprehensive integration tests
 python3 test_metacognition_integration.py
 
+# Install package in development mode
+pip install -e .
+
+# Run tests
+pytest .
+
 # Run with Docker
 docker-compose up evolux-core
 
@@ -48,6 +54,13 @@ docker-compose run testing-runner
 
 # Run with specific LLM provider
 EVOLUX_LLM_PROVIDER=google python3 run.py --goal "your goal here"
+
+# Quick system health check
+python3 -c "
+from evolux_engine.services.config_manager import ConfigManager
+config = ConfigManager()
+print(f'✅ Config loaded - Provider: {config.get_global_setting(\"default_llm_provider\")}')
+"
 ```
 
 ### Environment Setup
@@ -64,6 +77,10 @@ cp .env.example .env
 # EVOLUX_LLM_PROVIDER=google|openai|openrouter (default: google)
 # EVOLUX_PROJECT_BASE_DIR=./project_workspaces (default)
 # EVOLUX_LOGGING_LEVEL=INFO|DEBUG|WARNING (default: INFO)
+# EVOLUX_HTTP_REFERER=https://your-domain.com
+# EVOLUX_X_TITLE=Evolux Engine
+# EVOLUX_DEVELOPMENT_MODE=false
+# EVOLUX_DEBUG_MODE=false
 ```
 
 ## Architecture Overview
@@ -254,3 +271,19 @@ Access services:
 - Docker is required for secure command execution
 - The system learns from failures - check `failure_history` and `recovery_strategies` for debugging
 - Default LLM provider is Google Gemini (2.5 Flash) for optimal performance/cost balance
+
+### Package Management
+The system uses setuptools with `setup.py` for package management:
+```bash
+# Install in development mode
+pip install -e .
+
+# Current version: 0.2.0
+# Main dependencies: pydantic, typer, openai, google-generativeai, docker, pytest
+```
+
+### Testing Framework
+- Uses pytest for testing
+- Integration tests available via `test_metacognition_integration.py`
+- Docker-based testing with `docker-compose run testing-runner`
+- No specific pytest configuration file - uses defaults
