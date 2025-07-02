@@ -11,7 +11,7 @@ import logging
 # Removido logging.basicConfig para evitar conflitos
 # logger = logging.getLogger(__name__)
 from evolux_engine.utils.logging_utils import get_structured_logger
-logger = get_structured_logger("planner")
+logger = get_structured_logger(name="planner")
 
 # Imports from contracts
 from evolux_engine.schemas.contracts import (
@@ -26,6 +26,60 @@ from evolux_engine.core.evolux_a2a_integration import A2ACapableMixin, auto_regi
 @handoff_capable("context_transfer", "task_delegation", "knowledge_share")
 class PlannerAgent(A2ACapableMixin):
     """Classe responsável por gerenciar a criação e o fluxo de tarefas com capacidades A2A"""
+
+    def _generate_filename_from_description(self, description: str) -> str:
+        """Gera um nome de arquivo a partir da descrição da tarefa."""
+        import re
+        import unicodedata
+        
+        s = ''.join(c for c in unicodedata.normalize('NFD', description) if unicodedata.category(c) != 'Mn')
+        s = s.lower()
+        
+        match = re.search(r'([a-z0-9_.-]+\.(py|md|txt|json|yml|yaml|html|css|js|sh|dockerfile))', s)
+        if match:
+            return match.group(1)
+
+        s = re.sub(r'[^\w\s-]', '', s)
+        words = s.split()
+        common_words = {'e', 'o', 'a', 'de', 'do', 'da', 'com', 'para', 'em', 'um', 'uma', 'os', 'as'}
+        action_words = {'criar', 'implementar', 'desenvolver', 'configurar', 'gerar', 'adicionar', 'modificar', 'refatorar', 'testar'}
+        
+        filtered_words = [word for word in words if word not in common_words and word not in action_words]
+        
+        if not filtered_words:
+            # Fallback com base em palavras de ação se nada mais restar
+            filtered_words = [word for word in words if word not in common_words]
+            if not filtered_words:
+                return "task_file.py"
+
+        filename_base = "_".join(filtered_words[:5])
+        
+        # Adiciona extensão baseada em palavras-chave
+        if any(keyword in s for keyword in ['backend', 'serviço', 'api', 'lógica', 'modelo', 'autenticação', 'script', 'python']):
+            filename = f"{filename_base}.py"
+        elif any(keyword in s for keyword in ['frontend', 'ui', 'interface', 'página', 'template', 'html']):
+            filename = f"{filename_base}.html"
+        elif any(keyword in s for keyword in ['estilo', 'css']):
+            filename = f"{filename_base}.css"
+        elif any(keyword in s for keyword in ['documentação', 'readme', 'docs']):
+            filename = f"{filename_base}.md"
+        elif any(keyword in s for keyword in ['dependências', 'requirements']):
+            filename = "requirements.txt"
+        elif any(keyword in s for keyword in ['configuração', 'settings']):
+            filename = f"{filename_base}.py"
+        elif any(keyword in s for keyword in ['docker-compose', 'compose']):
+            filename = "docker-compose.yml"
+        elif 'dockerfile' in s:
+            filename = "Dockerfile"
+        elif any(keyword in s for keyword in ['json']):
+            filename = f"{filename_base}.json"
+        elif any(keyword in s for keyword in ['yaml', 'yml']):
+            filename = f"{filename_base}.yml"
+        else:
+            filename = f"{filename_base}.py"
+            
+        return filename.replace("-", "_")
+
     def __init__(self, context_manager, task_db, artifact_store, project_context=None, llm_client=None):
         # Inicializar A2A primeiro
         super().__init__()
@@ -110,65 +164,165 @@ class PlannerAgent(A2ACapableMixin):
 
     async def improve_plan_with_feedback(self, current_tasks: List[Task], feedback: dict) -> DependencyGraph:
         """
-        Melhora o plano atual baseado no feedback do CriticAgent.
-        Implementa o feedback loop entre refinamento e geração de planos.
+        Melhora o plano atual baseado no feedback do CriticAgent, instruindo o LLM a reestruturar
+        a lista de tarefas e suas dependências diretamente.
         """
         if not hasattr(self, 'llm_client') or not self.llm_client:
-            logger.warning("LLM client not available for plan improvement")
-            return await self._generate_dynamic_plan(self.project_context.project_goal)
-        
+            logger.warning("LLM client not available for plan improvement. Returning original plan.")
+            graph = DependencyGraph()
+            for task in current_tasks:
+                graph.add_task(task)
+            return graph
+
         try:
-            # Extrair informações do feedback
             issues = feedback.get('potential_issues', [])
-            suggestions = feedback.get('suggestions_for_improvement', [])
             score = feedback.get('score', 0.0)
             
-            logger.info(f"🔄 Melhorando plano com score {score:.2f} baseado em {len(issues)} problemas identificados")
-            
-            # Criar prompt para melhoria
+            logger.info(f"🔄 Improving plan with score {score:.2f} based on {len(issues)} identified issues.")
+
+            # Manter o prompt original detalhado como a fonte da verdade para o objetivo.
+            original_goal = self.project_context.project_goal
+
+            # Criar um prompt que instrui o LLM a agir como um gerente de projetos e reestruturar o plano.
+            # Função para serializar objetos datetime
+            def default_serializer(o):
+                if isinstance(o, datetime):
+                    return o.isoformat()
+                raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
+
             improvement_prompt = f"""
-            Você é um planejador de projetos experiente. Analise o plano atual e os problemas identificados, então gere um plano melhorado.
+            Você é um Gerente de Projetos de Software Sênior. Sua tarefa é refatorar um plano de projeto que foi rejeitado por um analista de qualidade.
 
-            OBJETIVO DO PROJETO:
-            {self.project_context.project_goal}
+            **Objetivo Principal do Projeto:**
+            {original_goal}
 
-            PLANO ATUAL (Score: {score:.2f}):
-            {[f"{task.description} (deps: {len(task.dependencies)})" for task in current_tasks]}
+            **Plano Atual (Rejeitado com Score: {score:.2f}):**
+            {json.dumps([task.dict() for task in current_tasks], indent=2, default=default_serializer)}
 
-            PROBLEMAS IDENTIFICADOS:
-            {chr(10).join([f"- {issue}" for issue in issues])}
+            **Críticas e Problemas Identificados pelo Analista de Qualidade:**
+            - {chr(10).join(f"- {issue}" for issue in issues)}
 
-            SUGESTÕES DE MELHORIA:
-            {chr(10).join([f"- {suggestion}" for suggestion in suggestions])}
+            **Sua Missão:**
+            Reestruture o plano de tarefas para resolver TODAS as críticas. O novo plano deve ser mais ágil, permitir paralelismo, integrar segurança e testes desde o início, e ter uma granularidade de tarefas mais adequada.
 
-            Crie um plano melhorado que:
-            1. Resolve os problemas identificados
-            2. Implementa as sugestões quando viáveis
-            3. Mantém o foco no objetivo principal
-            4. É mais eficiente e bem estruturado
+            **Diretrizes para o Novo Plano:**
+            1.  **Agilidade e Paralelismo:** Evite longas cadeias de dependência. Permita que tarefas de backend e frontend ocorram em paralelo sempre que possível.
+            2.  **Qualidade Contínua:** Posicione tarefas de configuração de CI/CD e testes no início do projeto.
+            3.  **Segurança "By Design":** Integre tarefas de segurança (como configuração de autenticação) no início, não no final.
+            4.  **Granularidade:** Quebre tarefas monolíticas (como "Implementar Frontend") em tarefas menores e mais específicas.
+            5.  **Dependências Lógicas:** Garanta que as dependências entre as tarefas sejam lógicas e eficientes.
 
-            Forneça apenas o objetivo refinado (1-2 parágrafos) que resolva os problemas:
+            **Formato de Saída:**
+            Responda com um JSON contendo uma única chave "tasks", que é uma lista de tarefas. Cada tarefa deve ter:
+            - "id": um número sequencial único para esta lista (ex: 1, 2, 3...).
+            - "description": uma descrição clara e concisa da tarefa.
+            - "dependencies": uma lista de IDs numéricos das tarefas das quais ela depende. Deixe a lista vazia ([]) se não houver dependências.
+
+            **Exemplo de Saída JSON:**
+            {{
+              "tasks": [
+                {{
+                  "id": 1,
+                  "description": "Configurar pipeline CI/CD inicial com linting e build",
+                  "dependencies": []
+                }},
+                {{
+                  "id": 2,
+                  "description": "Definir modelos de dados (ORM) para Usuário e Produto",
+                  "dependencies": []
+                }},
+                {{
+                  "id": 3,
+                  "description": "Implementar endpoints da API para CRUD de Produtos",
+                  "dependencies": [2]
+                }}
+              ]
+            }}
+
+            Agora, gere o novo plano de tarefas em formato JSON.
             """
-            
+
             response = await self.llm_client.generate_response(
                 messages=[{"role": "user", "content": improvement_prompt}],
-                temperature=0.4,
-                max_tokens=400
+                temperature=0.3,
+                max_tokens=2048  # Aumentar para permitir planos mais detalhados
             )
-            
+
             if response and response.strip():
-                improved_goal = response.strip()
-                logger.info(f"✨ Objetivo melhorado gerado ({len(improved_goal)} chars)")
-                
-                # Gerar novo plano com o objetivo melhorado
-                return await self._generate_dynamic_plan(improved_goal)
+                logger.info("📄 Received improved plan from LLM. Parsing and building new graph.")
+                try:
+                    # Extrair o JSON da resposta do LLM de forma mais robusta
+                    response_text = response.strip()
+                    json_start_index = response_text.find('{')
+                    if json_start_index == -1:
+                        raise ValueError("Nenhum JSON encontrado na resposta da LLM.")
+                    
+                    # Tentar encontrar o final do JSON correspondente
+                    json_response_str = response_text[json_start_index:]
+                    if "```" in json_response_str:
+                        json_response_str = json_response_str.split("```")[0]
+
+                    new_plan_data = json.loads(json_response_str)
+                    tasks_data = new_plan_data.get("tasks", [])
+
+                    if not tasks_data:
+                        raise ValueError("LLM response did not contain a 'tasks' list.")
+
+                    # Construir o novo grafo de dependências
+                    new_graph = DependencyGraph()
+                    id_to_uuid_map = {}
+
+                    # Primeira passagem: criar todas as tarefas e mapear IDs numéricos para UUIDs
+                    for task_data in tasks_data:
+                        new_task_id = self._generate_next_id()
+                        id_to_uuid_map[task_data['id']] = new_task_id
+                        
+                        generated_filename = self._generate_filename_from_description(task_data['description'])
+                        new_task = Task(
+                            task_id=new_task_id,
+                            description=task_data['description'],
+                            type=TaskType.CREATE_FILE,  # Default, pode ser refinado depois
+                            details=TaskDetailsCreateFile(file_path=generated_filename, content_guideline=task_data['description']),
+                            status=TaskStatus.PENDING,
+                            dependencies=[], # Será preenchido na segunda passagem
+                            acceptance_criteria=f"Funcionalidade '{task_data['description']}' implementada e testada."
+                        )
+                        new_graph.add_task(new_task)
+
+                    # Segunda passagem: adicionar as dependências usando os UUIDs mapeados
+                    for task_data in tasks_data:
+                        task_uuid = id_to_uuid_map[task_data['id']]
+                        task_obj = new_graph.get_task(task_uuid)
+                        
+                        dep_uuids = [id_to_uuid_map[dep_id] for dep_id in task_data.get('dependencies', [])]
+                        task_obj.dependencies = dep_uuids
+                        
+                        # Atualizar o grafo com as dependências corretas
+                        new_graph.dependencies[task_uuid] = set(dep_uuids)
+                        for dep_uuid in dep_uuids:
+                            new_graph.dependents.setdefault(dep_uuid, set()).add(task_uuid)
+
+                    logger.info(f"✅ Successfully built new dependency graph with {len(new_graph.get_all_tasks())} improved tasks.")
+                    return new_graph
+
+                except (json.JSONDecodeError, KeyError, ValueError) as e:
+                    logger.error(f"Error parsing improved plan from LLM: {e}. Response: {response.strip()}")
+                    # Fallback: se a análise falhar, retorna o plano original para evitar quebrar o ciclo.
+                    graph = DependencyGraph()
+                    for task in current_tasks:
+                        graph.add_task(task)
+                    return graph
             else:
-                logger.warning("Failed to generate improved plan, using original")
-                return await self._generate_dynamic_plan(self.project_context.project_goal)
-                
+                logger.warning("LLM returned an empty response for plan improvement.")
+                raise ValueError("LLM failed to provide an improved plan.")
+
         except Exception as e:
-            logger.error(f"Error improving plan with feedback: {e}")
-            return await self._generate_dynamic_plan(self.project_context.project_goal)
+            logger.error(f"Error improving plan with feedback: {e}", exc_info=True)
+            # Fallback em caso de erro inesperado
+            graph = DependencyGraph()
+            for task in current_tasks:
+                graph.add_task(task)
+            return graph
 
     def _analyze_prompt_specificity(self, prompt: str) -> float:
         """
@@ -797,180 +951,148 @@ class PlannerAgent(A2ACapableMixin):
             graph.add_task(rate_limit_task)
 
     async def _get_enhanced_web_app_tasks(self, graph: DependencyGraph, complexity: int, goal: str, project_info: dict):
-        """Tarefas específicas e detalhadas para aplicações web baseadas nas informações extraídas"""
-        
-        logger.info(f"🌐 Creating web app tasks with complexity {complexity}")
-        
-        # Verificar se é e-commerce baseado no project_goal
-        goal = self.project_context.project_goal if self.project_context else ""
+        """
+        Tarefas específicas e detalhadas para aplicações web, geradas dinamicamente
+        com base nas informações extraídas do prompt refinado.
+        """
+        logger.info(f"🌐 Creating dynamic web app tasks with complexity {complexity} based on extracted info")
+
+        # Extrair informações ricas do projeto
+        technologies = project_info.get('technologies', [])
+        features = project_info.get('features', [])
+        infrastructure = project_info.get('infrastructure', [])
+        architecture = project_info.get('architecture', 'monolito')
+
+        # Detectar se é um projeto de e-commerce para usar o plano mais especializado
         is_ecommerce = any(keyword in goal.lower() for keyword in [
-            'e-commerce', 'ecommerce', 'loja', 'shop', 'carrinho', 'cart', 'pagamento', 
-            'payment', 'produto', 'product', 'estoque', 'inventory', 'vendas', 'sales'
+            'e-commerce', 'ecommerce', 'loja', 'shop', 'carrinho', 'cart', 'pagamento',
+            'payment', 'produto', 'product', 'estoque', 'inventory', 'vendas', 'sales', 'venda'
         ])
-        
+
         if is_ecommerce and complexity >= 8:
-            logger.info("🛒 Detectado projeto E-COMMERCE complexo - criando plano especializado")
+            logger.info("🛒 E-commerce project detected. Using specialized e-commerce plan.")
             return self._get_ecommerce_specific_tasks(graph, complexity)
+
+        # Determinar o framework principal
+        framework = "Flask" # Default
+        if "Django" in technologies: framework = "Django"
+        elif "FastAPI" in technologies: framework = "FastAPI"
         
-        # 1. Setup de projeto e dependências (SEMPRE)
-        setup_task = Task(
+        logger.info(f"Detected web framework: {framework}")
+
+        # 1. Tarefa de Dependências (requirements.txt) - Dinâmica
+        reqs_content = f"{framework.lower()}\n"
+        if "PostgreSQL" in technologies: reqs_content += "psycopg2-binary\n"
+        if "SQLAlchemy" in technologies or framework in ["Flask", "FastAPI"]: reqs_content += "Flask-SQLAlchemy\n"
+        if "Redis" in infrastructure: reqs_content += "redis\n"
+        if "Celery" in infrastructure: reqs_content += "celery\n"
+        reqs_content += "python-dotenv\npytest\ngunicorn\n"
+
+        reqs_task = next((task for task in graph.get_all_tasks() if task.description == "Criar arquivo de dependências (requirements.txt)"), None)
+        if reqs_task:
+            reqs_task.details.content_guideline = reqs_content
+            logger.info("Updated requirements.txt task with dynamic dependencies.")
+        
+        # 2. Tarefa de Configuração (config.py) - Dinâmica
+        config_guideline = f"Configurações para ambiente de desenvolvimento, teste e produção. Carregar variáveis de ambiente (.env). Incluir secret key, URI do banco de dados ({'PostgreSQL' if 'PostgreSQL' in technologies else 'SQLite'})."
+        if "Redis" in infrastructure: config_guideline += " Configuração para conexão com Redis."
+        if "Celery" in infrastructure: config_guideline += " Configuração do broker Celery."
+
+        config_task = Task(
             task_id=self._generate_next_id(),
-            description="Configurar estrutura do projeto Flask",
+            description="Criar sistema de configuração centralizado",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(
-                file_path="requirements.txt",
-                content_guideline="Dependências Flask com Flask-SQLAlchemy, Flask-Login, Flask-WTF, Flask-Mail, pytest, gunicorn"
-            ),
-            status=TaskStatus.PENDING,
-            dependencies=[],
-            acceptance_criteria="Requirements.txt com dependências essenciais criado"
+            details=TaskDetailsCreateFile(file_path="config.py", content_guideline=config_guideline),
+            dependencies=[reqs_task.task_id] if reqs_task else [],
+            acceptance_criteria="Arquivo de configuração criado e funcional."
         )
-        graph.add_task(setup_task)
-        
-        # 2. Aplicação Flask principal (SEMPRE)
+        graph.add_task(config_task)
+        last_task_id = config_task.task_id
+
+        # 3. Tarefa da Aplicação Principal (app.py/main.py) - Dinâmica
+        app_guideline = f"Criar a aplicação principal {framework}. Inicializar extensões (SQLAlchemy, etc.), registrar blueprints/routers e aplicar configurações."
         app_task = Task(
             task_id=self._generate_next_id(),
-            description="Criar aplicação Flask principal com configuração",
+            description=f"Criar aplicação principal {framework}",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(
-                file_path="app.py",
-                content_guideline="Aplicação Flask com configuração de banco SQLite/PostgreSQL, blueprints, CSRF protection, configuração de segurança"
-            ),
-            status=TaskStatus.PENDING,
-            dependencies=[setup_task.task_id],
-            acceptance_criteria="Aplicação Flask com configuração de segurança e banco funcionais"
+            details=TaskDetailsCreateFile(file_path="app.py", content_guideline=app_guideline),
+            dependencies=[last_task_id],
+            acceptance_criteria=f"Aplicação {framework} principal funcional."
         )
         graph.add_task(app_task)
-        
-        # 3. Modelos de dados específicos (SEMPRE)
+        last_task_id = app_task.task_id
+
+        # 4. Tarefa de Modelos (models.py) - Dinâmica
+        models_guideline = f"Definir modelos de dados com SQLAlchemy/Django ORM para as funcionalidades: {', '.join(features)}. Incluir relacionamentos, validações e timestamps."
         models_task = Task(
             task_id=self._generate_next_id(),
-            description="Criar modelos SQLAlchemy específicos do projeto",
+            description="Criar modelos de dados do projeto",
             type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(
-                file_path="models.py",
-                content_guideline="Modelos SQLAlchemy com User, relacionamentos, índices de performance, validações de dados, timestamps"
-            ),
-            status=TaskStatus.PENDING,
-            dependencies=[app_task.task_id],
-            acceptance_criteria="Modelos de dados com relacionamentos e validações implementados"
+            details=TaskDetailsCreateFile(file_path="models.py", content_guideline=models_guideline),
+            dependencies=[last_task_id],
+            acceptance_criteria="Modelos de dados implementados corretamente."
         )
         graph.add_task(models_task)
-        
-        # 4. Sistema de autenticação robusto (SEMPRE para complexidade >= 6)
-        if complexity >= 6:
-            auth_task = Task(
+        last_task_id = models_task.task_id
+
+        # 5. Gerar tarefas para cada funcionalidade principal
+        logger.info(f"Generating tasks for {len(features)} identified features.")
+        feature_task_ids = []
+        for feature in features:
+            feature_file = f"{feature.lower().replace(' ', '_').replace('/', '_')}.py"
+            feature_task = Task(
                 task_id=self._generate_next_id(),
-                description="Implementar autenticação robusta com Flask-Login",
+                description=f"Implementar funcionalidade: {feature}",
                 type=TaskType.CREATE_FILE,
                 details=TaskDetailsCreateFile(
-                    file_path="auth.py",
-                    content_guideline="Sistema completo com registro, login, logout, verificação de email, reset de senha, proteção contra brute force"
+                    file_path=f"features/{feature_file}",
+                    content_guideline=f"Implementar a lógica de backend (rotas, views, lógica de negócio) para a funcionalidade '{feature}'."
                 ),
-                status=TaskStatus.PENDING,
-                dependencies=[models_task.task_id],
-                acceptance_criteria="Sistema de autenticação com segurança avançada implementado"
+                dependencies=[last_task_id],
+                acceptance_criteria=f"Funcionalidade '{feature}' implementada e funcional."
             )
-            graph.add_task(auth_task)
-            last_auth_task = auth_task.task_id
-        else:
-            last_auth_task = models_task.task_id
+            graph.add_task(feature_task)
+            feature_task_ids.append(feature_task.task_id)
         
-        # 5. Templates responsivos (SEMPRE)
-        templates_task = Task(
-            task_id=self._generate_next_id(),
-            description="Criar sistema de templates responsivos",
-            type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(
-                file_path="templates/base.html",
-                content_guideline="Template base com Bootstrap 5, navbar responsiva, footer, sistema de mensagens, SEO meta tags, PWA ready"
-            ),
-            status=TaskStatus.PENDING,
-            dependencies=[last_auth_task],
-            acceptance_criteria="Sistema de templates responsivos com SEO implementado"
-        )
-        graph.add_task(templates_task)
+        # A próxima tarefa depende de todas as features estarem prontas
+        last_task_id = feature_task_ids if feature_task_ids else [last_task_id]
+
+        # 6. Gerar tarefas para cada componente de infraestrutura
+        logger.info(f"Generating tasks for {len(infrastructure)} infrastructure components.")
+        infra_task_ids = []
+        for infra_component in infrastructure:
+            if infra_component.lower() == 'docker':
+                docker_task = Task(
+                    task_id=self._generate_next_id(),
+                    description="Criar Dockerfile para containerização",
+                    type=TaskType.CREATE_FILE,
+                    details=TaskDetailsCreateFile(
+                        file_path="Dockerfile",
+                        content_guideline="Criar um Dockerfile multi-stage otimizado para produção."
+                    ),
+                    dependencies=last_task_id,
+                    acceptance_criteria="Dockerfile criado e funcional."
+                )
+                graph.add_task(docker_task)
+                infra_task_ids.append(docker_task.task_id)
         
-        # 6. Views principais da aplicação (SEMPRE)
-        views_task = Task(
-            task_id=self._generate_next_id(),
-            description="Implementar views e rotas principais",
-            type=TaskType.CREATE_FILE,
-            details=TaskDetailsCreateFile(
-                file_path="routes.py",
-                content_guideline="Routes Flask com CRUD completo, paginação, filtros, validação de formulários, tratamento de erros"
-            ),
-            status=TaskStatus.PENDING,
-            dependencies=[templates_task.task_id],
-            acceptance_criteria="Sistema de rotas com funcionalidades completas implementado"
-        )
-        graph.add_task(views_task)
-        
-        # 7. Configuração avançada (para complexidade >= 7)
-        if complexity >= 7:
-            config_task = Task(
-                task_id=self._generate_next_id(),
-                description="Configurar ambiente de produção avançado",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="config.py",
-                    content_guideline="Configurações para dev/test/prod, variáveis de ambiente, logs estruturados, cache Redis, rate limiting"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[views_task.task_id],
-                acceptance_criteria="Configurações de produção com cache e rate limiting implementadas"
-            )
-            graph.add_task(config_task)
-            last_task_id = config_task.task_id
-        else:
-            last_task_id = views_task.task_id
-            
-        # 8. Testes automatizados (para complexidade >= 8)
+        if infra_task_ids:
+            last_task_id = infra_task_ids
+
+        # 7. Adicionar tarefas de qualidade se a complexidade for alta
         if complexity >= 8:
             test_task = Task(
                 task_id=self._generate_next_id(),
-                description="Criar suite de testes automatizados",
+                description="Criar suíte de testes automatizados",
                 type=TaskType.CREATE_FILE,
                 details=TaskDetailsCreateFile(
-                    file_path="tests/test_app.py",
-                    content_guideline="Testes pytest com fixtures, test client, cobertura de auth, CRUD, validações, casos edge"
+                    file_path="tests/test_features.py",
+                    content_guideline=f"Criar testes (pytest) para as funcionalidades: {', '.join(features)}. Cobrir casos de sucesso e de erro."
                 ),
-                status=TaskStatus.PENDING,
-                dependencies=[last_task_id],
-                acceptance_criteria="Suite de testes com alta cobertura implementada"
+                dependencies=last_task_id,
+                acceptance_criteria="Testes implementados com boa cobertura."
             )
             graph.add_task(test_task)
-            
-            # 9. Scripts de deployment (para complexidade >= 8)
-            deploy_task = Task(
-                task_id=self._generate_next_id(),
-                description="Configurar deployment automatizado",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="Dockerfile",
-                    content_guideline="Dockerfile otimizado, docker-compose para dev/prod, health checks, variáveis de ambiente"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[test_task.task_id],
-                acceptance_criteria="Sistema de deployment containerizado implementado"
-            )
-            graph.add_task(deploy_task)
-            
-        # 10. Segurança avançada (para complexidade >= 9)
-        if complexity >= 9:
-            security_task = Task(
-                task_id=self._generate_next_id(),
-                description="Implementar segurança avançada",
-                type=TaskType.CREATE_FILE,
-                details=TaskDetailsCreateFile(
-                    file_path="security.py",
-                    content_guideline="CSRF protection, Content Security Policy, sanitização XSS, rate limiting por IP, logging de segurança"
-                ),
-                status=TaskStatus.PENDING,
-                dependencies=[last_task_id],
-                acceptance_criteria="Medidas de segurança avançadas implementadas"
-            )
-            graph.add_task(security_task)
     
     def _get_ecommerce_specific_tasks(self, graph: DependencyGraph, complexity: int):
         """Tarefas específicas para projetos de e-commerce complexos"""

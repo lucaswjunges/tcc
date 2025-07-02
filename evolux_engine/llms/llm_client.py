@@ -1,5 +1,6 @@
 import json
 import asyncio
+import random
 from typing import Optional, Dict, Any, List, Union
 
 import httpx
@@ -65,34 +66,46 @@ class LLMClient:
             await self._async_client.aclose()
 
     async def _generate_gemini_response(self, messages: List[Dict[str, str]]) -> Optional[str]:
-        # Convert messages to Gemini format - combine system messages with user content
+        # Convert messages to Gemini format
         gemini_messages = []
         system_content = ""
-        
         for msg in messages:
             if msg["role"] == "system":
                 system_content += msg["content"] + "\n\n"
             elif msg["role"] == "assistant":
                 gemini_messages.append({'role': "model", 'parts': [msg['content']]})
             elif msg["role"] == "user":
-                # Prepend system content to first user message if exists
                 content = msg["content"]
                 if system_content and not gemini_messages:
                     content = system_content + content
-                    system_content = ""  # Only add once
+                    system_content = ""
                 gemini_messages.append({'role': "user", 'parts': [content]})
         
-        # If no user messages but have system content, create a user message
         if system_content and not any(msg['role'] == 'user' for msg in gemini_messages):
             gemini_messages.append({'role': "user", 'parts': [system_content + "Please provide your response."]})
+
+        # Retry com backoff exponencial e jitter
+        max_retries = 5
+        base_delay = 5  # Aumentado para 5s para ser mais conservador com a API do Gemini
         
-        try:
-            logger.debug(f"Enviando requisição para Gemini: Modelo='{self.model_name}', Messages={len(gemini_messages)}")
-            response = await self._gemini_model.generate_content_async(gemini_messages)
-            return response.text
-        except Exception:
-            logger.opt(exception=True).error(f"Erro inesperado ao gerar resposta do Gemini: {self.model_name}")
-            return None
+        for attempt in range(max_retries):
+            try:
+                logger.debug(f"Enviando requisição para Gemini: Modelo='{self.model_name}', Tentativa={attempt + 1}/{max_retries}")
+                response = await self._gemini_model.generate_content_async(gemini_messages)
+                return response.text
+            except Exception as e:
+                # Verificar se o erro é de 'ResourceExhausted' (código 429)
+                is_rate_limit_error = "429" in str(e) and "ResourceExhausted" in str(e)
+                
+                if is_rate_limit_error and attempt < max_retries - 1:
+                    delay = base_delay * (2 ** attempt) + random.uniform(0, 1)  # Adiciona jitter
+                    logger.warning(f"Limite de taxa da API Gemini atingido. Tentativa {attempt + 1}/{max_retries}. Aguardando {delay:.2f}s...")
+                    await asyncio.sleep(delay)
+                    continue
+                else:
+                    logger.opt(exception=True).error(f"Erro inesperado ou final ao gerar resposta do Gemini: {self.model_name}")
+                    return None
+        return None
 
     async def _generate_httpx_response(self, messages: List[Dict[str, str]], max_tokens: int, temperature: float) -> Optional[str]:
         endpoint_url = f"{self.base_url}/chat/completions"

@@ -94,5 +94,41 @@
     "dependencies": [],
     "size_bytes": 804,
     "file_count": 5
+  },
+  "proj_20250701_193901_8781428b": {
+    "context_id": "proj_20250701_193901_8781428b",
+    "project_name": "Criar Website Venda Project",
+    "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade",
+    "status": "active",
+    "created_at": "2025-07-01T19:39:01.450982",
+    "last_modified": "2025-07-01T19:39:01.451508",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 804,
+    "file_count": 5
+  },
+  "proj_20250701_194817_d5b66357": {
+    "context_id": "proj_20250701_194817_d5b66357",
+    "project_name": "Criar Website Venda Project",
+    "project_goal": "Criar um website de venda de eletr\u00f4nicos em geral",
+    "status": "active",
+    "created_at": "2025-07-01T19:48:17.508515",
+    "last_modified": "2025-07-01T19:48:17.509113",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 745,
+    "file_count": 5
+  },
+  "proj_20250701_204933_8781428b": {
+    "context_id": "proj_20250701_204933_8781428b",
+    "project_name": "Criar Website Venda Project",
+    "project_goal": "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade",
+    "status": "active",
+    "created_at": "2025-07-01T20:49:33.646593",
+    "last_modified": "2025-07-01T20:49:33.646870",
+    "tags": [],
+    "dependencies": [],
+    "size_bytes": 804,
+    "file_count": 5
   }
 }

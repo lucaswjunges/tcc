@@ -278,6 +278,7 @@ class ProjectContext(BaseModel):
     task_queue: List[Task] = Field(default_factory=list)
     completed_tasks: List[Task] = Field(default_factory=list)
     failed_tasks: List[Task] = Field(default_factory=list)
+    failed_tasks: List[Task] = Field(default_factory=list)
     failed_tasks: List[Task] = Field(default_factory=list) # Tarefas que falharam definitivamente
     
     iteration_history: List[IterationLog] = Field(default_factory=list)
