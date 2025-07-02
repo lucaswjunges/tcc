@@ -19,3 +19,4 @@ venv/
 # Logs
 logs/
 *.log
+.env*
