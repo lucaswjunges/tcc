@@ -18,6 +18,7 @@ from evolux_engine.schemas.contracts import (
     Task, TaskType, TaskStatus,
     TaskDetailsCreateFile, TaskDetailsModifyFile, TaskDetailsExecuteCommand
 )
+from evolux_engine.llms.model_router import TaskCategory
 from evolux_engine.core.dependency_graph import DependencyGraph
 from evolux_engine.core.evolux_a2a_integration import A2ACapableMixin, auto_register_agent, handoff_capable
 
@@ -244,6 +245,7 @@ class PlannerAgent(A2ACapableMixin):
 
             response = await self.llm_client.generate_response(
                 messages=[{"role": "user", "content": improvement_prompt}],
+                category=TaskCategory.PLANNING,
                 temperature=0.3,
                 max_tokens=2048  # Aumentar para permitir planos mais detalhados
             )
@@ -450,6 +452,7 @@ class PlannerAgent(A2ACapableMixin):
             # Fazer chamada para o LLM
             response = await self.llm_client.generate_response(
                 messages=[{"role": "user", "content": refinement_prompt}],
+                category=TaskCategory.PLANNING,
                 temperature=0.7,
                 max_tokens=500
             )
@@ -504,6 +507,7 @@ class PlannerAgent(A2ACapableMixin):
             
             response = await self.llm_client.generate_response(
                 messages=[{"role": "user", "content": classification_prompt}],
+                category=TaskCategory.PLANNING,
                 temperature=0.3,
                 max_tokens=50
             )
@@ -558,6 +562,7 @@ class PlannerAgent(A2ACapableMixin):
             
             response = await self.llm_client.generate_response(
                 messages=[{"role": "user", "content": extraction_prompt}],
+                category=TaskCategory.PLANNING,
                 temperature=0.2,
                 max_tokens=300
             )

@@ -8,6 +8,7 @@ from loguru import logger
 from evolux_engine.utils.string_utils import extract_json_from_llm_response, sanitize_llm_response, extract_content_from_json_response
 
 from evolux_engine.llms.llm_client import LLMClient
+from evolux_engine.llms.llm_factory import LLMFactory
 from evolux_engine.core.iterative_refiner import IterativeRefiner, RefinementStrategy
 from evolux_engine.models.project_context import ProjectContext, ArtifactState
 from evolux_engine.schemas.contracts import Task
@@ -31,9 +32,10 @@ from evolux_engine.services.file_service import FileService
 from evolux_engine.services.shell_service import ShellService # Assumindo que ele retorna um dict com stdout, stderr, exit_code
 from evolux_engine.security.security_gateway import SecurityGateway
 from evolux_engine.execution.secure_executor import SecureExecutor
-from evolux_engine.llms.model_router import ModelRouter
+from evolux_engine.llms.model_router import ModelRouter, ModelInfo, TaskCategory
 from evolux_engine.cache.cognitive_cache import get_cognitive_cache
 from evolux_engine.core.simulation import SimulationEngine
+from evolux_engine.services.config_manager import ConfigManager
 
 # Prompts do executor_prompts.py
 from .executor_prompts import (
@@ -55,48 +57,48 @@ class TaskExecutorAgent:
 
     def __init__(
         self,
-        executor_llm_client: LLMClient,
         project_context: ProjectContext,
         file_service: FileService,
         shell_service: ShellService,
+        config_manager: ConfigManager, # Recebe o config manager
         security_gateway: Optional[SecurityGateway] = None,
         secure_executor: Optional[SecureExecutor] = None,
         model_router: Optional[ModelRouter] = None,
         agent_id: str = "task_executor",
-        enable_iterative_refinement: bool = True,
-        reviewer_llm_client: Optional[LLMClient] = None,
-        validator_llm_client: Optional[LLMClient] = None
+        enable_iterative_refinement: bool = True
     ):
-        self.executor_llm = executor_llm_client
         self.project_context = project_context
         self.file_service = file_service
         self.shell_service = shell_service
+        self.config_manager = config_manager
         self.security_gateway = security_gateway
         self.secure_executor = secure_executor
-        self.model_router = model_router
+        self.model_router = model_router or ModelRouter()
         self.agent_id = agent_id
         self.enable_refinement = enable_iterative_refinement
         self.cache = get_cognitive_cache()
         
-        # Inicializar o SimulationEngine (usando um LLM mais rápido, como o do validador)
+        # A fábrica de LLM será usada para obter clientes dinamicamente
+        self.llm_factory = LLMFactory()
+
+        # O SimulationEngine e o IterativeRefiner obterão seus clientes via factory quando necessário
         self.simulation_engine = SimulationEngine(
-            simulation_llm_client=validator_llm_client, # Reutiliza um cliente LLM existente
+            llm_factory=self.llm_factory,
+            config_manager=self.config_manager,
             project_context=project_context
         )
-
-        # Inicializar refinador iterativo se habilitado
-        if enable_iterative_refinement and reviewer_llm_client and validator_llm_client:
+        self.iterative_refiner = None
+        if enable_iterative_refinement:
             from evolux_engine.prompts.prompt_engine import PromptEngine
             self.prompt_engine = PromptEngine()
             self.iterative_refiner = IterativeRefiner(
-                primary_llm=executor_llm_client,
-                reviewer_llm=reviewer_llm_client,
-                validator_llm=validator_llm_client,
+                llm_factory=self.llm_factory,
+                config_manager=self.config_manager,
                 prompt_engine=self.prompt_engine,
-                project_context=project_context
+                project_context=project_context,
+                file_service=self.file_service,
+                shell_service=self.shell_service
             )
-        else:
-            self.iterative_refiner = None
         
         logger.info(
             f"TaskExecutorAgent (ID: {self.agent_id}) inicializado para o projeto ID: {self.project_context.project_id}. Refinamento iterativo: {self.enable_refinement}"
@@ -214,122 +216,32 @@ class TaskExecutorAgent:
         self,
         messages: List[Dict[str, str]],
         expected_json_key: str,
-        action_description: str # Ex: "geração de conteúdo de arquivo", "geração de comando"
+        action_description: str,
+        task_category: TaskCategory
     ) -> Optional[Any]:
         """
-        Invoca o LLM esperando uma resposta JSON e extrai um valor de uma chave específica.
-        Salva a resposta bruta em caso de erro para depuração.
+        Invoca o LLM com a nova lógica de fallback e extrai uma chave JSON.
         """
-        task_id_for_log = "geral_executor" # Usar se não estiver no contexto de uma tarefa específica
-
         try:
-            start_time = asyncio.get_event_loop().time()
-            # Usar o modelo definido para o executor no config do projeto ou global
-            model_to_use = self.project_context.engine_config.default_executor_model or \
-                           self.executor_llm.model_name # Fallback para o modelo padrão do cliente
+            # A fábrica agora lida com a seleção do modelo e a criação do cliente
+            llm_client = self.llm_factory.get_client(task_category)
             
-            # Tentar com modelo principal primeiro, depois fallback se falhar
-            llm_response_text = None
+            # A lógica de fallback agora está dentro do próprio cliente
+            response = await llm_client.generate_response(messages, category=task_category)
             
-            try:
-                # Usar timeout e parâmetros otimizados para performance
-                llm_response_text = await asyncio.wait_for(
-                    self.executor_llm.generate_response(
-                        messages,
-                        max_tokens=2048,  # Reduzido para melhor performance
-                        temperature=0.3   # Mais determinístico
-                    ),
-                    timeout=60.0  # Timeout de 1 minuto
-                )
-            except Exception as e:
-                logger.warning(f"Modelo principal {self.executor_llm.model_name} falhou: {str(e)[:100]}...")
-                
-                # Tentar modelo de fallback se disponível
-                from evolux_engine.llms.model_router import ModelRouter, TaskCategory
-                router = ModelRouter()
-                fallback_model = router.get_fallback_model(self.executor_llm.model_name, TaskCategory.CODE_GENERATION)
-                
-                if fallback_model and fallback_model != self.executor_llm.model_name:
-                    logger.info(f"Tentando modelo de fallback: {fallback_model}")
-                    try:
-                        # Criar cliente temporário para fallback
-                        from evolux_engine.llms.llm_client import LLMClient
-                        from evolux_engine.services.config_manager import ConfigManager
-                        
-                        config_manager = ConfigManager()
-                        fallback_provider = router.available_models[fallback_model].provider
-                        fallback_api_key = config_manager.get_api_key(fallback_provider)
-                        
-                        if fallback_api_key:
-                            fallback_client = LLMClient(
-                                provider=fallback_provider,
-                                api_key=fallback_api_key,
-                                model_name=fallback_model
-                            )
-                            
-                            llm_response_text = await asyncio.wait_for(
-                                fallback_client.generate_response(messages, max_tokens=2048, temperature=0.3),
-                                timeout=60.0
-                            )
-                            logger.info(f"Sucesso com modelo de fallback: {fallback_model}")
-                    except Exception as fallback_error:
-                        logger.error(f"Fallback também falhou: {str(fallback_error)[:100]}...")
-                
-                if not llm_response_text:
-                    raise e  # Re-raise original exception if fallback also failed
-            latency_ms = int((asyncio.get_event_loop().time() - start_time) * 1000)
-
-            # TODO: Registrar LLMCallMetrics no ProjectContext.iteration_history
-            # Isso precisaria de acesso ao log da iteração atual, melhor feito pelo Orchestrator
-
-            if not llm_response_text:
-                logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Nenhuma resposta da LLM.")
-                return None
-
-            # Sanitiza a resposta primeiro
-            sanitized_response = sanitize_llm_response(llm_response_text)
-            logger.debug(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Resposta bruta LLM: {sanitized_response[:500]}...")
-
-            # Usa a função avançada para extrair conteúdo
-            content = extract_content_from_json_response(sanitized_response, expected_json_key)
-            
-            if content is not None:
-                logger.info(f"Conteúdo extraído com sucesso para chave '{expected_json_key}' ({len(str(content))} caracteres)")
-                return content
-            
-            # Fallback: tenta extrair JSON tradicionalmente
-            json_str = extract_json_from_llm_response(sanitized_response)
-            
-            if json_str:
-                try:
-                    # Handle JSON with unicode characters properly
-                    parsed_response = json.loads(json_str, strict=False)
-                    if expected_json_key not in parsed_response:
-                        error_msg = f"Chave '{expected_json_key}' não encontrada no JSON da LLM. Resposta: {json_str}"
-                        logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): {error_msg}")
-                        return None
-                    return parsed_response[expected_json_key]
-                except json.JSONDecodeError as e:
-                    error_msg = f"Falha ao decodificar JSON da LLM. Erro: {e}. JSON Tentado: {json_str[:500]}..."
-                    logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): {error_msg}")
+            if response:
+                content = extract_content_from_json_response(response, expected_json_key)
+                if content:
+                    return content
+                else:
+                    logger.warning(f"Resposta da LLM recebida, mas a chave '{expected_json_key}' não foi encontrada na resposta: {response[:200]}")
                     return None
             else:
-                # Fallback para CREATE_FILE/MODIFY_FILE se não for JSON, mas a LLM pode ter retornado conteúdo direto
-                if expected_json_key in ["file_content", "modified_content"]:
-                    logger.warning(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Resposta da LLM não é JSON, mas esperava '{expected_json_key}'. Usando resposta bruta como conteúdo.")
-                    return sanitized_response
-                
-                error_msg = f"Nenhum JSON válido encontrado na resposta da LLM. Resposta: {sanitized_response[:500]}..."
-                logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): {error_msg}")
+                logger.error(f"A chamada para a LLM para '{action_description}' retornou uma resposta vazia.")
                 return None
 
-        except asyncio.TimeoutError:
-            logger.error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Timeout ao consultar LLM (60s). Possível sobrecarga do serviço.")
-            return None
         except Exception as e:
-            error_type = type(e).__name__
-            error_msg = str(e)
-            logger.opt(exception=True).error(f"TaskExecutor (ID: {self.agent_id}, Ação: {action_description}): Erro {error_type} ao consultar LLM: {error_msg[:200]}")
+            logger.opt(exception=True).error(f"Erro final ao invocar LLM para '{action_description}'.")
             return None
 
 
@@ -363,7 +275,12 @@ class TaskExecutorAgent:
             file_content = cached_solution.get("file_content")
         else:
             # 2. Se não estiver no cache, invocar LLM
-            llm_output = await self._invoke_llm_for_json_output(messages, "file_content", action_desc)
+            llm_output = await self._invoke_llm_for_json_output(
+                messages, 
+                "file_content", 
+                action_desc, 
+                TaskCategory.CODE_GENERATION
+            )
             if llm_output is not None:
                 # 3. Armazenar a nova solução no cache
                 self.cache.put(task, {"file_content": llm_output})
@@ -424,7 +341,12 @@ class TaskExecutorAgent:
             modified_content = cached_solution.get("modified_content")
         else:
             # 2. Se não estiver no cache, invocar LLM
-            llm_output = await self._invoke_llm_for_json_output(messages, "modified_content", action_desc)
+            llm_output = await self._invoke_llm_for_json_output(
+                messages, 
+                "modified_content", 
+                action_desc, 
+                TaskCategory.CODE_GENERATION
+            )
             if llm_output is not None:
                 # 3. Armazenar a nova solução no cache
                 self.cache.put(task, {"modified_content": llm_output})
@@ -499,7 +421,12 @@ class TaskExecutorAgent:
             command_to_execute = cached_solution.get("command_to_execute")
         else:
             # 2. Se não estiver no cache, invocar LLM
-            llm_output = await self._invoke_llm_for_json_output(messages, "command_to_execute", action_desc)
+            llm_output = await self._invoke_llm_for_json_output(
+                messages, 
+                "command_to_execute", 
+                action_desc, 
+                TaskCategory.GENERIC # Usando GENERIC para comandos por enquanto
+            )
             if llm_output and isinstance(llm_output, str):
                 # 3. Armazenar a nova solução no cache
                 self.cache.put(task, {"command_to_execute": llm_output})

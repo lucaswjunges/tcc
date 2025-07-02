@@ -9,7 +9,7 @@ Este módulo implementa um sistema de revisão e melhoria iterativa que:
 """
 
 import asyncio
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, TYPE_CHECKING
 from dataclasses import dataclass
 from enum import Enum
 import json
@@ -20,6 +20,10 @@ from evolux_engine.schemas.contracts import Task, ExecutionResult, ValidationRes
 from evolux_engine.prompts.prompt_engine import PromptEngine, PromptContext
 from evolux_engine.models.project_context import ProjectContext
 from evolux_engine.utils.string_utils import extract_json_from_llm_response
+
+if TYPE_CHECKING:
+    from evolux_engine.llms.llm_factory import LLMFactory
+    from evolux_engine.services.config_manager import ConfigManager
 
 
 class RefinementStrategy(Enum):
@@ -61,24 +65,38 @@ class IterativeRefiner:
     
     def __init__(
         self,
-        primary_llm: LLMClient,
-        reviewer_llm: LLMClient,
-        validator_llm: LLMClient,
+        llm_factory: "LLMFactory",
+        config_manager: "ConfigManager",
         prompt_engine: PromptEngine,
         project_context: ProjectContext,
+        file_service,
+        shell_service,
         max_iterations: int = 5,
         quality_threshold: float = 8.5,
         convergence_threshold: float = 0.1
     ):
-        self.primary_llm = primary_llm
-        self.reviewer_llm = reviewer_llm
-        self.validator_llm = validator_llm
+        from evolux_engine.schemas.contracts import LLMProvider
+        self.llm_factory = llm_factory
+        self.config_manager = config_manager
         self.prompt_engine = prompt_engine
         self.project_context = project_context
+        self.file_service = file_service
+        self.shell_service = shell_service
         self.max_iterations = max_iterations
         self.quality_threshold = quality_threshold
         self.convergence_threshold = convergence_threshold
+
+        # Get clients from factory
+        from evolux_engine.llms.model_router import TaskCategory
         
+        self.primary_llm = self.llm_factory.get_client(
+            task_category=TaskCategory.CODE_GENERATION
+        )
+        self.reviewer_llm = self.llm_factory.get_client(
+            task_category=TaskCategory.VALIDATION
+        )
+        self.validator_llm = self.reviewer_llm # Reuse the same client
+
         logger.info(f"IterativeRefiner initialized with {max_iterations} max iterations")
     
     async def refine_task_iteratively(
@@ -145,7 +163,16 @@ class IterativeRefiner:
         
         # Executar tarefa com LLM primário
         execution_result = await self._execute_with_primary_llm(task, prompt)
-        
+        if not execution_result or execution_result.exit_code != 0:
+            # Se a execução primária falhou ou não retornou resultado, não há o que validar.
+            return RefinementIteration(
+                iteration_number=iteration_number,
+                task_attempt=prompt,
+                execution_result=execution_result or ExecutionResult(exit_code=1, stderr="Primary LLM execution failed to return a result."),
+                validation_result=ValidationResult(validation_passed=False, identified_issues=["Primary LLM execution failed."]),
+                quality_score=0.0
+            )
+
         # Validar resultado
         validation_result = await self._validate_iteration_result(task, execution_result)
         
@@ -239,8 +266,10 @@ class IterativeRefiner:
                 {"role": "user", "content": prompt}
             ]
             
+            from evolux_engine.llms.model_router import TaskCategory
             response = await self.primary_llm.generate_response(
                 messages,
+                category=TaskCategory.CODE_GENERATION,
                 max_tokens=6000,
                 temperature=0.2
             )
@@ -252,13 +281,28 @@ class IterativeRefiner:
                 )
             
             # Processar resposta baseada no tipo de tarefa
-            # Por simplicidade, retornamos sucesso aqui
-            # Em implementação real, isso executaria a tarefa específica
-            return ExecutionResult(
-                exit_code=0,
-                stdout=response[:1000],  # Truncar para logging
-                stderr=""
-            )
+            from evolux_engine.schemas.contracts import TaskType, TaskDetailsCreateFile, ArtifactChange, ArtifactChangeType
+            from evolux_engine.models.project_context import ArtifactState
+            import os
+
+            if task.type == TaskType.CREATE_FILE:
+                details: TaskDetailsCreateFile = task.details
+                relative_file_path = os.path.join("artifacts", details.file_path)
+                self.file_service.save_file(relative_file_path, str(response))
+                artifact_change = ArtifactChange(path=relative_file_path, change_type=ArtifactChangeType.CREATED)
+                file_hash = self.file_service.get_file_hash(relative_file_path)
+                self.project_context.update_artifact_state(
+                    relative_file_path,
+                    ArtifactState(path=relative_file_path, hash=file_hash, summary=f"Arquivo criado/sobrescrito: {details.file_path}")
+                )
+                await self.project_context.save_context()
+                return ExecutionResult(exit_code=0, stdout=f"Arquivo {details.file_path} criado/atualizado.", artifacts_changed=[artifact_change])
+            else:
+                return ExecutionResult(
+                    exit_code=0,
+                    stdout=response[:1000],  # Truncar para logging
+                    stderr=""
+                )
             
         except Exception as e:
             logger.error(f"Error executing with primary LLM: {e}")
@@ -313,11 +357,17 @@ Response format:
                 {"role": "user", "content": validation_prompt}
             ]
             
+            from evolux_engine.llms.model_router import TaskCategory
             response = await self.validator_llm.generate_response(
                 messages,
+                category=TaskCategory.VALIDATION,
                 max_tokens=3000,
                 temperature=0.1
             )
+
+            if not response:
+                logger.warning("Validation LLM returned no response. Returning default validation failure.")
+                return ValidationResult(validation_passed=False, confidence_score=0.0, identified_issues=["Validation LLM failed to respond."])
             
             # Extrair dados estruturados
             json_str = extract_json_from_llm_response(response)
@@ -403,8 +453,10 @@ Be thorough but fair in your evaluation.
                 {"role": "user", "content": review_prompt}
             ]
             
+            from evolux_engine.llms.model_router import TaskCategory
             response = await self.reviewer_llm.generate_response(
                 messages,
+                category=TaskCategory.VALIDATION,
                 max_tokens=2000,
                 temperature=0.3
             )

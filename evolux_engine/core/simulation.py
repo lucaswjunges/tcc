@@ -1,10 +1,14 @@
 import asyncio
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, TYPE_CHECKING
 from loguru import logger
 
 from evolux_engine.llms.llm_client import LLMClient
 from evolux_engine.models.project_context import ProjectContext
 from evolux_engine.schemas.contracts import Task
+
+if TYPE_CHECKING:
+    from evolux_engine.llms.llm_factory import LLMFactory
+    from evolux_engine.services.config_manager import ConfigManager
 
 class SimulationReport(Dict):
     """
@@ -25,14 +29,23 @@ class SimulationEngine:
 
     def __init__(
         self,
-        simulation_llm_client: LLMClient,
+        llm_factory: "LLMFactory",
+        config_manager: "ConfigManager",
         project_context: ProjectContext,
-        agent_id: str = "simulation_engine"
+        agent_id: str = "simulation_engine",
     ):
-        self.simulation_llm = simulation_llm_client
+        from evolux_engine.schemas.contracts import LLMProvider
+        self.llm_factory = llm_factory
+        self.config_manager = config_manager
         self.project_context = project_context
         self.agent_id = agent_id
-        logger.info(f"SimulationEngine (ID: {self.agent_id}) inicializado.")
+        
+        # Obter um cliente LLM usando a fábrica. Usamos o modelo do validador por ser rápido.
+        from evolux_engine.llms.model_router import TaskCategory
+        self.simulation_llm = self.llm_factory.get_client(
+            task_category=TaskCategory.VALIDATION
+        )
+        logger.info(f"SimulationEngine (ID: {self.agent_id}) inicializado com o modelo {self.simulation_llm.model_name}.")
 
     async def simulate_command_execution(self, command: str, task_context: str) -> SimulationReport:
         """

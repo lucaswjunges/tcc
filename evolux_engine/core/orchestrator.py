@@ -7,8 +7,8 @@ from evolux_engine.core.dependency_graph import DependencyGraph
 from evolux_engine.models.project_context import ProjectContext
 from evolux_engine.schemas.contracts import Task, TaskType, TaskStatus, ProjectStatus, ExecutionResult, ValidationResult
 from evolux_engine.services.config_manager import ConfigManager
-from evolux_engine.llms.llm_client import LLMClient
-from evolux_engine.llms.model_router import ModelRouter, TaskCategory
+from evolux_engine.llms.llm_factory import LLMFactory
+from evolux_engine.llms.model_router import TaskCategory
 from evolux_engine.prompts.prompt_engine import PromptEngine
 from evolux_engine.services.file_service import FileService
 from evolux_engine.services.shell_service import ShellService
@@ -38,36 +38,17 @@ class Orchestrator:
         self.dependency_graph = DependencyGraph()
 
         # --- Bloco de Inicialização Corrigido ---
-        provider = self.config_manager.get_global_setting("default_llm_provider", "openrouter")
-        api_key = self.config_manager.get_api_key(provider)
-
-        # Validação para garantir que a chave de API foi carregada
-        if not api_key:
-            raise ValueError(f"API Key para o provedor '{provider}' não foi encontrada. Verifique seu arquivo .env.")
-
-        self.planner_llm_client = LLMClient(
-            provider=provider, 
-            api_key=api_key, 
-            model_name=self.config_manager.get_default_model_for("planner")
-        )
-        self.executor_llm_client = LLMClient(
-            provider=provider, 
-            api_key=api_key, 
-            model_name=self.config_manager.get_default_model_for("executor_content_gen")
-        )
-        self.validator_llm_client = LLMClient(
-            provider=provider, 
-            api_key=api_key, 
-            model_name=self.config_manager.get_default_model_for("validator")
-        )
-
+        # A LLMFactory agora gerencia a criação de clientes e o roteamento
+        self.planner_llm_client = LLMFactory.get_client(TaskCategory.PLANNING)
+        self.executor_llm_client = LLMFactory.get_client(TaskCategory.CODE_GENERATION)
+        self.validator_llm_client = LLMFactory.get_client(TaskCategory.VALIDATION)
+        
         # O workspace path agora é um objeto Path no ProjectContext
         workspace_dir = self.project_context.workspace_path
         self.file_service = FileService(workspace_path=str(workspace_dir))
         self.shell_service = ShellService(workspace_path=str(workspace_dir))
         
         # Inicializar componentes conforme especificação
-        self.model_router = ModelRouter()
         self.prompt_engine = PromptEngine()
         self.backup_system = BackupSystem()
         self.criteria_engine = CriteriaEngine()
@@ -92,13 +73,13 @@ class Orchestrator:
             llm_client=self.planner_llm_client
         )
         self.task_executor_agent = TaskExecutorAgent(
-            executor_llm_client=self.executor_llm_client,
             project_context=self.project_context,
             file_service=self.file_service,
             shell_service=self.shell_service,
+            config_manager=self.config_manager, # Passa o config_manager
             security_gateway=self.security_gateway,
             secure_executor=self.secure_executor,
-            model_router=self.model_router,
+            # O model_router não é mais necessário aqui, pois a factory o gerencia
             agent_id=f"executor-{self.project_context.project_id}"
         )
         self.semantic_validator_agent = SemanticValidatorAgent(

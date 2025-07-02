@@ -6,6 +6,7 @@ from loguru import logger
 from evolux_engine.llms.llm_client import LLMClient
 from evolux_engine.models.project_context import ProjectContext
 from evolux_engine.schemas.contracts import Task, ExecutionResult, ValidationResult, SemanticValidationChecklistItem, TaskType
+from evolux_engine.llms.model_router import TaskCategory
 from evolux_engine.services.file_service import FileService
 
 class SemanticValidatorAgent:
@@ -444,6 +445,7 @@ class SemanticValidatorAgent:
             
             llm_response = await self.validator_llm.generate_response(
                 messages,
+                category=TaskCategory.VALIDATION,
                 max_tokens=2048,
                 temperature=0.2
             )

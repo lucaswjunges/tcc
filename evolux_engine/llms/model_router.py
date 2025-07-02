@@ -71,6 +71,7 @@ class ModelRouter:
         self.available_models: Dict[str, ModelInfo] = {}
         self.performance_history: Dict[str, Dict[TaskCategory, ModelPerformance]] = {}
         self.fallback_chain: Dict[TaskCategory, List[str]] = {}
+        self.provider_preference = [LLMProvider.GOOGLE, LLMProvider.OPENROUTER, LLMProvider.OPENAI]
         
         self._initialize_default_models()
         self._initialize_fallback_chains()
@@ -110,8 +111,8 @@ class ModelRouter:
         )
         
         # Claude models
-        self.available_models["claude-3-haiku-20240307"] = ModelInfo(
-            name="claude-3-haiku-20240307",
+        self.available_models["anthropic/claude-3-haiku"] = ModelInfo(
+            name="anthropic/claude-3-haiku",
             provider=LLMProvider.OPENROUTER,
             max_tokens=4000,
             cost_per_1k_tokens=0.0008,
@@ -157,7 +158,7 @@ class ModelRouter:
             TaskCategory.CODE_GENERATION: [
                 "gemini-2.5-flash",  # Fast and efficient for most code generation
                 "gemini-2.5-pro",   # Fallback to Pro for complex cases
-                "claude-3-haiku-20240307",
+                "anthropic/claude-3-haiku",
                 "gpt-4o-mini", 
                 "deepseek/deepseek-r1-0528-qwen3-8b:free"
             ],
@@ -171,7 +172,7 @@ class ModelRouter:
             TaskCategory.VALIDATION: [
                 "gemini-2.5-flash",  # Fast validation with strong reasoning
                 "gemini-2.5-pro",   # For complex validation cases
-                "claude-3-haiku-20240307",
+                "anthropic/claude-3-haiku",
                 "gpt-4o-mini",
                 "deepseek/deepseek-r1-0528-qwen3-8b:free"
             ],
@@ -179,7 +180,7 @@ class ModelRouter:
                 "gemini-2.5-flash",  # Excellent for error analysis with speed
                 "gemini-2.5-pro",   # For very complex error scenarios
                 "gpt-4o-mini",
-                "claude-3-haiku-20240307",
+                "anthropic/claude-3-haiku",
                 "deepseek/deepseek-r1-0528-qwen3-8b:free"
             ],
             TaskCategory.DOCUMENTATION: [
@@ -335,23 +336,38 @@ class ModelRouter:
         logger.debug(f"Model performance updated for model: {model_name}, category: {category.value}, success: {success}, new_success_rate: {round(perf.success_rate, 3)}")
     
     def get_fallback_model(self, 
-                          primary_model: str, 
-                          category: TaskCategory) -> Optional[str]:
-        """Obtém modelo de fallback se o primário falhar"""
+                           failed_model_name: str, 
+                           category: TaskCategory) -> Optional[ModelInfo]:
+        """
+        Obtém o próximo modelo de fallback disponível de uma cadeia pré-definida.
         
+        Args:
+            failed_model_name: O nome do modelo que falhou.
+            category: A categoria da tarefa para a qual encontrar um fallback.
+            
+        Returns:
+            Um objeto ModelInfo do próximo modelo disponível ou None se nenhum for encontrado.
+        """
         fallback_list = self.fallback_chain.get(category, [])
         
         try:
-            primary_index = fallback_list.index(primary_model)
-            if primary_index + 1 < len(fallback_list):
-                fallback = fallback_list[primary_index + 1]
-                logger.info(f"Fallback model selected. Primary: {primary_model}, Fallback: {fallback}, Category: {category.value}")
-                return fallback
+            # Encontra o índice do modelo que falhou na lista de fallback
+            failed_index = fallback_list.index(failed_model_name)
         except ValueError:
-            # Modelo primário não está na lista, usa primeiro da lista
-            if fallback_list:
-                return fallback_list[0]
+            # Se o modelo que falhou não está na lista, começa do início
+            failed_index = -1
+
+        # Itera na lista de fallback a partir da posição seguinte ao modelo que falhou
+        for i in range(failed_index + 1, len(fallback_list)):
+            fallback_name = fallback_list[i]
+            fallback_info = self.available_models.get(fallback_name)
+            
+            # Verifica se o modelo de fallback existe e está disponível
+            if fallback_info and fallback_info.is_available:
+                logger.info(f"Fallback model found for category '{category.value}'. Failed model: '{failed_model_name}'. New model: '{fallback_name}'.")
+                return fallback_info
         
+        logger.error(f"No available fallback model found in the chain for category '{category.value}' after '{failed_model_name}' failed.")
         return None
     
     def mark_model_unavailable(self, model_name: str):

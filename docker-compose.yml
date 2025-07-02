@@ -30,9 +30,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - evolux_net
+    environment:
+      - PUID=${UID:-1000}
+      - PGID=${GID:-1000}
     env_file:
       - .env
-    command: ["python", "run.py", "--goal", "create a simple portfolio website"]
+    command: ["python", "run.py", "--goal", "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade"]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.evolux-core.rule=Host(`evolux.localhost`)"

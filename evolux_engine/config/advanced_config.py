@@ -44,7 +44,7 @@ class AdvancedSystemConfig(BaseSettings):
     
     # === LLM Configuration ===
     default_llm_provider: LLMProvider = Field(
-        default=LLMProvider.OPENROUTER,
+        default=LLMProvider.GOOGLE,
         description="Provedor LLM padrão do sistema"
     )
     
@@ -56,17 +56,17 @@ class AdvancedSystemConfig(BaseSettings):
     )
     
     default_model_planner: str = Field(
-        default="deepseek/deepseek-r1-0528-qwen3-8b:free",
+        default="gemini-1.5-flash",
         description="Modelo padrão para tarefas de planejamento"
     )
     
     default_model_executor: str = Field(
-        default="deepseek/deepseek-r1-0528-qwen3-8b:free", 
+        default="gemini-1.5-flash", 
         description="Modelo padrão para execução de tarefas"
     )
     
     default_model_validator: str = Field(
-        default="deepseek/deepseek-r1-0528-qwen3-8b:free",
+        default="anthropic/claude-3-haiku",
         description="Modelo padrão para validação"
     )
     

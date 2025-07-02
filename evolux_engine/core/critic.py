@@ -4,6 +4,7 @@ from typing import Optional, List, Dict, Any
 from loguru import logger
 
 from evolux_engine.llms.llm_client import LLMClient
+from evolux_engine.llms.model_router import TaskCategory
 from evolux_engine.models.project_context import ProjectContext
 from evolux_engine.schemas.contracts import Task, ArtifactState
 
@@ -83,7 +84,12 @@ class CriticAgent:
         
         messages = [{"role": "system", "content": "Você é um revisor de planos de engenharia de software altamente crítico e experiente."}, {"role": "user", "content": prompt}]
         
-        response_text = await self.critic_llm.generate_response(messages, max_tokens=1024, temperature=0.3)
+        response_text = await self.critic_llm.generate_response(
+            messages, 
+            category=TaskCategory.PLANNING,
+            max_tokens=1024, 
+            temperature=0.3
+        )
         
         return self._parse_llm_response(response_text)
 
@@ -123,7 +129,12 @@ class CriticAgent:
         
         messages = [{"role": "system", "content": "Você é um revisor de código sênior, focado em encontrar problemas e sugerir melhorias."}, {"role": "user", "content": prompt}]
         
-        response_text = await self.critic_llm.generate_response(messages, max_tokens=1500, temperature=0.2)
+        response_text = await self.critic_llm.generate_response(
+            messages, 
+            category=TaskCategory.VALIDATION,
+            max_tokens=1500, 
+            temperature=0.2
+        )
         
         return self._parse_llm_response(response_text)
 

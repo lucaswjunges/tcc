@@ -1,11 +1,10 @@
 from .llm_client import LLMClient
-from .llm_factory import LLMFactory, LLMConfiguration
+from .llm_factory import LLMFactory
 from .model_router import ModelRouter, TaskCategory, ModelInfo, ModelPerformance
 
 __all__ = [
     "LLMClient",
-    "LLMFactory", 
-    "LLMConfiguration",
+    "LLMFactory",
     "ModelRouter",
     "TaskCategory",
     "ModelInfo",

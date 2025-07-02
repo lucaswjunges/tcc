@@ -33,12 +33,26 @@ WORKDIR /home/app/evolux
 # Graças ao .dockerignore, apenas os arquivos necessários serão copiados.
 COPY --chown=app:app . .
 
-# Cria o diretório de logs e ajusta as permissões
-RUN mkdir -p /home/app/evolux/logs && chown -R app:app /home/app/evolux
+# Instala gosu para manipulação de permissões no entrypoint
+# e depois limpa o cache do apt para manter a imagem pequena.
+RUN apt-get update && apt-get install -y --no-install-recommends gosu \
+    && rm -rf /var/lib/apt/lists/*
 
-# Muda para o usuário não-root
-USER app
+# Copia o script de entrypoint e o torna executável
+COPY --chown=app:app entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# A criação do diretório de logs e o ajuste de permissões
+# agora são gerenciados pelo entrypoint.sh para maior flexibilidade.
+RUN mkdir -p /home/app/evolux/logs
+
+# A mudança para o usuário não-root agora é gerenciada
+# pelo entrypoint.sh usando gosu para maior segurança e flexibilidade.
 
 EXPOSE 8000
 
+# Define o entrypoint para executar nosso script de inicialização
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# O comando padrão que será passado para o entrypoint
 CMD ["python", "run.py"]
