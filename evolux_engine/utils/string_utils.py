@@ -130,7 +130,17 @@ def extract_content_from_json_response(text: str, key: str = "file_content") -> 
     """
     import json
     
-    # Primeiro tenta extrair JSON normal
+    # Primeiro tenta extrair JSON de blocos de código
+    json_block = extract_first_code_block(text, "json")
+    if json_block:
+        try:
+            parsed = json.loads(json_block)
+            if key in parsed:
+                return parsed[key]
+        except json.JSONDecodeError:
+            pass
+    
+    # Segundo, tenta extrair JSON normal
     json_str = extract_json_from_llm_response(text)
     if json_str:
         try:

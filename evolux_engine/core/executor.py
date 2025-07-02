@@ -235,6 +235,19 @@ class TaskExecutorAgent:
                     return content
                 else:
                     logger.warning(f"Resposta da LLM recebida, mas a chave '{expected_json_key}' não foi encontrada na resposta: {response[:200]}")
+                    
+                    # Fallback: Se a resposta é um bloco de código simples, use-a diretamente
+                    from evolux_engine.utils.string_utils import extract_first_code_block
+                    code_block = extract_first_code_block(response)
+                    if code_block and len(code_block.strip()) > 10:  # Evita blocos muito pequenos
+                        logger.info(f"Fallback: Usando bloco de código extraído para {expected_json_key}")
+                        return code_block
+                    
+                    # Último fallback: usar a resposta completa se for razoavelmente longa
+                    if len(response.strip()) > 20:
+                        logger.info(f"Fallback: Usando resposta completa para {expected_json_key}")
+                        return response.strip()
+                    
                     return None
             else:
                 logger.error(f"A chamada para a LLM para '{action_description}' retornou uma resposta vazia.")
