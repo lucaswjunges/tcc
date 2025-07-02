@@ -53,9 +53,11 @@ class SecureExecutor:
     
     def __init__(self, 
                  security_gateway: Optional[SecurityGateway] = None,
-                 default_limits: Optional[ResourceLimits] = None):
+                 default_limits: Optional[ResourceLimits] = None,
+                 config_manager: Optional[Any] = None):
         self.security_gateway = security_gateway or SecurityGateway(SecurityLevel.STRICT)
         self.default_limits = default_limits or ResourceLimits()
+        self.config_manager = config_manager
         self.execution_count = 0
         self.active_containers: Dict[str, str] = {}  # execution_id -> container_id
         
@@ -273,6 +275,20 @@ class SecureExecutor:
         import subprocess
         
         start_time = time.time()
+
+        # Otimização para modo de teste: não reinstalar dependências
+        execution_mode = self.config_manager.get_global_setting("execution_mode", "producao") if self.config_manager else "producao"
+        if execution_mode == "teste" and "pip install" in command:
+            logger.info(f"Modo de teste: Pulando a instalação de dependências para o comando: {command}")
+            return ExecutionResult(
+                command_executed=command,
+                exit_code=0,
+                stdout="Dependencies installation skipped in test mode.",
+                stderr="",
+                execution_time_ms=int((time.time() - start_time) * 1000),
+                resource_usage=self._estimate_resource_usage(0),
+                security_warnings=["Dependency installation skipped due to test mode."]
+            )
         
         try:
             # Preparar ambiente

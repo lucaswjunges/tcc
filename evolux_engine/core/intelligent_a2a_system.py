@@ -108,6 +108,9 @@ class IntelligentA2ASystem:
         # Integração metacognitiva
         self.metacognitive_integration: Optional[Any] = None
         self.metacognitive_enabled = False
+
+        # Registrar o próprio sistema como um agente para poder enviar notificações
+        self.coordinator.register_agent("intelligent_a2a_system", self, capabilities=["all"])
         
         logger.info("IntelligentA2ASystem inicializado - Modo GENIUS ativado")
     

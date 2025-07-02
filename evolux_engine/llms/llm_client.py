@@ -1,6 +1,7 @@
 import json
 import asyncio
 import os
+import time
 from typing import Optional, Dict, Any, List, Union
 
 import httpx
@@ -11,6 +12,7 @@ from loguru import logger
 from evolux_engine.schemas.contracts import LLMProvider
 from evolux_engine.llms.model_router import ModelRouter, TaskCategory, ModelInfo
 from evolux_engine.utils.resilience import CircuitBreaker, RateLimiter
+from evolux_engine.utils.token_optimizer import TokenOptimizer
 
 class LLMClient:
     def __init__(
@@ -23,6 +25,7 @@ class LLMClient:
         timeout: int = 120,
         http_referer: Optional[str] = None,
         x_title: Optional[str] = None,
+        model_manager=None,
     ):
         if not api_key: raise ValueError("API key é obrigatória")
         if not model_name: raise ValueError("Nome do modelo é obrigatório")
@@ -33,9 +36,11 @@ class LLMClient:
         self.timeout = timeout
         self.provider = LLMProvider(provider.lower()) if isinstance(provider, str) else provider
         self.model_router = model_router
+        self._token_optimizer = TokenOptimizer(model_name=self.model_name)
         
         self._rate_limiter = RateLimiter(requests_per_minute=15, name=f"{self.provider.value}_{self.model_name}_limiter")
         self._circuit_breaker = CircuitBreaker(failure_threshold=3, recovery_timeout=60, name=f"{self.provider.value}_{self.model_name}_breaker")
+        self.model_manager = model_manager  # Sistema inteligente de gerenciamento
 
         self._async_client: Optional[httpx.AsyncClient] = None
         self._gemini_model: Optional[genai.GenerativeModel] = None
@@ -129,7 +134,19 @@ class LLMClient:
                 response = await client.post(endpoint_url, json=payload)
                 response.raise_for_status()
                 result = response.json()
-                return result.get('choices', [{}])[0].get('message', {}).get('content', '')
+                message = result.get('choices', [{}])[0].get('message', {})
+                content = message.get('content', '')
+                
+                # Se content está vazio, tenta extrair do reasoning (para modelos como deepseek)
+                if not content or not content.strip():
+                    reasoning = message.get('reasoning', '')
+                    if reasoning and reasoning.strip():
+                        logger.info(f"LLM '{self.model_name}' retornou reasoning em vez de content, usando reasoning")
+                        content = reasoning
+                    else:
+                        logger.warning(f"LLM '{self.model_name}' retornou conteúdo vazio. Resultado completo: {result}")
+                
+                return content
         except ConnectionAbortedError as e:
             logger.error(f"Circuit Breaker está aberto. A chamada para {self.model_name} foi bloqueada. Erro: {e}")
             return None
@@ -167,49 +184,83 @@ class LLMClient:
             return False
 
     async def generate_response(
-        self, 
-        messages: List[Dict[str, str]], 
+        self,
+        messages: List[Dict[str, str]],
         category: TaskCategory,
-        max_tokens: int = 8000, 
+        max_tokens: int = 8000,
         temperature: float = 0.5,
-        max_retries: int = 3
+        max_retries: int = 3,
+        max_prompt_tokens: int = 4096
     ) -> Optional[str]:
         """
-        Gera uma resposta do LLM com lógica de fallback e novas tentativas.
+        Generates a response from the LLM with robust retry and fallback logic.
         """
-        current_model = self.model_name
+        initial_model = self.model_name
+        current_model = initial_model
+        start_time = time.time()  # Para medir tempo de resposta
+        
+        optimized_messages = self._token_optimizer.truncate_messages(messages, max_prompt_tokens)
         
         for attempt in range(max_retries):
             try:
                 if self.provider == LLMProvider.GOOGLE:
-                    return await self._generate_gemini_response(messages)
+                    response = await self._generate_gemini_response(optimized_messages)
                 else:
-                    return await self._generate_httpx_response(messages, max_tokens, temperature)
-            
-            except (ResourceExhausted, httpx.HTTPStatusError) as e:
-                is_rate_limit_error = False
-                if isinstance(e, ResourceExhausted):
-                    is_rate_limit_error = True
-                    logger.warning(f"Erro de cota/rate limit com o Gemini (modelo: {current_model}). Tentativa {attempt + 1}/{max_retries}.")
-                elif isinstance(e, httpx.HTTPStatusError) and e.response.status_code == 429:
-                    is_rate_limit_error = True
-                    logger.warning(f"Erro de rate limit (429) com o provedor HTTPX (modelo: {current_model}). Tentativa {attempt + 1}/{max_retries}.")
+                    response = await self._generate_httpx_response(optimized_messages, max_tokens, temperature)
                 
+                # Registrar sucesso no sistema inteligente
+                if self.model_manager and response is not None:
+                    response_time = (time.time() - start_time) * 1000  # em ms
+                    is_empty = not response or not response.strip()
+                    tokens_generated = len(response.split()) if response else 0
+                    
+                    self.model_manager.record_request(
+                        model_name=current_model,
+                        success=not is_empty,
+                        response_empty=is_empty,
+                        response_time=response_time,
+                        tokens_generated=tokens_generated
+                    )
+                
+                return response
+
+            except (ResourceExhausted, httpx.HTTPStatusError, httpx.TimeoutException, httpx.ConnectError) as e:
+                is_rate_limit_error = isinstance(e, ResourceExhausted) or (isinstance(e, httpx.HTTPStatusError) and e.response.status_code == 429)
+                is_timeout_error = isinstance(e, (httpx.TimeoutException, httpx.ConnectError))
+
                 if is_rate_limit_error:
+                    logger.warning(f"Rate limit error with {current_model} on attempt {attempt + 1}/{max_retries}. Triggering fallback.")
                     fallback_successful = await self._handle_fallback(current_model, category)
                     if fallback_successful:
-                        current_model = self.model_name  # Atualiza o nome do modelo para a próxima iteração
-                        continue  # Tenta novamente com o modelo de fallback
+                        current_model = self.model_name
+                        continue
                     else:
-                        logger.critical("Falha no fallback. Nenhuma outra opção disponível. Lançando exceção.")
-                        raise e  # Lança a exceção original se o fallback falhar
+                        logger.critical(f"Fallback failed for {current_model}. No other models available.")
+                        raise e
+                
+                elif is_timeout_error:
+                    wait_time = 2 ** attempt  # Exponential backoff
+                    logger.warning(f"Timeout/Connection error with {current_model}. Retrying in {wait_time}s...")
+                    await asyncio.sleep(wait_time)
+                    continue
+
                 else:
-                    # Se for outro erro HTTP, não tenta o fallback e lança a exceção
+                    logger.error(f"Unhandled HTTP error with {current_model}: {e}")
                     raise e
-            
+
             except Exception as e:
-                logger.opt(exception=True).error(f"Erro inesperado na tentativa {attempt + 1}/{max_retries} com o modelo {current_model}.")
+                logger.opt(exception=True).error(f"Unexpected error on attempt {attempt + 1}/{max_retries} with {current_model}.")
                 raise e
 
-        logger.error(f"Falha ao gerar resposta após {max_retries} tentativas.")
+        # Registrar falha no sistema inteligente
+        if self.model_manager:
+            response_time = (time.time() - start_time) * 1000  # em ms
+            self.model_manager.record_request(
+                model_name=initial_model,
+                success=False,
+                response_empty=False,
+                response_time=response_time
+            )
+        
+        logger.error(f"Failed to generate response from {initial_model} after {max_retries} attempts and potential fallbacks.")
         return None

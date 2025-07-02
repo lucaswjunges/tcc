@@ -462,12 +462,40 @@ class PlannerAgent(A2ACapableMixin):
                 logger.info(f"✅ Prompt refinado com sucesso ({len(refined_prompt)} chars)")
                 return refined_prompt
             else:
-                logger.warning("LLM returned empty response for prompt refinement")
-                return prompt_mestre
+                logger.warning("LLM returned empty response for prompt refinement. Using enhanced fallback.")
+                # Fallback melhorado - adicionar detalhes baseados em palavras-chave
+                enhanced_prompt = self._enhance_prompt_with_keywords(prompt_mestre)
+                return enhanced_prompt
                 
         except Exception as e:
             logger.error(f"Error in prompt refinement: {e}")
-            return prompt_mestre
+            enhanced_prompt = self._enhance_prompt_with_keywords(prompt_mestre)
+            return enhanced_prompt
+
+    def _enhance_prompt_with_keywords(self, prompt: str) -> str:
+        """
+        Melhora o prompt baseado em palavras-chave identificadas quando o LLM falha.
+        """
+        enhanced_parts = [prompt]
+        
+        # Detectar tipo de projeto e adicionar detalhes específicos
+        prompt_lower = prompt.lower()
+        
+        if any(word in prompt_lower for word in ['website', 'web', 'flask', 'django', 'html']):
+            enhanced_parts.append("O projeto deve incluir: interface responsiva, navegação intuitiva, estrutura MVC, e design moderno.")
+            
+        if any(word in prompt_lower for word in ['vape', 'loja', 'e-commerce', 'venda']):
+            enhanced_parts.append("Funcionalidades de e-commerce: catálogo de produtos, carrinho de compras, sistema de pagamento, gestão de usuários.")
+            
+        if any(word in prompt_lower for word in ['api', 'service', 'backend']):
+            enhanced_parts.append("Deve incluir: endpoints RESTful, documentação da API, autenticação, validação de dados.")
+            
+        if any(word in prompt_lower for word in ['banco', 'database', 'dados']):
+            enhanced_parts.append("Sistema de banco de dados: modelagem relacional, migrações, queries otimizadas.")
+            
+        enhanced_prompt = " ".join(enhanced_parts)
+        logger.info(f"🔧 Prompt melhorado com fallback baseado em keywords ({len(enhanced_prompt)} chars)")
+        return enhanced_prompt
 
     async def _get_project_type(self, goal: str) -> str:
         """
@@ -569,13 +597,51 @@ class PlannerAgent(A2ACapableMixin):
             
             if response and response.strip():
                 import json
+                from evolux_engine.utils.string_utils import extract_json_from_llm_response, clean_llm_response, extract_json_from_text
+                
+                # Limpa a resposta primeiro
+                response_clean = clean_llm_response(response)
+                
+                # Múltiplas tentativas de parsing JSON com fallbacks
+                json_str = None
+                
+                # Tentativa 1: Extrair JSON de blocos de código
+                json_str = extract_json_from_llm_response(response_clean)
+                
+                # Tentativa 2: Extrair JSON diretamente do texto
+                if not json_str:
+                    json_data = extract_json_from_text(response_clean)
+                    if json_data:
+                        logger.info(f"📋 Project info extracted: {len(json_data.get('technologies', []))} techs, {len(json_data.get('features', []))} features")
+                        return json_data
+                
+                # Tentativa 3: Parsing manual melhorado
+                if json_str:
+                    try:
+                        info = json.loads(json_str)
+                        logger.info(f"📋 Project info extracted: {len(info.get('technologies', []))} techs, {len(info.get('features', []))} features")
+                        return info
+                    except json.JSONDecodeError as e:
+                        logger.warning(f"Failed to parse extracted JSON: {e}")
+                
+                # Tentativa 4: Parsing mais agressivo para LLMs que adicionam texto extra
                 try:
-                    info = json.loads(response.strip())
-                    logger.info(f"📋 Project info extracted: {len(info.get('technologies', []))} techs, {len(info.get('features', []))} features")
-                    return info
-                except json.JSONDecodeError:
-                    logger.warning("Failed to parse LLM JSON response for project info")
-                    return self._extract_project_info_basic(project_goal)
+                    # Procura por qualquer coisa que se pareça com JSON
+                    import re
+                    json_matches = re.findall(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', response_clean, re.DOTALL)
+                    for match in json_matches:
+                        try:
+                            info = json.loads(match)
+                            if isinstance(info, dict) and ('technologies' in info or 'features' in info):
+                                logger.info(f"📋 Project info extracted via regex: {len(info.get('technologies', []))} techs, {len(info.get('features', []))} features")
+                                return info
+                        except json.JSONDecodeError:
+                            continue
+                except Exception as e:
+                    logger.debug(f"Advanced JSON parsing failed: {e}")
+                
+                logger.warning(f"Failed to parse LLM JSON response for project info. Response: {response_clean[:200]}...")
+                return self._extract_project_info_basic(project_goal)
             else:
                 return self._extract_project_info_basic(project_goal)
                 

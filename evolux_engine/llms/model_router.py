@@ -159,15 +159,17 @@ class ModelRouter:
                 "gemini-2.5-flash",  # Fast and efficient for most code generation
                 "gemini-2.5-pro",   # Fallback to Pro for complex cases
                 "anthropic/claude-3-haiku",
-                "gpt-4o-mini", 
-                "deepseek/deepseek-r1-0528-qwen3-8b:free"
+                "gpt-4o-mini",
+                "gemini-1.5-flash",
+                "deepseek/deepseek-r1-0528-qwen3-8b:free"  # Moved to last due to content issues
             ],
             TaskCategory.PLANNING: [
                 "gemini-2.5-flash",  # Fast planning with excellent quality
                 "gemini-2.5-pro",   # For complex planning scenarios
+                "anthropic/claude-3-haiku",
                 "gpt-4o-mini",
                 "gemini-1.5-flash",
-                "deepseek/deepseek-r1-0528-qwen3-8b:free"
+                "deepseek/deepseek-r1-0528-qwen3-8b:free"  # Moved to last due to empty responses
             ],
             TaskCategory.VALIDATION: [
                 "gemini-2.5-flash",  # Fast validation with strong reasoning

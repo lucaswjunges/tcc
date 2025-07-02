@@ -212,6 +212,146 @@ class TaskExecutorAgent:
         
         return '\n'.join(patterns) if patterns else ""
 
+    async def _invoke_llm_for_clean_content(
+        self,
+        messages: List[Dict[str, str]],
+        action_description: str,
+        task_category: TaskCategory
+    ) -> Optional[str]:
+        """
+        Invoca o LLM e retorna o conteúdo limpo, sem wrappers JSON.
+        """
+        try:
+            llm_client = self.llm_factory.get_client(task_category)
+            response = await llm_client.generate_response(messages, category=task_category)
+            
+            if response and response.strip():
+                cleaned_content = self._clean_llm_response(response)
+                if cleaned_content and len(cleaned_content.strip()) > 10:
+                    logger.info(f"✅ Conteúdo limpo gerado com sucesso ({len(cleaned_content)} chars)")
+                    return cleaned_content
+                else:
+                    logger.warning(f"Conteúdo muito pequeno após limpeza: {len(cleaned_content) if cleaned_content else 0} chars")
+                    return None
+            else:
+                logger.error(f"A chamada para a LLM para '{action_description}' retornou uma resposta vazia.")
+                return None
+
+        except Exception as e:
+            logger.opt(exception=True).error(f"Erro ao invocar LLM para '{action_description}'.")
+            return None
+
+    def _clean_llm_response(self, response: str) -> str:
+        """
+        Limpa a resposta do LLM removendo wrappers JSON e blocos de código desnecessários.
+        Sistema aprimorado para garantir que nenhum wrapper JSON passe.
+        """
+        content = response.strip()
+        logger.debug(f"Limpando resposta LLM (primeiros 200 chars): {content[:200]}")
+        
+        # 1. Se começar com JSON markdown + JSON, extrair conteúdo
+        if content.startswith('```json'):
+            logger.debug("Detectado bloco JSON markdown")
+            # Remove ```json no início e ``` no final
+            content = content[7:]  # Remove ```json\n
+            if content.endswith('```'):
+                content = content[:-3]
+            content = content.strip()
+            
+        # 2. Se é um JSON válido com file_content, extrair
+        if content.startswith('{') and '"file_content"' in content:
+            logger.debug("Detectado JSON com file_content")
+            try:
+                import json
+                from evolux_engine.utils.string_utils import extract_json_from_text
+                
+                # Primeiro, tentar parsing direto
+                try:
+                    parsed = json.loads(content)
+                    if 'file_content' in parsed:
+                        extracted = parsed['file_content']
+                        logger.info(f"✅ Conteúdo extraído de JSON wrapper direto (tamanho: {len(extracted)})")
+                        return extracted
+                except json.JSONDecodeError:
+                    # Se parsing direto falhou, usar utilitário melhorado
+                    parsed = extract_json_from_text(content)
+                    if parsed and 'file_content' in parsed:
+                        extracted = parsed['file_content']
+                        logger.info(f"✅ Conteúdo extraído de JSON com utility (tamanho: {len(extracted)})")
+                        return extracted
+                        
+            except Exception as e:
+                logger.warning(f"Falha ao extrair JSON: {e}")
+        
+        # 3. Usar utilitários existentes para extração como fallback
+        from evolux_engine.utils.string_utils import extract_content_from_json_response
+        json_content = extract_content_from_json_response(content, "file_content")
+        if json_content and json_content.strip() != content.strip():
+            logger.info("✅ Conteúdo extraído usando string_utils fallback")
+            return json_content
+        
+        # 4. Remove blocos de código markdown se o conteúdo estiver envolvido neles
+        import re
+        code_block_pattern = r'^```(?:\w+)?\n?(.*?)\n?```$'
+        match = re.match(code_block_pattern, content, re.DOTALL)
+        if match:
+            extracted = match.group(1).strip()
+            logger.info("✅ Conteúdo extraído de bloco markdown")
+            return extracted
+        
+        # 5. Remove blocos de código simples
+        if content.startswith('```') and content.endswith('```'):
+            lines = content.split('\n')
+            if len(lines) > 2:
+                extracted = '\n'.join(lines[1:-1]).strip()
+                logger.info("✅ Conteúdo extraído de bloco simples")
+                return extracted
+        
+        # 6. Verificação final: se ainda contém JSON wrapper, forçar extração
+        if '"file_content"' in content and content.count('"file_content"') == 1:
+            # Tenta extração manual mais agressiva
+            try:
+                start_idx = content.find('"file_content"')
+                if start_idx != -1:
+                    # Encontra o valor após file_content
+                    colon_idx = content.find(':', start_idx)
+                    if colon_idx != -1:
+                        # Encontra o início do valor (após o ':' e possível espaço)
+                        value_start = colon_idx + 1
+                        while value_start < len(content) and content[value_start] in ' \n\t':
+                            value_start += 1
+                        
+                        if value_start < len(content) and content[value_start] == '"':
+                            # É uma string JSON, encontrar o final
+                            value_start += 1  # Pula a primeira aspas
+                            value_end = value_start
+                            escaped = False
+                            
+                            while value_end < len(content):
+                                if escaped:
+                                    escaped = False
+                                elif content[value_end] == '\\':
+                                    escaped = True
+                                elif content[value_end] == '"':
+                                    break
+                                value_end += 1
+                            
+                            if value_end < len(content):
+                                extracted = content[value_start:value_end]
+                                # Decodificar escapes JSON
+                                extracted = extracted.replace('\\"', '"').replace('\\n', '\n').replace('\\t', '\t').replace('\\\\', '\\')
+                                logger.info("✅ Conteúdo extraído por parsing manual")
+                                return extracted
+            except Exception as e:
+                logger.warning(f"Falha na extração manual: {e}")
+        
+        # 7. Se nada funcionou, retorna o conteúdo original (mas avisa)
+        if content.startswith('{') and '"file_content"' in content:
+            logger.error("❌ ATENÇÃO: Não foi possível extrair conteúdo de wrapper JSON!")
+        
+        logger.debug("Retornando conteúdo original")
+        return content
+
     async def _invoke_llm_for_json_output(
         self,
         messages: List[Dict[str, str]],
@@ -272,13 +412,13 @@ class TaskExecutorAgent:
         # Construir contexto rico do projeto
         project_context_str = self._build_project_context(task)
         
-        user_prompt = get_file_content_generation_prompt(
-            file_path=details.file_path,
-            guideline=details.content_guideline,
-            project_goal=self.project_context.project_goal,
-            project_type=self.project_context.project_type,
-            existing_artifacts_summary=self.project_context.get_artifacts_structure_summary(),
-            project_context=project_context_str
+        # Use prompts especializados baseados no tipo de arquivo
+        from evolux_engine.prompts.specialized_prompts import get_code_generation_prompt
+        
+        user_prompt = get_code_generation_prompt(
+            file_type=details.file_path,
+            description=f"{details.content_guideline}\n\nObjetivo do projeto: {self.project_context.project_goal}",
+            context=f"Tipo: {self.project_context.project_type or 'general'}\nArtefatos existentes: {self.project_context.get_artifacts_structure_summary()}\n{project_context_str}"
         )
         messages = [{"role": "system", "content": FILE_MANIPULATION_SYSTEM_PROMPT}, {"role": "user", "content": user_prompt}]
 
@@ -288,16 +428,14 @@ class TaskExecutorAgent:
             file_content = cached_solution.get("file_content")
         else:
             # 2. Se não estiver no cache, invocar LLM
-            llm_output = await self._invoke_llm_for_json_output(
+            file_content = await self._invoke_llm_for_clean_content(
                 messages, 
-                "file_content", 
                 action_desc, 
                 TaskCategory.CODE_GENERATION
             )
-            if llm_output is not None:
+            if file_content is not None:
                 # 3. Armazenar a nova solução no cache
-                self.cache.put(task, {"file_content": llm_output})
-                file_content = llm_output
+                self.cache.put(task, {"file_content": file_content})
             else:
                 file_content = None
 
@@ -569,6 +707,38 @@ class TaskExecutorAgent:
         logger.info(
             f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): Iniciando execução - Tipo: {task.type.value}, Desc: {task.description}"
         )
+        
+        # Configurar timeout baseado no modo de execução
+        execution_mode = self.config_manager.get_global_setting("execution_mode", "producao")
+        if execution_mode == "teste":
+            task_timeout = self.config_manager.get_global_setting("test_mode_task_timeout", 120)
+        else:
+            task_timeout = self.config_manager.get_global_setting("default_task_timeout", 300)
+        
+        # Usar timeout específico da tarefa se definido, senão usar o padrão
+        if hasattr(task.details, 'timeout_seconds') and task.details.timeout_seconds:
+            actual_timeout = min(task.details.timeout_seconds, task_timeout)  # Não ultrapassar limite do modo
+        else:
+            actual_timeout = task_timeout
+            
+        logger.info(f"TaskExecutor: Task timeout set to {actual_timeout} seconds (mode: {execution_mode})")
+        
+        # Executar tarefa com timeout
+        try:
+            return await asyncio.wait_for(self._execute_task_internal(task, use_refinement), timeout=actual_timeout)
+        except asyncio.TimeoutError:
+            logger.error(f"⏰ Task {task.task_id} timed out after {actual_timeout} seconds")
+            return ExecutionResult(
+                exit_code=124,  # Standard timeout exit code
+                stderr=f"Task execution timed out after {actual_timeout} seconds",
+                stdout="",
+                execution_time=actual_timeout
+            )
+
+    async def _execute_task_internal(self, task: Task, use_refinement: bool = None) -> ExecutionResult:
+        """
+        Execução interna da tarefa (sem timeout).
+        """
         
         if not task.details:
             logger.error(f"TaskExecutor (ID: {self.agent_id}, Tarefa: {task.task_id}): Tarefa não possui detalhes. Não pode ser executada.")

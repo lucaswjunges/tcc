@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any, Union, ClassVar
 from pydantic import BaseModel, Field, validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from enum import Enum
@@ -203,7 +203,7 @@ class Task(BaseModel):
     assigned_agent_id: Optional[str] = None # Se diferentes agentes puderem pegar tarefas
     execution_history: List[ExecutionResult] = Field(default_factory=list, description="Histórico de tentativas de execução para esta tarefa.")
     validation_history: List[ValidationResult] = Field(default_factory=list, description="Histórico de validações para esta tarefa.")
-    raw_llm_response_planning: Optional[Dict[str, Any]] = Field(None, description="A resposta JSON original da LLM que gerou esta tarefa (se aplicável).")
+    raw_llm_response_planning: Optional[Dict[str, Any]] = Field(None, description="A resposta JSON original da LLM que gerou esta tarefa (se aplicável).", exclude=True)
     # Adicionar 'priority' ou 'estimated_effort' futuramente?
 
     @validator("updated_at", pre=True, always=True)
@@ -229,7 +229,7 @@ class IterationLog(BaseModel):
     executor_llm_call: Optional[LLMCallMetrics] = None # Se a iteração envolveu geração de conteúdo/comando
     
     prompt_sent_to_llm: Optional[str] = Field(None, description="O prompt principal enviado (pode ser truncado para logs).") # Ou hash
-    raw_llm_response: Optional[str] = Field(None, description="Resposta bruta da LLM (pode ser truncado).") # Ou hash
+    raw_llm_response: Optional[str] = Field(None, description="Resposta bruta da LLM (pode ser truncado).", exclude=True) # Ou hash
 
     execution_result: Optional[ExecutionResult] = None # Se a tarefa envolveu execução
     validation_result: Optional[ValidationResult] = None # Se a tarefa envolveu validação
@@ -283,6 +283,15 @@ class ProjectContext(BaseModel):
     
     iteration_history: List[IterationLog] = Field(default_factory=list)
     
+    # Otimização de memória: Limitar o histórico de iterações
+    MAX_ITERATION_HISTORY: ClassVar[int] = 50
+
+    def add_iteration_log(self, log: IterationLog):
+        """Adiciona um log de iteração, mantendo a lista com tamanho limitado."""
+        if len(self.iteration_history) >= self.MAX_ITERATION_HISTORY:
+            self.iteration_history.pop(0)  # Remove o mais antigo
+        self.iteration_history.append(log)
+
     # Estado dos artefatos: caminho -> hash, resumo, etc.
     artifacts_state: Dict[str, ArtifactState] = Field(default_factory=dict)
     
@@ -392,6 +401,14 @@ class GlobalConfig(BaseSettings):
 
     max_concurrent_tasks: int = Field(default=1, env="EVOLUX_MAX_CONCURRENT_TASKS") # Começar com 1 para simplicidade
     logging_level: str = Field(default="INFO", env="EVOLUX_LOGGING_LEVEL")
+    execution_mode: str = Field(default="producao", env="EVOLUX_EXECUTION_MODE")
+    
+    # Configurações de timeout (em segundos)
+    default_task_timeout: int = Field(default=300, env="EVOLUX_DEFAULT_TASK_TIMEOUT")  # 5 minutos padrão
+    test_mode_task_timeout: int = Field(default=120, env="EVOLUX_TEST_MODE_TASK_TIMEOUT")  # 2 minutos para teste
+    llm_request_timeout: int = Field(default=60, env="EVOLUX_LLM_REQUEST_TIMEOUT")  # 1 minuto para requests LLM
+    project_max_duration: int = Field(default=3600, env="EVOLUX_PROJECT_MAX_DURATION")  # 1 hora máximo para projetos
+    test_mode_max_duration: int = Field(default=900, env="EVOLUX_TEST_MODE_MAX_DURATION")  # 15 minutos para teste
 
     model_config = SettingsConfigDict(
         env_file=".env",

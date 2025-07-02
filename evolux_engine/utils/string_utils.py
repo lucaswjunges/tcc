@@ -264,18 +264,79 @@ def clean_llm_response(response: str) -> str:
 def extract_json_from_text(text: str) -> dict | None:
     """
     Extrai e parseia JSON válido de uma string que pode conter outros conteúdos.
+    Versão melhorada com múltiplas estratégias de parsing.
     """
     import json
     
-    # Tenta encontrar estruturas JSON válidas no texto
-    json_pattern = r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}'
-    matches = re.findall(json_pattern, text, re.DOTALL)
+    if not text or not text.strip():
+        return None
     
-    for match in matches:
+    text = text.strip()
+    
+    # Estratégia 1: JSON completo e válido
+    if text.startswith('{') and text.endswith('}'):
         try:
-            return json.loads(match)
-        except (json.JSONDecodeError, ValueError):
+            return json.loads(text)
+        except json.JSONDecodeError:
+            pass
+    
+    # Estratégia 2: Encontrar objetos JSON balanceados
+    def find_json_objects(s):
+        objects = []
+        stack = []
+        start = -1
+        
+        for i, char in enumerate(s):
+            if char == '{':
+                if not stack:
+                    start = i
+                stack.append(char)
+            elif char == '}' and stack:
+                stack.pop()
+                if not stack and start != -1:
+                    objects.append(s[start:i+1])
+                    start = -1
+        return objects
+    
+    json_objects = find_json_objects(text)
+    for obj in json_objects:
+        try:
+            parsed = json.loads(obj)
+            if isinstance(parsed, dict):
+                return parsed
+        except json.JSONDecodeError:
             continue
+    
+    # Estratégia 3: Regex melhorado para estruturas complexas
+    patterns = [
+        r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}',  # Padrão original
+        r'\{(?:[^{}]|{[^{}]*})*\}',  # Padrão mais flexível
+        r'\{.*?\}',  # Padrão mais simples
+    ]
+    
+    for pattern in patterns:
+        matches = re.findall(pattern, text, re.DOTALL)
+        for match in matches:
+            try:
+                parsed = json.loads(match)
+                if isinstance(parsed, dict):
+                    return parsed
+            except json.JSONDecodeError:
+                continue
+    
+    # Estratégia 4: Tentar limpar e corrigir JSON malformado
+    try:
+        # Remove comentários comuns
+        cleaned = re.sub(r'//.*?$', '', text, flags=re.MULTILINE)
+        cleaned = re.sub(r'/\*.*?\*/', '', cleaned, flags=re.DOTALL)
+        
+        # Corrige aspas simples para duplas (comum em LLMs)
+        cleaned = re.sub(r"'([^']*)':", r'"\1":', cleaned)
+        cleaned = re.sub(r":\s*'([^']*)'", r': "\1"', cleaned)
+        
+        return json.loads(cleaned)
+    except (json.JSONDecodeError, ValueError):
+        pass
     
     return None
 

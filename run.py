@@ -43,7 +43,12 @@ async def main():
     parser = argparse.ArgumentParser(description="Evolux Engine - Orquestrador de Agentes de IA")
     parser.add_argument("--goal", type=str, required=True, help="O objetivo principal do projeto.")
     parser.add_argument("--project-id", type=str, help="ID de um projeto existente para continuar trabalhando nele.")
+    parser.add_argument("--modoexecucao", type=str, default="producao", choices=["producao", "teste"], help="Modo de execução do sistema.")
     args = parser.parse_args()
+
+    # Passa o modo de execução para a configuração global
+    config.set_global_setting("execution_mode", args.modoexecucao)
+    log.info(f"Modo de execução definido como: {args.modoexecucao}")
 
     # 4. Cria ou carrega o contexto do projeto usando AdvancedContextManager
     advanced_config = AdvancedSystemConfig(

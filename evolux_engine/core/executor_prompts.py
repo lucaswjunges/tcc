@@ -5,7 +5,25 @@ Prompts para o TaskExecutorAgent
 FILE_MANIPULATION_SYSTEM_PROMPT = """
 Você é um assistente especializado em manipulação de arquivos para desenvolvimento de software.
 Sua tarefa é gerar ou modificar arquivos conforme as instruções fornecidas.
-Sempre retorne sua resposta em formato JSON válido com a chave solicitada.
+
+FORMATO DE RESPOSTA OBRIGATÓRIO:
+- NUNCA use formato JSON {"file_content": "..."}
+- NUNCA use blocos markdown ```
+- Para arquivos de código: retorne APENAS o código puro, começando com import/declarações
+- Para arquivos de configuração: retorne APENAS o conteúdo direto
+- NÃO inclua explicações, comentários extras ou texto descritivo
+- O resultado deve ser código funcionando e pronto para execução
+
+EXEMPLO INCORRETO:
+```json
+{"file_content": "from flask import Flask..."}
+```
+
+EXEMPLO CORRETO:
+from flask import Flask
+app = Flask(__name__)
+
+IMPORTANTE: Sua resposta deve começar diretamente com o conteúdo do arquivo.
 """
 
 COMMAND_GENERATION_SYSTEM_PROMPT = """
@@ -41,10 +59,22 @@ INSTRUÇÕES IMPORTANTES:
 4. Certifique-se de que imports sejam consistentes com arquivos existentes
 5. Se for um arquivo Python, verifique a sintaxe e imports corretos
 
-Retorne a resposta em formato JSON:
-{{
-    "file_content": "conteúdo do arquivo aqui"
-}}
+FORMATO DA RESPOSTA OBRIGATÓRIO:
+Se o arquivo for de código (Python, HTML, CSS, JS, etc.):
+- Retorne APENAS o código limpo, sem wrapper JSON
+- Comece diretamente com o código (ex: "from flask import Flask...")
+- NUNCA use {"file_content": "..."}
+
+Se for um arquivo de documentação:
+- Retorne APENAS o conteúdo em markdown ou texto  
+
+ABSOLUTAMENTE PROIBIDO:
+- Wrappers JSON {"file_content": "..."}
+- Blocos de código markdown (```)
+- Explicações ou comentários extras
+- Tags de formatação desnecessárias
+
+LEMBRE-SE: Sua primeira linha deve ser o início real do arquivo!
 """
 
 def get_file_modification_prompt(

@@ -82,7 +82,15 @@ class IterativeRefiner:
         self.project_context = project_context
         self.file_service = file_service
         self.shell_service = shell_service
-        self.max_iterations = max_iterations
+        
+        # Ajusta o número de iterações com base no modo de execução
+        execution_mode = self.config_manager.get_global_setting("execution_mode", "producao")
+        if execution_mode == "teste":
+            self.max_iterations = 1
+            logger.info("Modo de teste ativado: O número máximo de iterações de refinamento foi definido como 1.")
+        else:
+            self.max_iterations = max_iterations
+
         self.quality_threshold = quality_threshold
         self.convergence_threshold = convergence_threshold
 
@@ -271,7 +279,8 @@ class IterativeRefiner:
                 messages,
                 category=TaskCategory.CODE_GENERATION,
                 max_tokens=6000,
-                temperature=0.2
+                temperature=0.2,
+                max_prompt_tokens=4096
             )
             
             if not response:
@@ -362,7 +371,8 @@ Response format:
                 messages,
                 category=TaskCategory.VALIDATION,
                 max_tokens=3000,
-                temperature=0.1
+                temperature=0.1,
+                max_prompt_tokens=2048
             )
 
             if not response:
@@ -458,7 +468,8 @@ Be thorough but fair in your evaluation.
                 messages,
                 category=TaskCategory.VALIDATION,
                 max_tokens=2000,
-                temperature=0.3
+                temperature=0.3,
+                max_prompt_tokens=2048
             )
             
             return response or "No reviewer feedback available"

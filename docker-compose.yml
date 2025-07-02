@@ -23,6 +23,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: evolux-core
+    develop:
+      watch:
+        - action: rebuild
+          path: .
     volumes:
       - ./project_workspaces:/home/app/evolux/project_workspaces
       - ./logs:/home/app/evolux/logs
@@ -64,7 +68,7 @@ services:
       dockerfile: Dockerfile
     container_name: testing-runner
     # O comando é sobrescrito para rodar os testes e sair
-    command: ["pytest", "."]
+    command: ["pytest", "--ignore=project_workspaces"]
     volumes:
       - ./project_workspaces:/home/app/evolux/project_workspaces
     networks:

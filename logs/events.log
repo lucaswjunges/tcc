@@ -16410,3 +16410,1790 @@ Completion check finished with status: completed, score: 1.0, total_checks: 4
 Creating project snapshot for project_id: proj_20250702_101458_8781428b, backup_id: proj_20250702_101458_8781428b_20250702_102248
 Snapshot created successfully at: project_workspaces/backups/proj_20250702_101458_8781428b_20250702_102248.zip, size_mb: 0.02
 {"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T13:22:48.842730Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T13:30:44.245195Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T13:30:44.245849Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T13:30:44.246215Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T13:30:44.255961Z"}
+Project context saved for project_id: proj_20250702_133044_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_133044_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_133044_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_133044_8781428b", "level": "info", "timestamp": "2025-07-02T13:30:44.266370Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T13:30:44.267541Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b", "level": "info", "timestamp": "2025-07-02T13:30:44.274198Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_133044_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_133044_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_133044_8781428b_133044: intelligent_a2a_system -> planner_proj_20250702_133044_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_133044_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_133044_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_133044_8781428b_133044: intelligent_a2a_system -> executor_proj_20250702_133044_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_133044_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_133044_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_133044_8781428b_133044: intelligent_a2a_system -> validator_proj_20250702_133044_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T13:31:13.185348Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T13:31:13.185650Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:31:14.549948Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:31:14.550209Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T13:31:24.449397Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T13:31:24.449768Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T13:31:44.418861Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T13:31:44.419216Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T13:31:53.737535Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:32:12.494252Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:32:12.494820Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:32:33.024663Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:32:33.025238Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:32:56.511298Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:32:56.511687Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T13:33:00.608194Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T13:33:18.631161Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T13:33:18.631477Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T13:33:44.643982Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T13:33:44.644377Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T13:34:21.093949Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T13:34:21.094342Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T13:34:26.064287Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T13:34:53.559847Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T13:34:53.560122Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T13:35:39.627462Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T13:35:39.627837Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T13:36:21.832069Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T13:36:21.832447Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T13:36:28.591407Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T13:36:38.428303Z"}
+{"event": "Successfully wrote to artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T13:36:38.428643Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:36:50.403046Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:36:50.403348Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T13:36:56.649091Z"}
+{"event": "Successfully wrote to artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T13:36:56.649462Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T13:37:09.697437Z"}
+{"event": "Successfully wrote to artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T13:37:09.697820Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T13:37:15.389163Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:37:20.101975Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:37:20.102328Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T13:37:25.040086Z"}
+{"event": "Successfully wrote to artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T13:37:25.040344Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:38:22.768348Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:38:22.768775Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:39:01.990829Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:39:01.991192Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T13:39:05.687958Z"}
+{"event": "Successfully wrote to artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T13:39:05.692417Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T13:39:06.738808Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T13:39:28.266566Z"}
+{"event": "Successfully wrote to artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T13:39:28.266900Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_133044_8781428b/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T13:39:31.823738Z"}
+Checking project completion for project_id: proj_20250702_133044_8781428b
+Completion check finished with status: completed, score: 1.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250702_133044_8781428b, backup_id: proj_20250702_133044_8781428b_20250702_133931
+Snapshot created successfully at: project_workspaces/backups/proj_20250702_133044_8781428b_20250702_133931.zip, size_mb: 0.02
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T13:39:31.835514Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:21:48.936444Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:21:48.937675Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:21:48.938102Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:21:48.950721Z"}
+Project context saved for project_id: proj_20250702_142148_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_142148_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_142148_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_142148_8781428b", "level": "info", "timestamp": "2025-07-02T14:21:48.957299Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:21:48.957771Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b", "level": "info", "timestamp": "2025-07-02T14:21:53.330364Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_142148_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_142148_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_142148_8781428b_142153: intelligent_a2a_system -> planner_proj_20250702_142148_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_142148_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_142148_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_142148_8781428b_142153: intelligent_a2a_system -> executor_proj_20250702_142148_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_142148_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_142148_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_142148_8781428b_142153: intelligent_a2a_system -> validator_proj_20250702_142148_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:22:19.097739Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:22:19.098034Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:22:26.380428Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:22:26.380710Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:22:36.722646Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:22:36.722975Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:22:49.710718Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:22:49.711116Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:22:50.240690Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:22:50.241022Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:22:54.417877Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:23:09.388205Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:23:09.388556Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:23:14.099894Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T14:23:46.970652Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T14:23:46.970961Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T14:24:15.745646Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T14:24:15.746206Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T14:24:44.515178Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T14:24:44.515616Z"}
+{"event": "Reading file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T14:24:49.823839Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142148_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T14:25:17.411585Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T14:25:17.411941Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:25:29.129119Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:25:29.129406Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:25:29.129671Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:25:29.136291Z"}
+Project context saved for project_id: proj_20250702_142529_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_142529_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_142529_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_142529_8781428b", "level": "info", "timestamp": "2025-07-02T14:25:29.141037Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:25:29.141534Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_142529_8781428b", "level": "info", "timestamp": "2025-07-02T14:25:34.820493Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_142529_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_142529_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_142529_8781428b_142534: intelligent_a2a_system -> planner_proj_20250702_142529_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_142529_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_142529_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_142529_8781428b_142534: intelligent_a2a_system -> executor_proj_20250702_142529_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_142529_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_142529_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_142529_8781428b_142534: intelligent_a2a_system -> validator_proj_20250702_142529_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142529_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:26:00.297995Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:26:00.298313Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142529_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:26:01.337271Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:26:01.337597Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:26:11.345777Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:26:11.346007Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:26:11.346175Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:26:11.351380Z"}
+Project context saved for project_id: proj_20250702_142611_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_142611_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_142611_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_142611_8781428b", "level": "info", "timestamp": "2025-07-02T14:26:11.353845Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:26:11.354004Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_142611_8781428b", "level": "info", "timestamp": "2025-07-02T14:26:15.012875Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_142611_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_142611_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_142611_8781428b_142615: intelligent_a2a_system -> planner_proj_20250702_142611_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_142611_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_142611_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_142611_8781428b_142615: intelligent_a2a_system -> executor_proj_20250702_142611_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_142611_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_142611_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_142611_8781428b_142615: intelligent_a2a_system -> validator_proj_20250702_142611_8781428b
+Agente sender intelligent_a2a_system não encontrado
+✅ Prompt refinado com sucesso (740 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Desenvolver um **web application full-stack** para e-commerce de vapes e pods, utilizando **React (frontend)**, **Flask (backend em Python)** e **PostgreSQL (banco de dados)**. A aplicação deve incluir:
+
+### **Funcionalidades**
+1. **Frontend**:
+   - Páginas: Home, produtos (listagem com filtros por tipo/preço), detalhes do produto, carrinho, checkout, área do cliente, admin.
+   - Interface responsiva e estilizada com **Tailwind CSS** ou **Material UI**.
+   - Sistema de busca e filtragem avançada de produtos.
+
+2. **Backend (Flask)**:
+   - Autenticação de usuários (login, registro, recuperação de senha) com **JWT**.
+   - CRUD completo para gerenciamento de produtos (admin).
+   - Funcionalidade de wishlist e favoritos.
+   - Histórico
+📝 Transformação: 108 chars → 740 chars
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 8
+Generating domain-specific tasks for project type 'web_app' with complexity 8
+🌐 Creating dynamic web app tasks with complexity 8 based on extracted info
+🛒 E-commerce project detected. Using specialized e-commerce plan.
+🛒 Criando plano específico para E-COMMERCE
+Initial plan created with 20 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142611_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:26:49.455454Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:26:49.455841Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142611_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:26:51.714736Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:26:51.715106Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:27:03.405789Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:27:03.406318Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:27:03.406745Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:27:03.417453Z"}
+Project context saved for project_id: proj_20250702_142703_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_142703_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_142703_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_142703_8781428b", "level": "info", "timestamp": "2025-07-02T14:27:03.424381Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:27:03.424735Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_142703_8781428b", "level": "info", "timestamp": "2025-07-02T14:27:06.139730Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_142703_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_142703_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_142703_8781428b_142706: intelligent_a2a_system -> planner_proj_20250702_142703_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_142703_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_142703_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_142703_8781428b_142706: intelligent_a2a_system -> executor_proj_20250702_142703_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_142703_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_142703_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_142703_8781428b_142706: intelligent_a2a_system -> validator_proj_20250702_142703_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142703_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:27:29.021384Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:27:29.021782Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142703_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:27:34.237240Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:27:34.237599Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142703_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:27:47.795312Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:27:47.795721Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142703_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:27:52.072922Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:27:52.073294Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:27:55.566647Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:27:55.567128Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:27:55.567557Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:27:55.581046Z"}
+Project context saved for project_id: proj_20250702_142755_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_142755_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_142755_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_142755_8781428b", "level": "info", "timestamp": "2025-07-02T14:27:55.588407Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:27:55.588842Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_142755_8781428b", "level": "info", "timestamp": "2025-07-02T14:27:59.577459Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_142755_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_142755_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_142755_8781428b_142759: intelligent_a2a_system -> planner_proj_20250702_142755_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_142755_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_142755_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_142755_8781428b_142759: intelligent_a2a_system -> executor_proj_20250702_142755_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_142755_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_142755_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_142755_8781428b_142759: intelligent_a2a_system -> validator_proj_20250702_142755_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142755_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:28:22.042803Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:28:22.043122Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142755_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:28:35.006312Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:28:35.007153Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142755_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:28:43.525783Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:28:43.526228Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:28:50.154344Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:28:50.154931Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:28:50.155387Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:28:50.170260Z"}
+Project context saved for project_id: proj_20250702_142850_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_142850_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_142850_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_142850_8781428b", "level": "info", "timestamp": "2025-07-02T14:28:50.181214Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:28:50.181502Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_142850_8781428b", "level": "info", "timestamp": "2025-07-02T14:28:54.413855Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_142850_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_142850_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_142850_8781428b_142854: intelligent_a2a_system -> planner_proj_20250702_142850_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_142850_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_142850_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_142850_8781428b_142854: intelligent_a2a_system -> executor_proj_20250702_142850_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_142850_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_142850_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_142850_8781428b_142854: intelligent_a2a_system -> validator_proj_20250702_142850_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142850_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:29:19.673166Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:29:19.673527Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:29:42.976116Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:29:42.976391Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:29:42.976595Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:29:42.982377Z"}
+Project context saved for project_id: proj_20250702_142942_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_142942_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_142942_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_142942_8781428b", "level": "info", "timestamp": "2025-07-02T14:29:42.986803Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:29:42.986989Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_142942_8781428b", "level": "info", "timestamp": "2025-07-02T14:29:46.796657Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_142942_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_142942_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_142942_8781428b_142946: intelligent_a2a_system -> planner_proj_20250702_142942_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_142942_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_142942_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_142942_8781428b_142946: intelligent_a2a_system -> executor_proj_20250702_142942_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_142942_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_142942_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_142942_8781428b_142946: intelligent_a2a_system -> validator_proj_20250702_142942_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142942_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:30:11.638464Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:30:11.639111Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_142942_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:30:27.858564Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:30:27.858882Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:30:34.941225Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:30:34.941812Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:30:34.942360Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:30:34.952952Z"}
+Project context saved for project_id: proj_20250702_143034_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_143034_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_143034_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_143034_8781428b", "level": "info", "timestamp": "2025-07-02T14:30:34.957950Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:30:34.958289Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_143034_8781428b", "level": "info", "timestamp": "2025-07-02T14:30:38.138733Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_143034_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_143034_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_143034_8781428b_143038: intelligent_a2a_system -> planner_proj_20250702_143034_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_143034_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_143034_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_143034_8781428b_143038: intelligent_a2a_system -> executor_proj_20250702_143034_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_143034_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_143034_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_143034_8781428b_143038: intelligent_a2a_system -> validator_proj_20250702_143034_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_143034_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:31:01.032516Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:31:01.032868Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_143034_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:31:08.132012Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:31:08.132354Z"}
+{"event": "Writing file: /home/app/evolux/project_workspaces/proj_20250702_143034_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:31:17.082566Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:31:17.082941Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:31:26.166452Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:31:26.167089Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:31:26.167541Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:31:26.179992Z"}
+Project context saved for project_id: proj_20250702_143126_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_143126_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_143126_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_143126_8781428b", "level": "info", "timestamp": "2025-07-02T14:31:26.186983Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:31:26.187320Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/11" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/app/evolux/project_workspaces/proj_20250702_143126_8781428b", "level": "info", "timestamp": "2025-07-02T14:31:30.416031Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+Docker not available, falling back to local execution
+SecureExecutor initialized, docker_available: False, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_143126_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_143126_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_143126_8781428b_143130: intelligent_a2a_system -> planner_proj_20250702_143126_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente executor_proj_20250702_143126_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_143126_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_143126_8781428b_143130: intelligent_a2a_system -> executor_proj_20250702_143126_8781428b
+Agente sender intelligent_a2a_system não encontrado
+🎯 Agente inteligente validator_proj_20250702_143126_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_143126_8781428b especializado em: ['architecture_guru', 'performance_optimizer']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_143126_8781428b_143130: intelligent_a2a_system -> validator_proj_20250702_143126_8781428b
+Agente sender intelligent_a2a_system não encontrado
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T14:59:04.020161Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T14:59:04.020438Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T14:59:04.020612Z"}
+{"event": "Modo de execu\u00e7\u00e3o definido como: teste", "level": "info", "timestamp": "2025-07-02T14:59:04.021608Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T14:59:04.026621Z"}
+Project context saved for project_id: proj_20250702_115904_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_115904_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_115904_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_115904_8781428b", "level": "info", "timestamp": "2025-07-02T14:59:04.030988Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T14:59:04.031078Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Starting new HTTPS connection (1): openaipublic.blob.core.windows.net:443
+https://openaipublic.blob.core.windows.net:443 "GET /encodings/cl100k_base.tiktoken HTTP/1.1" 200 1681126
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b", "level": "info", "timestamp": "2025-07-02T14:59:07.179946Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+Agente intelligent_a2a_system registrado com capacidades: ['all']
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+LLM returned empty response for prompt refinement
+✅ Prompt mestre já é suficientemente específico
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 6
+Generating domain-specific tasks for project type 'web_app' with complexity 6
+🌐 Creating dynamic web app tasks with complexity 6 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:59:33.648511Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:59:33.648822Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T14:59:38.465243Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:59:39.894652Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:59:39.894938Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T14:59:43.741921Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:01:54.160335Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:01:54.160641Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:02:03.147989Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:02:28.517656Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:02:28.517913Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:02:34.280850Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T15:02:53.276865Z"}
+{"event": "Successfully wrote to artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T15:02:53.277188Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T15:03:01.485084Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T15:03:03.470608Z"}
+{"event": "Successfully wrote to artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T15:03:03.470909Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:03:08.536192Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:03:08.536488Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T15:03:10.646824Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_115904_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:03:12.966514Z"}
+Checking project completion for project_id: proj_20250702_115904_8781428b
+Completion check finished with status: completed, score: 1.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250702_115904_8781428b, backup_id: proj_20250702_115904_8781428b_20250702_120312
+Snapshot created successfully at: project_workspaces/backups/proj_20250702_115904_8781428b_20250702_120312.zip, size_mb: 0.02
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T15:03:12.981641Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T15:11:04.362248Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T15:11:04.362517Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T15:11:04.362686Z"}
+{"event": "Modo de execu\u00e7\u00e3o definido como: teste", "level": "info", "timestamp": "2025-07-02T15:11:04.363648Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T15:11:04.369093Z"}
+Project context saved for project_id: proj_20250702_121104_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_121104_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_121104_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_121104_8781428b", "level": "info", "timestamp": "2025-07-02T15:11:04.371951Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T15:11:04.372087Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b", "level": "info", "timestamp": "2025-07-02T15:11:04.548716Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+Agente intelligent_a2a_system registrado com capacidades: ['all']
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+LLM returned empty response for prompt refinement. Using enhanced fallback.
+🔧 Prompt melhorado com fallback baseado em keywords (324 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade O projeto deve incluir: interface responsiva, navegação intuitiva, estrutura MVC, e design moderno. Funcionalidades de e-commerce: catálogo de produtos, carrinho de compras, sistema de pagamento, gestão de usuários.
+📝 Transformação: 108 chars → 324 chars
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: ''. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 7
+Generating domain-specific tasks for project type 'web_app' with complexity 7
+🌐 Creating dynamic web app tasks with complexity 7 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 8 tasks and saved to context.
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:11:38.772127Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:11:38.772758Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:11:40.790514Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:11:40.790951Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:11:43.823829Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:11:46.989749Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:12:14.440942Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:12:14.441286Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:12:19.495092Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:13:22.881526Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:13:22.881886Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:13:28.174359Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:14:08.368266Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:14:08.368747Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:14:12.135378Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:14:41.524660Z"}
+{"event": "Successfully wrote to artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:14:41.525036Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:14:46.698367Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-02T15:15:06.459427Z"}
+{"event": "Successfully wrote to artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-02T15:15:06.460113Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-02T15:15:11.220073Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/security.py", "level": "info", "timestamp": "2025-07-02T15:15:31.303684Z"}
+{"event": "Successfully wrote to artifacts/security.py", "level": "info", "timestamp": "2025-07-02T15:15:31.303942Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_121104_8781428b/artifacts/security.py", "level": "info", "timestamp": "2025-07-02T15:15:37.045805Z"}
+Checking project completion for project_id: proj_20250702_121104_8781428b
+Completion check finished with status: completed, score: 1.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250702_121104_8781428b, backup_id: proj_20250702_121104_8781428b_20250702_121537
+Snapshot created successfully at: project_workspaces/backups/proj_20250702_121104_8781428b_20250702_121537.zip, size_mb: 0.02
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T15:15:37.061355Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T15:23:19.058713Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T15:23:19.058995Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T15:23:19.059119Z"}
+{"event": "Modo de execu\u00e7\u00e3o definido como: producao", "level": "info", "timestamp": "2025-07-02T15:23:19.060083Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T15:23:19.065673Z"}
+Project context saved for project_id: proj_20250702_122319_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_122319_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_122319_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_122319_8781428b", "level": "info", "timestamp": "2025-07-02T15:23:19.067751Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T15:23:19.067843Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b", "level": "info", "timestamp": "2025-07-02T15:23:19.236796Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+Agente intelligent_a2a_system registrado com capacidades: ['all']
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+🎯 Adaptando estratégia de pensamento baseada em auto-reflexão
+🤔 Baixa confiança na estratégia - usando abordagem reflexiva
+🎯 Estratégia selecionada: reflective (confiança: 0.65)
+❓ Questionando próprias suposições
+❓ Geradas 12 questões auto-reflexivas
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+🎯 Agente inteligente planner_proj_20250702_122319_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente planner_proj_20250702_122319_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_planner_proj_20250702_122319_8781428b_152319: intelligent_a2a_system -> planner_proj_20250702_122319_8781428b
+Agente receiver planner_proj_20250702_122319_8781428b não encontrado
+🎯 Agente inteligente executor_proj_20250702_122319_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente executor_proj_20250702_122319_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_executor_proj_20250702_122319_8781428b_152319: intelligent_a2a_system -> executor_proj_20250702_122319_8781428b
+Agente receiver executor_proj_20250702_122319_8781428b não encontrado
+🎯 Agente inteligente validator_proj_20250702_122319_8781428b registrado no sistema A2A
+🧠 Iniciando análise para especialização dinâmica de agentes
+🎯 Agente validator_proj_20250702_122319_8781428b especializado em: ['performance_optimizer', 'architecture_guru']
+Compartilhando conhecimento 'specialization_update' de intelligent_a2a_system para 1 agentes
+Iniciando handoff knowledge_share_intelligent_a2a_system_validator_proj_20250702_122319_8781428b_152319: intelligent_a2a_system -> validator_proj_20250702_122319_8781428b
+Agente receiver validator_proj_20250702_122319_8781428b não encontrado
+✅ Prompt refinado com sucesso (2055 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Analisando o prompt original: "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade"
+
+O objetivo é transformar isso em um prompt específico para engenharia de software, com nível de refinamento "extensive". Isso significa que precisamos abordar uma variedade ampla de requisitos, incluindo funcionalidades, tecnologias, desempenho, segurança e aspectos de produção.
+
+Passo 1: Especificar o tipo de aplicação.
+- O objetivo é um "website de venda", então é uma aplicação web.
+
+Passo 2: Definir tecnologias principais.
+- Python é mencionado, então podemos considerar frameworks como Django ou Flask. No entanto, para um site de e-commerce, Django pode ser mais adequado porque oferece recursos administrativos embutidos. Mas o prompt diz "usando Python", então podemos escolher Flask para maior flexibilidade ou Django para uma solução mais completa. Vou optar por Django por causa de sua conveniência para e-commerce.
+- Para a interface do usuário, precisamos de um template engine e talvez um frontend JavaScript. Podemos usar o Django com seu sistema de templates e incluir um frontend simples com HTML, CSS, e JavaScript, ou integrar um frontend mais robusto como React. Como o prompt deve ser extenso, vou incluir opções para frontend.
+
+Passo 3: Listar funcionalidades específicas.
+- CRUD completo para produtos (vapes, pods, etc.).
+- Sistema de carrinho de compras.
+- Processamento de pagamentos (integrar gateway de pagamento).
+- Autenticação de usuários (login, cadastro, perfil).
+- Painel administrativo para gerenciar produtos, pedidos, etc.
+- Busca de produtos.
+- Categorias e filtros.
+- Páginas estáticas (sobre, contato, política de privacidade).
+- Estilização com CSS/SCSS ou framework CSS (Bootstrap, Tailwind).
+
+Passo 4: Incluir requisitos técnicos.
+- Banco de dados: PostgreSQL para produção, SQLite para desenvolvimento.
+- Segurança: HTTPS, proteção contra CSRF, validação de dados, armazenamento seguro de senhas (usando bcrypt ou similar), prevenção contra SQL injection (usando ORM
+📝 Transformação: 108 chars → 2055 chars
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: 'okay, let me analyze this. the user wants me to classify a project based on its objective. the project is about creating a website for selling vapes and pods using python. the key terms here are website de venda which translates to '. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 9
+Generating domain-specific tasks for project type 'web_app' with complexity 9
+🌐 Creating dynamic web app tasks with complexity 9 based on extracted info
+🛒 E-commerce project detected. Using specialized e-commerce plan.
+🛒 Criando plano específico para E-COMMERCE
+Initial plan created with 20 tasks and saved to context.
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:23:47.724070Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:23:47.724355Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:23:50.462488Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:23:50.462796Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:24:05.050520Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:24:05.050890Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:24:11.567320Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:24:11.567719Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:24:16.346478Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:24:16.346886Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:24:22.335204Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:24:22.335567Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:24:27.865632Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:24:38.136494Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:24:38.136820Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:24:53.895892Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:24:53.896222Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:25:12.637202Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:25:12.637525Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:25:51.935977Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:25:51.936419Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:25:54.098397Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:25:54.098776Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:25:56.878290Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:25:58.386600Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:26:39.245298Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:26:39.245606Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:27:50.046546Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:27:50.049232Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:28:33.843431Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:28:33.843857Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_122319_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:28:38.920307Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T15:30:22.651741Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T15:30:22.652036Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T15:30:22.652218Z"}
+{"event": "Modo de execu\u00e7\u00e3o definido como: teste", "level": "info", "timestamp": "2025-07-02T15:30:22.653284Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T15:30:22.658277Z"}
+Project context saved for project_id: proj_20250702_123022_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_123022_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_123022_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_123022_8781428b", "level": "info", "timestamp": "2025-07-02T15:30:22.660508Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T15:30:22.660602Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b", "level": "info", "timestamp": "2025-07-02T15:30:22.832033Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+Agente intelligent_a2a_system registrado com capacidades: ['all']
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+✅ Prompt refinado com sucesso (109 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Desenvolver um e-commerce completo para venda de vapes e pods utilizando Python e JavaScript. A aplicação web
+📝 Transformação: 108 chars → 109 chars
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: 'okay, lets see. the user wants me to classify a project based on its objective. the project is described as desenvolver um e-commerce completo para venda de vapes e pods utilizando python e javascript. a aplicação web.'. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 5
+Generating domain-specific tasks for project type 'web_app' with complexity 5
+🌐 Creating dynamic web app tasks with complexity 5 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 7 tasks and saved to context.
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:30:48.937297Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:30:48.937627Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:30:52.727912Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:30:53.124900Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:30:53.125172Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:30:56.432499Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:31:36.282080Z"}
+{"event": "Successfully wrote to artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:31:36.282412Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/config.py", "level": "info", "timestamp": "2025-07-02T15:31:41.037482Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:32:14.452442Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:32:14.452718Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:32:18.928431Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:32:47.524507Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:32:47.524757Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:32:54.666543Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T15:34:29.534076Z"}
+{"event": "Successfully wrote to artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T15:34:29.534407Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T15:34:29.538680Z"}
+{"event": "Successfully wrote to artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T15:34:29.539076Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/docs/ARCHITECTURE.md", "level": "info", "timestamp": "2025-07-02T15:34:33.892738Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123022_8781428b/artifacts/.pre-commit-config.yaml", "level": "info", "timestamp": "2025-07-02T15:34:35.535640Z"}
+Checking project completion for project_id: proj_20250702_123022_8781428b
+Completion check finished with status: completed, score: 1.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250702_123022_8781428b, backup_id: proj_20250702_123022_8781428b_20250702_123435
+Snapshot created successfully at: project_workspaces/backups/proj_20250702_123022_8781428b_20250702_123435.zip, size_mb: 0.02
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T15:34:35.544845Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T15:34:57.529214Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T15:34:57.529626Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T15:34:57.529939Z"}
+{"event": "Modo de execu\u00e7\u00e3o definido como: teste", "level": "info", "timestamp": "2025-07-02T15:34:57.531021Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T15:34:57.537785Z"}
+Project context saved for project_id: proj_20250702_123457_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_123457_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_123457_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_123457_8781428b", "level": "info", "timestamp": "2025-07-02T15:34:57.541077Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T15:34:57.541306Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123457_8781428b", "level": "info", "timestamp": "2025-07-02T15:34:57.781924Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+Agente intelligent_a2a_system registrado com capacidades: ['all']
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+LLM returned empty response for prompt refinement. Using enhanced fallback.
+🔧 Prompt melhorado com fallback baseado em keywords (324 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade O projeto deve incluir: interface responsiva, navegação intuitiva, estrutura MVC, e design moderno. Funcionalidades de e-commerce: catálogo de produtos, carrinho de compras, sistema de pagamento, gestão de usuários.
+📝 Transformação: 108 chars → 324 chars
+Error extracting project info: Server error '502 Bad Gateway' for url 'https://openrouter.ai/api/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502
+Error in LLM classification: Server error '502 Bad Gateway' for url 'https://openrouter.ai/api/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 7
+Generating domain-specific tasks for project type 'web_app' with complexity 7
+🌐 Creating dynamic web app tasks with complexity 7 based on extracted info
+Detected web framework: Flask
+Updated requirements.txt task with dynamic dependencies.
+Generating tasks for 0 identified features.
+Generating tasks for 0 infrastructure components.
+Initial plan created with 8 tasks and saved to context.
+Replanning task c9ea437f-3519-432a-8390-d0ad296ac720 due to error: A tarefa 'Criar documentação do projeto (README.md)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Failed to get response from primary LLM...
+Replanning task c0bb29a4-1871-4071-8b63-ab2c00b12e8c due to error: A tarefa 'Criar arquivo de dependências (requirements.txt)' falhou após 3 tentativas. Últimos erros: Exit code: 1, Erro: Failed to get response from primary LLM...
+Replanning task a493d59a-80ba-4912-b2a1-ea454a7870d1 due to error: A tarefa 'Revisão: Criar documentação do projeto (README.md)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Failed to get response from primary LLM...
+Replanning task 1bcfd315-3728-4c64-992d-e4b1d6bd64fe due to error: A tarefa 'Revisão: Criar arquivo de dependências (requirements.txt)' falhou após 1 tentativas. Últimos erros: Exit code: 1, Erro: Failed to get response from primary LLM...
+Multiple revision loop detected for task 6167f1ae-fa46-427a-ae55-622982e09eb1. Stopping replanning.
+Multiple revision loop detected for task a82a0306-5375-4c07-be88-616cc9052458. Stopping replanning.
+Checking project completion for project_id: proj_20250702_123457_8781428b
+Completion check finished with status: failed_criteria, score: 0.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250702_123457_8781428b, backup_id: proj_20250702_123457_8781428b_20250702_123516
+Snapshot created successfully at: project_workspaces/backups/proj_20250702_123457_8781428b_20250702_123516.zip, size_mb: 0.0
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T15:35:16.235875Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T15:37:59.236603Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T15:37:59.236890Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T15:37:59.237229Z"}
+{"event": "Modo de execu\u00e7\u00e3o definido como: teste", "level": "info", "timestamp": "2025-07-02T15:37:59.238152Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T15:37:59.246643Z"}
+Project context saved for project_id: proj_20250702_123759_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_123759_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_123759_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_123759_8781428b", "level": "info", "timestamp": "2025-07-02T15:37:59.249062Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T15:37:59.249150Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b", "level": "info", "timestamp": "2025-07-02T15:37:59.424097Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+Agente intelligent_a2a_system registrado com capacidades: ['all']
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+✅ Prompt refinado com sucesso (1889 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Vamos transformar o objetivo vago em um prompt específico para um website de venda de vapes e pods.
+
+Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python.
+
+Refinamento:
+
+1. **Tipo de aplicação**: Vamos focar em um web app, provavelmente com um frontend e backend. Como a tecnologia principal é Python, podemos usar Flask para o backend e um frontend moderno, talvez com React.
+
+2. **Tecnologias principais**: 
+   - Backend: Flask (ou FastAPI, mas o prompt original menciona Python, então Flask é uma escolha comum).
+   - Frontend: React (ou outra opção, mas React é uma escolha moderna).
+   - Banco de dados: SQLAlchemy (ORM para Python) e um banco de dados relacional como PostgreSQL ou SQLite. Para um site de e-commerce, PostgreSQL é mais adequado.
+
+3. **Funcionalidades específicas**:
+   - CRUD completo para produtos (vapes, pods, etc.).
+   - Sistema de carrinho de compras.
+   - Checkout (pagamento, integração com gateway de pagamento como Stripe ou PayPal).
+   - Páginas de produto com detalhes.
+   - Busca e filtros.
+   - Administração de produtos (dashboard para gerenciar estoque, preços, etc.).
+   - Usuário autenticado (login, cadastro, perfil).
+   - Carrinho persistente (mesmo após deslogar ou sair do navegador).
+
+4. **Requisitos técnicos**:
+   - Desempenho: Aplicação deve responder em menos de 2 segundos em rotas comuns sob carga moderada.
+   - Segurança: Proteção contra CSRF, SQL injection, XSS. Armazenamento seguro de senhas (usando bcrypt ou similar). Validação de dados em ambos os lados (frontend e backend).
+   - Performance: Otimização de banco de dados, cache de páginas, etc.
+   - Escalabilidade: A aplicação deve ser capaz de lidar com até 1000 usuários simultâneos.
+
+5. **Entregáveis concretos**:
+   - Uma aplicação web com todas as funcionalidades acima.
+   - Dashboard de administração para gerenciar produtos e
+📝 Transformação: 108 chars → 1889 chars
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: 'okay, let me analyze this project description. the user wants a website for selling e-cigarettes and pods, built with python. the objective mentions creating a web app with backend using flask and frontend with react. theres also a focus on e'. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 9
+Generating domain-specific tasks for project type 'web_app' with complexity 9
+🌐 Creating dynamic web app tasks with complexity 9 based on extracted info
+🛒 E-commerce project detected. Using specialized e-commerce plan.
+🛒 Criando plano específico para E-COMMERCE
+Initial plan created with 20 tasks and saved to context.
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:38:39.812565Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:38:39.813317Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:38:43.762208Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:38:44.253787Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:38:44.254067Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:38:46.156654Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:38:46.157024Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:38:47.918989Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:38:49.842029Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:39:16.018972Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:39:16.019250Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:39:26.362243Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T15:40:11.918865Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T15:40:11.919152Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T15:40:11.919332Z"}
+{"event": "Modo de execu\u00e7\u00e3o definido como: teste", "level": "info", "timestamp": "2025-07-02T15:40:11.920640Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T15:40:11.925433Z"}
+Project context saved for project_id: proj_20250702_124011_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_124011_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_124011_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_124011_8781428b", "level": "info", "timestamp": "2025-07-02T15:40:11.927901Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T15:40:11.928050Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b", "level": "info", "timestamp": "2025-07-02T15:40:12.100664Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+Agente intelligent_a2a_system registrado com capacidades: ['all']
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+✅ Prompt refinado com sucesso (1928 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Vamos transformar o objetivo vago em um prompt específico e actionable.
+
+Objetivo original: "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade"
+
+Refinamento:
+
+1. Especificar o tipo de aplicação: Vamos criar uma aplicação web (web app) para vender vapes e pods.
+
+2. Definir tecnologias principais: 
+   - Backend: Python (usando Flask, por exemplo, por ser leve e rápido para aplicações web)
+   - Frontend: HTML, CSS, JavaScript (talvez com um framework como Bootstrap para estilização rápida e responsiva, ou até React se for mais complexo)
+   - Banco de dados: SQLite (para simplicidade inicial, mas poderíamos considerar PostgreSQL ou MySQL se necessário) ou se for usar microserviços, talvez separado.
+
+3. Listar funcionalidades específicas:
+   - Página inicial com produtos em destaque.
+   - Catálogo de produtos com filtros (por marca, tipo, preço, etc.).
+   - Carrinho de compras.
+   - Checkout (pode ser simples, sem integração com gateway de pagamento complexa, apenas captura de dados e envio para email).
+   - Páginas de detalhes do produto.
+   - Usuário: cadastro, login, wishlist, histórico de compras.
+   - Admin: painel para gerenciar produtos, pedidos, usuários, etc.
+   - Busca de produtos.
+   - Paginação para listagens.
+
+4. Requisitos técnicos:
+   - Banco de dados: SQLite ou PostgreSQL (para maior escalabilidade).
+   - Segurança: HTTPS, validação de dados, prevenção contra SQL injection e XSS.
+   - Performance: Otimização de queries, cache de páginas.
+   - Interface: Responsiva, acessível, design moderno (usando CSS frameworks como Bootstrap ou Tailwind, ou um framework de UI).
+   - Internacionalização (se necessário, mas não é mencionado, então talvez não).
+
+5. Entregáveis concretos:
+   - Código fonte completo e comentado.
+   - Documentação: instruções de instalação, como rodar, estrutura do projeto.
+   - Testes unitários (se possível, mas
+📝 Transformação: 108 chars → 1928 chars
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:40:18.588973Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:40:18.589267Z"}
+Failed to parse LLM JSON response for project info
+LLM returned invalid type: 'okay, lets see. the user wants me to classify a project based on its objective. the project is about creating a website for selling vapes and pods using python. the original objective mentions its a website with maximum quality.
+
+first, i'. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 9
+Generating domain-specific tasks for project type 'web_app' with complexity 9
+🌐 Creating dynamic web app tasks with complexity 9 based on extracted info
+🛒 E-commerce project detected. Using specialized e-commerce plan.
+🛒 Criando plano específico para E-COMMERCE
+Initial plan created with 20 tasks and saved to context.
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:40:25.492399Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:40:34.711216Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:40:34.711552Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:40:38.312467Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/auth.py", "level": "info", "timestamp": "2025-07-02T15:40:38.864339Z"}
+{"event": "Successfully wrote to artifacts/auth.py", "level": "info", "timestamp": "2025-07-02T15:40:38.864615Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:40:40.876345Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:40:40.876646Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/auth.py", "level": "info", "timestamp": "2025-07-02T15:40:42.447445Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:40:46.419566Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:40:46.419877Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:40:47.362375Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:40:51.458577Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/catalog.py", "level": "info", "timestamp": "2025-07-02T15:41:17.102918Z"}
+{"event": "Successfully wrote to artifacts/catalog.py", "level": "info", "timestamp": "2025-07-02T15:41:17.103267Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/catalog.py", "level": "info", "timestamp": "2025-07-02T15:41:23.305909Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:41:26.816043Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:41:26.816364Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:41:34.539349Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/cart.py", "level": "info", "timestamp": "2025-07-02T15:41:46.551681Z"}
+{"event": "Successfully wrote to artifacts/cart.py", "level": "info", "timestamp": "2025-07-02T15:41:46.551929Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:41:55.460053Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:41:55.460372Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/cart.py", "level": "info", "timestamp": "2025-07-02T15:41:55.665316Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124011_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:41:59.395272Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/payments.py", "level": "info", "timestamp": "2025-07-02T15:42:30.438558Z"}
+{"event": "Successfully wrote to artifacts/payments.py", "level": "info", "timestamp": "2025-07-02T15:42:30.438853Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/payments.py", "level": "info", "timestamp": "2025-07-02T15:42:35.661606Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/admin.py", "level": "info", "timestamp": "2025-07-02T15:42:51.474799Z"}
+{"event": "Successfully wrote to artifacts/admin.py", "level": "info", "timestamp": "2025-07-02T15:42:51.475162Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/admin.py", "level": "info", "timestamp": "2025-07-02T15:42:56.143711Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/reviews.py", "level": "info", "timestamp": "2025-07-02T15:43:33.655246Z"}
+{"event": "Successfully wrote to artifacts/reviews.py", "level": "info", "timestamp": "2025-07-02T15:43:33.655550Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/reviews.py", "level": "info", "timestamp": "2025-07-02T15:43:40.153822Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/inventory.py", "level": "info", "timestamp": "2025-07-02T15:44:20.352761Z"}
+{"event": "Successfully wrote to artifacts/inventory.py", "level": "info", "timestamp": "2025-07-02T15:44:20.353048Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/inventory.py", "level": "info", "timestamp": "2025-07-02T15:44:27.528122Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/notifications.py", "level": "info", "timestamp": "2025-07-02T15:45:03.688845Z"}
+{"event": "Successfully wrote to artifacts/notifications.py", "level": "info", "timestamp": "2025-07-02T15:45:03.689101Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/notifications.py", "level": "info", "timestamp": "2025-07-02T15:45:08.694105Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/templates/index.html", "level": "info", "timestamp": "2025-07-02T15:45:34.703415Z"}
+{"event": "Successfully wrote to artifacts/templates/index.html", "level": "info", "timestamp": "2025-07-02T15:45:34.703703Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/templates/index.html", "level": "info", "timestamp": "2025-07-02T15:45:40.029152Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/reports.py", "level": "info", "timestamp": "2025-07-02T15:46:20.618286Z"}
+{"event": "Successfully wrote to artifacts/reports.py", "level": "info", "timestamp": "2025-07-02T15:46:20.618539Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/reports.py", "level": "info", "timestamp": "2025-07-02T15:46:24.117084Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/tests/test_ecommerce.py", "level": "info", "timestamp": "2025-07-02T15:46:49.969523Z"}
+{"event": "Successfully wrote to artifacts/tests/test_ecommerce.py", "level": "info", "timestamp": "2025-07-02T15:46:49.969865Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/tests/test_ecommerce.py", "level": "info", "timestamp": "2025-07-02T15:46:55.296217Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/deploy.yml", "level": "info", "timestamp": "2025-07-02T15:47:09.754606Z"}
+{"event": "Successfully wrote to artifacts/deploy.yml", "level": "info", "timestamp": "2025-07-02T15:47:09.754873Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/deploy.yml", "level": "info", "timestamp": "2025-07-02T15:47:14.758784Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:47:44.317971Z"}
+{"event": "Successfully wrote to artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:47:44.318274Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:47:48.875893Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-02T15:48:11.667581Z"}
+{"event": "Successfully wrote to artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-02T15:48:11.667972Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-02T15:48:16.280406Z"}
+{"console_level": "INFO", "event": "Logging system initialized", "file_level": "DEBUG", "level": "info", "log_file": "logs/events.log", "timestamp": "2025-07-02T15:49:47.930451Z"}
+{"event": "ConfigManager e Logging inicializados com sucesso.", "level": "info", "timestamp": "2025-07-02T15:49:47.930733Z"}
+{"event": "PROVEDOR DE LLM CONFIGURADO: LLMProvider.GOOGLE", "level": "info", "timestamp": "2025-07-02T15:49:47.930897Z"}
+{"event": "Modo de execu\u00e7\u00e3o definido como: teste", "level": "info", "timestamp": "2025-07-02T15:49:47.931867Z"}
+AdvancedContextManager initialized
+{"event": "Nenhum projeto existente fornecido ou encontrado. Criando um novo projeto.", "level": "info", "timestamp": "2025-07-02T15:49:47.940433Z"}
+Project context saved for project_id: proj_20250702_124947_8781428b, snapshot_created: False
+New project context created for project_id: proj_20250702_124947_8781428b, project_name: Criar Website Venda Project, workspace: project_workspaces/proj_20250702_124947_8781428b
+{"event": "Trabalhando com o Projeto ID: proj_20250702_124947_8781428b", "level": "info", "timestamp": "2025-07-02T15:49:47.946806Z"}
+{"event": "Objetivo: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com m\u00e1xima qualidade", "level": "info", "timestamp": "2025-07-02T15:49:47.946908Z"}
+ModelRouter initialized with 7 available models
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: planning with strategy: cost_optimization
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+{"event": "ShellService initialized for workspace: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b", "level": "info", "timestamp": "2025-07-02T15:49:48.131770Z"}
+PromptEngine initialized with 5 templates
+BackupSystem initialized at: project_workspaces/backups
+CriteriaEngine initialized
+SecurityGateway initialized with security_level: strict, whitelist_size: 53
+SecureExecutor initialized, docker_available: True, security_level: strict
+EnterpriseObservabilityService initialized, metrics_enabled: True, structured_logging: True
+AgentHandoffCoordinator inicializado
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+PlannerAgent initialized with necessary components and A2A capabilities
+Agente planner registrado com capacidades: ['handle_context_transfer', 'handle_task_delegation', 'handle_knowledge_share']
+ModelRouter initialized with 7 available models
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+PromptEngine initialized with 5 templates
+Model selected: deepseek/deepseek-r1-0528-qwen3-8b:free for task_category: code_generation with strategy: cost_optimization
+Model selected: anthropic/claude-3-haiku for task_category: validation with strategy: cost_optimization
+Regra de validação adicionada para context_transfer
+Regra de validação adicionada para task_delegation
+EvoluxA2AIntegration inicializada
+Agente intelligent_a2a_system registrado com capacidades: ['all']
+IntelligentA2ASystem inicializado - Modo GENIUS ativado
+🧠 MetaCognitiveEngine inicializado - Auto-reflexão ativada
+Generating initial task plan...
+Prompt Mestre: Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade
+📊 Prompt specificity score: 0.21
+🔄 Prompt considerado vago - iniciando refinamento...
+🤖 Usando LLM para refinar prompt vago...
+✅ Prompt refinado com sucesso (1952 chars)
+🎯 Prompt refinado de vago para específico
+Prompt Efetivo: Vamos transformar o objetivo vago em um prompt específico. O objetivo original é: "Criar um website de venda de vapes e pods funcional, estiloso e completo usando Python. Com máxima qualidade".
+
+Vamos considerar que precisamos de um e-commerce completo. Isso inclui:
+
+1. **Tipo de aplicação**: Um website de e-commerce, que normalmente é uma aplicação web. Como o prompt menciona Python, podemos usar um framework web em Python.
+
+2. **Tecnologias principais**: Vamos optar por um stack moderna e eficiente. Podemos usar:
+   - Backend: FastAPI (ou Django, mas FastAPI é mais focado em microservices e tem boa performance)
+   - Frontend: React (ou Vue, mas React é mais popular e tem uma vasta comunidade)
+   - Banco de dados: PostgreSQL (conhecido por ser robusto e seguro)
+   - Outras tecnologias: JWT para autenticação, Docker para containerização, Git para versionamento.
+
+3. **Funcionalidades específicas**:
+   - CRUD completo para produtos (vapes, pods, acessórios, etc.)
+   - Catálogo de produtos com filtros, busca, ordenação.
+   - Carrinho de compras.
+   - Checkout (pode ser integrado com uma API de pagamento, como Stripe).
+   - Páginas de detalhes do produto.
+   - Administração de produtos (painel para adicionar, editar, excluir produtos).
+   - Usuário (login, cadastro, wishlist, etc.).
+   - Dashboard para administradores com relatórios de vendas.
+
+4. **Requisitos técnicos**:
+   - Segurança: proteção contra CSRF, validação de dados, prevenção de SQL injection (usando SQLAlchemy ou outro ORM seguro).
+   - Performance: otimização de banco de dados, cache de páginas, etc.
+   - Escalabilidade: design do sistema para permitir futuras expansões (microservices, etc.).
+   - Interface responsiva: o site deve funcionar bem em dispositivos móveis, desktops, tablets.
+
+5. **Entregáveis concretos**:
+   - Código fonte completo, documentado.
+   - Documentação de como rodar a aplicação (usando Docker ou ambiente virtual).
+   - Testes unitários
+📝 Transformação: 108 chars → 1952 chars
+Failed to parse LLM JSON response for project info. Response: ```json
+{
+    "technologies": ["FastAPI", "React...
+LLM returned invalid type: 'okay, lets analyze the users objective: criar um website de venda de vapes e pods funcional, estiloso e completo usando python. 
+
+first, the user wants a website for selling e-cigarettes and pods. that inherently'. Using basic analysis.
+Determined project type: web_app
+Determined project complexity: 10
+Generating domain-specific tasks for project type 'web_app' with complexity 10
+🌐 Creating dynamic web app tasks with complexity 10 based on extracted info
+🛒 E-commerce project detected. Using specialized e-commerce plan.
+🛒 Criando plano específico para E-COMMERCE
+Initial plan created with 20 tasks and saved to context.
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:50:10.582379Z"}
+{"event": "Successfully wrote to artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:50:10.582684Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/README.md", "level": "info", "timestamp": "2025-07-02T15:50:15.285255Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/security.py", "level": "info", "timestamp": "2025-07-02T15:50:24.689137Z"}
+{"event": "Successfully wrote to artifacts/security.py", "level": "info", "timestamp": "2025-07-02T15:50:24.689450Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_123759_8781428b/artifacts/security.py", "level": "info", "timestamp": "2025-07-02T15:50:28.562431Z"}
+Checking project completion for project_id: proj_20250702_123759_8781428b
+Completion check finished with status: completed, score: 1.0, total_checks: 4
+Creating project snapshot for project_id: proj_20250702_123759_8781428b, backup_id: proj_20250702_123759_8781428b_20250702_125028
+Snapshot created successfully at: project_workspaces/backups/proj_20250702_123759_8781428b_20250702_125028.zip, size_mb: 0.05
+{"event": "Ciclo do Orquestrador conclu\u00eddo.", "level": "info", "timestamp": "2025-07-02T15:50:28.576874Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:50:30.952707Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:50:30.953030Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:50:31.073956Z"}
+{"event": "Successfully wrote to artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:50:31.074307Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:50:35.374682Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/requirements.txt", "level": "info", "timestamp": "2025-07-02T15:50:36.004462Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:51:18.757793Z"}
+{"event": "Successfully wrote to artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:51:18.758182Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/models.py", "level": "info", "timestamp": "2025-07-02T15:51:25.751795Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:51:54.815236Z"}
+{"event": "Successfully wrote to artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:51:54.815541Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/app.py", "level": "info", "timestamp": "2025-07-02T15:51:59.939943Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/auth.py", "level": "info", "timestamp": "2025-07-02T15:52:33.095584Z"}
+{"event": "Successfully wrote to artifacts/auth.py", "level": "info", "timestamp": "2025-07-02T15:52:33.095902Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/auth.py", "level": "info", "timestamp": "2025-07-02T15:52:38.442849Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/catalog.py", "level": "info", "timestamp": "2025-07-02T15:53:08.195979Z"}
+{"event": "Successfully wrote to artifacts/catalog.py", "level": "info", "timestamp": "2025-07-02T15:53:08.196317Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/catalog.py", "level": "info", "timestamp": "2025-07-02T15:53:11.934075Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/cart.py", "level": "info", "timestamp": "2025-07-02T15:53:35.675423Z"}
+{"event": "Successfully wrote to artifacts/cart.py", "level": "info", "timestamp": "2025-07-02T15:53:35.675745Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/cart.py", "level": "info", "timestamp": "2025-07-02T15:53:41.515736Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/payments.py", "level": "info", "timestamp": "2025-07-02T15:54:01.477586Z"}
+{"event": "Successfully wrote to artifacts/payments.py", "level": "info", "timestamp": "2025-07-02T15:54:01.477921Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/payments.py", "level": "info", "timestamp": "2025-07-02T15:54:07.018075Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/admin.py", "level": "info", "timestamp": "2025-07-02T15:54:32.269891Z"}
+{"event": "Successfully wrote to artifacts/admin.py", "level": "info", "timestamp": "2025-07-02T15:54:32.270208Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/admin.py", "level": "info", "timestamp": "2025-07-02T15:54:35.590839Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/reviews.py", "level": "info", "timestamp": "2025-07-02T15:55:16.039550Z"}
+{"event": "Successfully wrote to artifacts/reviews.py", "level": "info", "timestamp": "2025-07-02T15:55:16.039855Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/reviews.py", "level": "info", "timestamp": "2025-07-02T15:55:22.397862Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/inventory.py", "level": "info", "timestamp": "2025-07-02T15:55:56.256880Z"}
+{"event": "Successfully wrote to artifacts/inventory.py", "level": "info", "timestamp": "2025-07-02T15:55:56.257202Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/inventory.py", "level": "info", "timestamp": "2025-07-02T15:56:02.229758Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/notifications.py", "level": "info", "timestamp": "2025-07-02T15:56:32.774085Z"}
+{"event": "Successfully wrote to artifacts/notifications.py", "level": "info", "timestamp": "2025-07-02T15:56:32.774406Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/notifications.py", "level": "info", "timestamp": "2025-07-02T15:56:39.394314Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/templates/index.html", "level": "info", "timestamp": "2025-07-02T15:56:55.785797Z"}
+{"event": "Successfully wrote to artifacts/templates/index.html", "level": "info", "timestamp": "2025-07-02T15:56:55.786124Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/templates/index.html", "level": "info", "timestamp": "2025-07-02T15:57:01.473168Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/reports.py", "level": "info", "timestamp": "2025-07-02T15:57:36.537126Z"}
+{"event": "Successfully wrote to artifacts/reports.py", "level": "info", "timestamp": "2025-07-02T15:57:36.537450Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/reports.py", "level": "info", "timestamp": "2025-07-02T15:57:42.473757Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/tests/test_ecommerce.py", "level": "info", "timestamp": "2025-07-02T15:58:07.272408Z"}
+{"event": "Successfully wrote to artifacts/tests/test_ecommerce.py", "level": "info", "timestamp": "2025-07-02T15:58:07.272746Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/tests/test_ecommerce.py", "level": "info", "timestamp": "2025-07-02T15:58:11.579185Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/deploy.yml", "level": "info", "timestamp": "2025-07-02T15:58:30.826153Z"}
+{"event": "Successfully wrote to artifacts/deploy.yml", "level": "info", "timestamp": "2025-07-02T15:58:30.826449Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/deploy.yml", "level": "info", "timestamp": "2025-07-02T15:58:34.789378Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:58:59.377787Z"}
+{"event": "Successfully wrote to artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:58:59.378078Z"}
+{"event": "Reading file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/monitoring.py", "level": "info", "timestamp": "2025-07-02T15:59:04.335146Z"}
+{"event": "Writing file: /home/lucas-junges/Documents/evolux-engine/project_workspaces/proj_20250702_124947_8781428b/artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-02T15:59:45.766061Z"}
+{"event": "Successfully wrote to artifacts/.github/workflows/ci.yml", "level": "info", "timestamp": "2025-07-02T15:59:45.766443Z"}

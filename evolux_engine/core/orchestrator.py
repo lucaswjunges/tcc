@@ -58,7 +58,10 @@ class Orchestrator:
         security_level_str = self.config_manager.get_global_setting("security_level", "strict")
         security_level = SecurityLevel(security_level_str)  # Convert string to enum
         self.security_gateway = SecurityGateway(security_level=security_level)
-        self.secure_executor = SecureExecutor(security_gateway=self.security_gateway)
+        self.secure_executor = SecureExecutor(
+            security_gateway=self.security_gateway,
+            config_manager=self.config_manager
+        )
         # Precisamos de uma instância do AdvancedSystemConfig para o observability
         from evolux_engine.config.advanced_config import AdvancedSystemConfig
         advanced_config = AdvancedSystemConfig()
@@ -95,11 +98,19 @@ class Orchestrator:
         
         # 🚀 INICIALIZAR SISTEMA A2A INTELIGENTE
         self.intelligent_a2a = get_intelligent_a2a_system()
-        self.a2a_enabled = self.config_manager.get_global_setting("enable_intelligent_a2a", True)
+        execution_mode = self.config_manager.get_global_setting("execution_mode", "producao")
         
+        # Desabilitar A2A e Metacognição em modo de teste para performance
+        if execution_mode == "teste":
+            self.a2a_enabled = False
+            self.metacognition_enabled = False
+            logger.info("Modo de teste: A2A Inteligente e Metacognição foram desabilitados.")
+        else:
+            self.a2a_enabled = self.config_manager.get_global_setting("enable_intelligent_a2a", True)
+            self.metacognition_enabled = self.config_manager.get_global_setting("enable_metacognition", True)
+
         # 🧠 INICIALIZAR MOTOR METACOGNITIVO
         self.metacognitive_engine = get_metacognitive_engine()
-        self.metacognition_enabled = self.config_manager.get_global_setting("enable_metacognition", True)
         
         # Registrar agentes no sistema A2A inteligente
         if self.a2a_enabled:
@@ -123,6 +134,30 @@ class Orchestrator:
         🚀 MODO INTELIGENTE A2A + 🧠 METACOGNIÇÃO ATIVADOS
         """
         logger.info(f"Orchestrator (ID: {self.agent_id}): Starting project cycle for '{self.project_context.project_name}'.")
+        
+        # Configurar timeout baseado no modo de execução
+        execution_mode = self.config_manager.get_global_setting("execution_mode", "producao")
+        if execution_mode == "teste":
+            max_duration = self.config_manager.get_global_setting("test_mode_max_duration", 900)
+            logger.info(f"🧪 TEST MODE: Max project duration set to {max_duration} seconds")
+        else:
+            max_duration = self.config_manager.get_global_setting("project_max_duration", 3600)
+            logger.info(f"🏭 PRODUCTION MODE: Max project duration set to {max_duration} seconds")
+        
+        # Executar com timeout
+        try:
+            return await asyncio.wait_for(self._run_project_cycle_internal(), timeout=max_duration)
+        except asyncio.TimeoutError:
+            logger.error(f"⏰ Project execution timed out after {max_duration} seconds")
+            self.project_context.status = ProjectStatus.FAILED
+            await self.project_context.save_context()
+            return self.project_context.status
+
+    async def _run_project_cycle_internal(self) -> ProjectStatus:
+        """
+        Lógica interna do ciclo do projeto (sem timeout).
+        """
+        logger.info(f"Orchestrator (ID: {self.agent_id}): Starting internal project cycle for '{self.project_context.project_name}'.")
 
         # 🧠 METACOGNIÇÃO: Auto-reflexão sobre estratégia de execução
         if self.metacognition_enabled:

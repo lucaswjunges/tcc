@@ -108,6 +108,16 @@ class ConfigManager:
         """
         return getattr(self.global_config, key, default)
 
+    def set_global_setting(self, key: str, value: Any):
+        """
+        Define uma configuração global dinamicamente.
+        """
+        if hasattr(self.global_config, key):
+            setattr(self.global_config, key, value)
+            logger.info(f"Global setting '{key}' updated to '{value}'.")
+        else:
+            logger.warning(f"Attempted to set an unknown global setting: '{key}'")
+
     def get_api_key(self, provider_name: Union[str, LLMProvider]) -> Optional[str]:
         """
         Obtém a chave de API para um provedor LLM específico.
